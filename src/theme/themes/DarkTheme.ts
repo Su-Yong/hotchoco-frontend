@@ -1,6 +1,6 @@
-import Theme from './Theme';
+import Theme from '../Theme';
 
-const DefaultTheme: Theme = {
+const DarkTheme: Theme = {
   palette: {
     primary: {
       main: '#3f51b5',
@@ -15,12 +15,12 @@ const DefaultTheme: Theme = {
       contrastText: '#000000',
     },
     white: {
-      main: '#ffffff',
-      contrastText: '#000000',
+      main: '#2d2d2d',
+      contrastText: '#ffffff',
     },
     black: {
-      main: '#000000',
-      contrastText: '#ffffff',
+      main: '#f1f1f1',
+      contrastText: '#000000',
     },
     red: {
       main: '#f44336',
@@ -99,4 +99,4 @@ const DefaultTheme: Theme = {
   },
 };
 
-export default DefaultTheme;
+export default DarkTheme;
