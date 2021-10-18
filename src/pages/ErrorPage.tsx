@@ -1,9 +1,5 @@
 const ErrorPage = (): JSX.Element => {
-  return (
-    <div>
-      Error!
-    </div>
-  )
+  return <div>Error!</div>;
 };
 
 export default ErrorPage;

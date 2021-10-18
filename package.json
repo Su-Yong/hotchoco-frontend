@@ -8,8 +8,10 @@
     "pretty": "prettier --write ."
   },
   "dependencies": {
+    "@callstack/react-theme-provider": "^3.0.7",
     "@linaria/core": "^3.0.0-beta.13",
     "@linaria/react": "^3.0.0-beta.13",
+    "jotai": "^1.4.0",
     "react": "^17.0.0",
     "react-dom": "^17.0.0",
     "wouter": "^2.8.0-alpha.1"

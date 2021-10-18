@@ -5,6 +5,7 @@ import { Route } from 'wouter';
 
 import LoginPage from './pages/LoginPage';
 import ErrorPage from './pages/ErrorPage';
+import { ThemeProvider } from './theme';
 
 const bodyStyle = css`
   width: 100vw;
@@ -18,11 +19,13 @@ const bodyStyle = css`
 
 const App = () => {
   return (
-    <div className={bodyStyle}>
-      <Route path={'/login'} component={LoginPage} />
-      <Route component={ErrorPage} />
-    </div>
+    <ThemeProvider>
+      <div className={bodyStyle}>
+        <Route path={'/login'} component={LoginPage} />
+        <Route component={ErrorPage} />
+      </div>
+    </ThemeProvider>
   );
-}
+};
 
 export default App;
