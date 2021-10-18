@@ -1,33 +1,57 @@
-import { useState } from 'react';
-import logo from './logo.svg';
-import './App.css';
+import { useCallback, useState } from 'react';
+import { css } from '@linaria/core';
+
+const centerStyle = css`
+  width: 100vw;
+  height: 100vh;
+
+  display: flex;
+  flex-flow: column;
+  justify-content: center;
+  align-items: center;
+`;
+
+const buttonStyle = css`
+  font-size: 18px;
+  padding: 8px;
+
+  outline: none;
+  border: transparent solid 4px;
+  border-radius: 8px;
+  background: rgba(45, 45, 45, 0.2);
+
+  transition: all 0.25s;
+
+  &:hover {
+    border-radius: 0px;
+    border-color: rgba(45, 45, 45, 0.5);
+    background: rgba(45, 45, 45, 0.3);
+  }
+
+  &:active {
+    background: rgba(45, 45, 45, 0.5);
+  }
+`;
 
 function App() {
-  const [count, setCount] = useState(0);
+  const [text, setText] = useState('Hello, world!');
+
+  const onChangeText = useCallback(() => {
+    setText((it) => {
+      if (it === 'Hello, world!') {
+        return '반갑습니다';
+      }
+
+      return 'Hello, world!';
+    });
+  }, []);
 
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>Hello Vite + React!</p>
-        <p>
-          <button type="button" onClick={() => setCount((count) => count + 1)}>
-            count is: {count}
-          </button>
-        </p>
-        <p>
-          Edit <code>App.tsx</code> and save to test HMR updates.
-        </p>
-        <p>
-          <a className="App-link" href="https://reactjs.org" target="_blank" rel="noopener noreferrer">
-            Learn React
-          </a>
-          {' | '}
-          <a className="App-link" href="https://vitejs.dev/guide/features.html" target="_blank" rel="noopener noreferrer">
-            Vite Docs
-          </a>
-        </p>
-      </header>
+    <div className={centerStyle}>
+      <h1>{text}</h1>
+      <button className={buttonStyle} onClick={onChangeText}>
+        Change
+      </button>
     </div>
   );
 }
