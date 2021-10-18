@@ -1,12 +1,8 @@
-import preactRefresh from '@prefresh/vite';
-import type { UserConfig } from 'vite';
+import react from '@vitejs/plugin-react';
+import linaria from 'vite-plugin-linaria';
 
-const config: UserConfig = {
-  jsx: {
-    factory: 'h',
-    fragment: 'Fragment',
-  },
-  plugins: [preactRefresh()],
-};
+import { defineConfig } from 'vite';
 
-export default config;
+export default defineConfig({
+  plugins: [react(), linaria()],
+});
