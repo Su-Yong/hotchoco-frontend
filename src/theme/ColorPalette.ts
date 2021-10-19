@@ -3,7 +3,8 @@ import Color from './Color';
 interface ColorPalette {
   primary: Color;
   secondary: Color;
-  background: Color;
+  backgroundPrimary: Color;
+  backgroundSecondary: Color;
 
   white: Color;
   black: Color;

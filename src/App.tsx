@@ -2,13 +2,12 @@ import React from 'react';
 
 import { css } from '@linaria/core';
 import { Route } from 'wouter';
-import { atom, useAtom } from 'jotai';
-import { atomWithStorage } from 'jotai/utils';
+import { useAtom } from 'jotai';
 
 import LoginPage from './pages/LoginPage';
 import ErrorPage from './pages/ErrorPage';
-import ThemeList from './theme/ThemeList';
 import { ThemeProvider } from './theme';
+import { themeObject } from './store/theme';
 
 const bodyStyle = css`
   width: 100vw;
@@ -19,9 +18,6 @@ const bodyStyle = css`
   justify-content: center;
   align-items: center;
 `;
-
-const themeMode = atomWithStorage<keyof typeof ThemeList>('theme', 'light');
-const themeObject = atom((get) => ThemeList[get(themeMode)]);
 
 const App = () => {
   const [theme] = useAtom(themeObject);

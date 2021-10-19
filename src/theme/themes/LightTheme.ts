@@ -10,8 +10,12 @@ const LightTheme: Theme = {
       main: '#03a9f4',
       contrastText: '#000000',
     },
-    background: {
+    backgroundPrimary: {
       main: '#f1f1f1',
+      contrastText: '#000000',
+    },
+    backgroundSecondary: {
+      main: '#e0e0e0',
       contrastText: '#000000',
     },
     white: {
