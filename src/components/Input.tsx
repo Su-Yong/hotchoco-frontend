@@ -1,7 +1,8 @@
 import { css } from '@linaria/core';
-import { PropsWithChildren } from 'react';
+import { PropsWithChildren, useMemo } from 'react';
 import { useTheme } from '../theme';
 import className from '../utils/className';
+import ColorUtil from '../utils/Color';
 import style from '../utils/style';
 
 const inputStyle = css`
@@ -17,10 +18,18 @@ const inputStyle = css`
   align-items: center;
 `;
 
-export interface InputProps extends React.HTMLAttributes<HTMLInputElement> {}
+export type InputHelp = ((text: string) => string) | string;
+export interface InputProps extends React.HTMLAttributes<HTMLInputElement> {
+  icon?: never; // TODO: add left icon
+  help?: InputHelp;
+  placeholder?: string;
+  error?: string;
+}
 
-const Input = ({ children, ...props }: PropsWithChildren<InputProps>): JSX.Element => {
+const Input = ({ icon, help, placeholder, children, ...props }: PropsWithChildren<InputProps>): JSX.Element => {
   const theme = useTheme();
+
+  const borderColor = useMemo(() => ColorUtil.alpha(theme.palette.black.main, 0.2), [theme.palette.black.main]);
 
   return (
     <input
@@ -28,9 +37,9 @@ const Input = ({ children, ...props }: PropsWithChildren<InputProps>): JSX.Eleme
       className={className(inputStyle, props.className)}
       style={style(
         {
-          background: theme.palette.backgroundPrimary.main,
-          color: theme.palette.backgroundPrimary.contrastText,
-          borderColor: theme.palette.backgroundSecondary.main,
+          background: theme.palette.backgroundSecondary.main,
+          color: theme.palette.backgroundSecondary.contrastText,
+          borderColor: borderColor,
         },
         props.style,
       )}
