@@ -1,5 +1,5 @@
 import { css } from '@linaria/core';
-import { HTMLAttributes, HTMLInputTypeAttribute, PropsWithChildren, useMemo } from 'react';
+import React, { PropsWithChildren, useMemo } from 'react';
 import { useTheme } from '../theme';
 import className from '../utils/className';
 import ColorUtil from '../utils/Color';
