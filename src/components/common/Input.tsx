@@ -1,9 +1,12 @@
-import { css } from '@linaria/core';
 import React, { PropsWithChildren, useMemo } from 'react';
-import { useTheme } from '../theme';
-import className from '../utils/className';
-import ColorUtil from '../utils/Color';
-import style from '../utils/style';
+
+import { css } from '@linaria/core';
+
+import className from '@/utils/className';
+import ColorUtil from '@/utils/Color';
+import style from '@/utils/style';
+import { useTheme } from '@/theme';
+
 import { TypographyProps } from './Typography';
 
 const inputStyle = css`
@@ -31,6 +34,10 @@ const inputStyle = css`
     border-radius: 4px;
     border-color: var(--border-color);
   }
+
+  &::placeholder {
+    color: var(--border-color);
+  }
 `;
 
 export type InputHelp = ((text: string) => string) | string;
@@ -38,11 +45,10 @@ export interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> 
   typographyType?: TypographyProps['type'];
   icon?: never; // TODO: add left icon
   help?: InputHelp;
-  placeholder?: string;
   error?: string;
 }
 
-const Input = ({ typographyType = 'body3', icon, help, placeholder, children, ...props }: PropsWithChildren<InputProps>): JSX.Element => {
+const Input = ({ typographyType = 'body3', icon, help, children, ...props }: PropsWithChildren<InputProps>): JSX.Element => {
   const theme = useTheme();
 
   const borderColor = useMemo(() => ColorUtil.alpha(theme.palette.black.main, 0.2), [theme.palette.black.main]);
@@ -56,6 +62,8 @@ const Input = ({ typographyType = 'body3', icon, help, placeholder, children, ..
       lineHeight: style.height,
     };
   }, [typographyType, theme.typography]);
+
+  console.log(props);
 
   return (
     <input

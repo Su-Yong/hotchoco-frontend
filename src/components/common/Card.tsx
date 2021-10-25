@@ -1,10 +1,10 @@
 import { HTMLAttributes, PropsWithChildren, useMemo } from 'react';
 import { css } from '@linaria/core';
 
-import { useTheme } from '../theme';
-import className from '../utils/className';
-import style from '../utils/style';
-import ColorUtil from '../utils/Color';
+import { useTheme } from '@/theme';
+import className from '@/utils/className';
+import style from '@/utils/style';
+import ColorUtil from '@/utils/Color';
 
 const cardStyle = css`
   padding: 8px;

@@ -1,8 +1,8 @@
 import { HTMLAttributes, PropsWithChildren, useMemo } from 'react';
-import { useTheme } from '../theme';
 
-import TypographySheet from '../theme/TypographySheet';
-import style from '../utils/style';
+import { useTheme } from '@/theme';
+import TypographySheet from '@/theme/TypographySheet';
+import style from '@/utils/style';
 
 export interface TypographyProps extends HTMLAttributes<HTMLDivElement> {
   type?: keyof TypographySheet;

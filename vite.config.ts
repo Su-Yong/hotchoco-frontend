@@ -1,3 +1,4 @@
+import path from 'path';
 import react from '@vitejs/plugin-react';
 import linaria from '@linaria/rollup';
 import css from 'rollup-plugin-css-only';
@@ -5,6 +6,14 @@ import css from 'rollup-plugin-css-only';
 import { defineConfig } from 'vite';
 
 export default defineConfig({
+  resolve: {
+    alias: [
+      {
+        find: '@',
+        replacement: path.resolve(__dirname, 'src'),
+      },
+    ],
+  },
   plugins: [
     react(),
     linaria({

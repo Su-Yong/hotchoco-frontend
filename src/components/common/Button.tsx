@@ -1,9 +1,12 @@
-import { css } from '@linaria/core';
 import React, { PropsWithChildren, useMemo } from 'react';
-import { useTheme } from '../theme';
-import className from '../utils/className';
-import ColorUtil from '../utils/Color';
-import style from '../utils/style';
+
+import { css } from '@linaria/core';
+
+import { useTheme } from '@/theme';
+import className from '@/utils/className';
+import ColorUtil from '@/utils/Color';
+import style from '@/utils/style';
+
 import { TypographyProps } from './Typography';
 
 const buttonStyle = css`
