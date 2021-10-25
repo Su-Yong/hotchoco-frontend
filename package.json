@@ -18,13 +18,15 @@
     "wouter": "^2.8.0-alpha.1"
   },
   "devDependencies": {
+    "@linaria/rollup": "^3.0.0-beta.13",
     "@types/color-rgba": "^2.1.0",
+    "@types/node": "^16.11.4",
     "@types/react": "^17.0.0",
     "@types/react-dom": "^17.0.0",
     "@vitejs/plugin-react": "^1.0.0",
     "prettier": "^2.3.2",
+    "rollup-plugin-css-only": "^3.1.0",
     "typescript": "^4.3.2",
-    "vite": "^2.6.4",
-    "vite-plugin-linaria": "^1.0.0"
+    "vite": "^2.6.4"
   }
 }
