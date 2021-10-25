@@ -4,10 +4,11 @@ import { css } from '@linaria/core';
 import { Route } from 'wouter';
 import { useAtom } from 'jotai';
 
-import LoginPage from './pages/LoginPage';
-import ErrorPage from './pages/ErrorPage';
-import { ThemeProvider } from './theme';
-import { themeObject } from './store/theme';
+import LoginPage from '@/pages/LoginPage';
+import ErrorPage from '@/pages/ErrorPage';
+import TestPage from '@/pages/TestPage';
+import { ThemeProvider } from '@/theme';
+import { themeObject } from '@/store/theme';
 
 const bodyStyle = css`
   width: 100vw;
@@ -26,6 +27,7 @@ const App = () => {
     <ThemeProvider theme={theme}>
       <div className={bodyStyle}>
         <Route path={'/login'} component={LoginPage} />
+        <Route path={'/test'} component={TestPage} />
         <Route component={ErrorPage} />
       </div>
     </ThemeProvider>
