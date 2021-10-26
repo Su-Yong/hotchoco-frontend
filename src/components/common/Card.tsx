@@ -13,7 +13,7 @@ const cardStyle = css`
   color: var(--color);
   background: var(--background);
 
-  border: solid 2px var(--border-color);
+  box-shadow: -8px -8px 16px var(--white), 8px 8px 16px var(--black);
 
   display: flex;
   flex-flow: column;
@@ -26,7 +26,8 @@ export interface CardProps extends HTMLAttributes<HTMLDivElement> {}
 const Card = ({ children, ...props }: PropsWithChildren<CardProps>): JSX.Element => {
   const theme = useTheme();
 
-  const borderColor = useMemo(() => ColorUtil.alpha(theme.palette.backgroundSecondary.main, 0.3), []);
+  const whiteColor = useMemo(() => ColorUtil.alpha(theme.palette.white.main, 0.3), []);
+  const blackColor = useMemo(() => ColorUtil.alpha(theme.palette.black.main, 0.1), []);
 
   return (
     <div
@@ -36,7 +37,8 @@ const Card = ({ children, ...props }: PropsWithChildren<CardProps>): JSX.Element
         {
           '--color': theme.palette.backgroundPrimary.contrastText,
           '--background': theme.palette.backgroundPrimary.main,
-          '--border-color': borderColor,
+          '--white': whiteColor,
+          '--black': blackColor,
         },
         props.style,
       )}

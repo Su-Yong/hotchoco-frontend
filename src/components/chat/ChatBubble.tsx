@@ -27,8 +27,6 @@ const contentStyle = css`
   grid-row: 2;
   grid-column: 2;
 
-  padding: 4px 8px;
-
   background: var(--bubble-background);
   color: var(--bubble-color);
   border: none;
@@ -49,6 +47,8 @@ const infoStyle = css`
 `;
 
 const bubbleStyle = css`
+  max-width: 60%;
+
   display: grid;
   grid-template-columns: 24px auto 1fr;
   grid-template-rows: auto auto;

@@ -19,6 +19,7 @@ const buttonStyle = css`
 
   background: var(--background);
   color: var(--color);
+  box-shadow: 0 4px 16px var(--shadow-color);
 
   transition: background 0.25s;
 
@@ -38,6 +39,7 @@ export interface ButtonProps extends React.HTMLAttributes<HTMLButtonElement> {
 const Button = ({ type = 'body3', children, ...props }: PropsWithChildren<ButtonProps>): JSX.Element => {
   const theme = useTheme();
 
+  const shadowColor = useMemo(() => ColorUtil.alpha(theme.palette.black.main, 0.2), [theme.palette]);
   const backgroundHover = useMemo(() => ColorUtil.lighten(theme.palette.primary.main, 0.2), [theme.palette]);
   const backgroundActive = useMemo(() => ColorUtil.lighten(theme.palette.primary.main, 0.5), [theme.palette]);
   const typeStyle = useMemo(() => {
@@ -61,6 +63,7 @@ const Button = ({ type = 'body3', children, ...props }: PropsWithChildren<Button
           '--color': theme.palette.primary.contrastText,
           '--background-hover': backgroundHover,
           '--background-active': backgroundActive,
+          '--shadow-color': shadowColor,
         },
         typeStyle,
         props.style,
