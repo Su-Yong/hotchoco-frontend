@@ -2,7 +2,7 @@ import { useTheme } from '@/theme';
 import className from '@/utils/className';
 import style from '@/utils/style';
 import { css } from '@linaria/core';
-import React, { PropsWithChildren } from 'react';
+import React, { PropsWithChildren, useMemo } from 'react';
 import Typography from '../common/Typography';
 
 const senderStyle = css`
@@ -15,7 +15,7 @@ const senderStyle = css`
 `;
 
 const profileStyle = css`
-  grid-row: 2;
+  grid-row: 1 / span 2;
   grid-column: 1;
 
   .mine > & {
@@ -43,14 +43,13 @@ const infoStyle = css`
 
   display: flex;
   flex-flow: var(--align);
+  align-items: flex-end;
   gap: 8px;
 `;
 
 const bubbleStyle = css`
-  max-width: 60%;
-
   display: grid;
-  grid-template-columns: 24px auto 1fr;
+  grid-template-columns: 48px auto 1fr;
   grid-template-rows: auto auto;
   justify-items: start;
   align-items: end;
@@ -59,13 +58,13 @@ const bubbleStyle = css`
 
   &.mine {
     justify-items: end;
-    grid-template-columns: 1fr auto 24px;
+    grid-template-columns: 1fr auto 48px;
   }
 
   &.no-profile::before {
     content: '';
-    width: 24px;
-    height: 24px;
+    width: 48px;
+    height: 48px;
     grid-row: 2;
     grid-column: 1;
   }
@@ -82,12 +81,14 @@ export interface ChatBubbleProps {
 const ChatBubble = ({ mine, sender, profile, time, readers, children }: PropsWithChildren<ChatBubbleProps>): JSX.Element => {
   const theme = useTheme();
 
+  const bubbleColor = useMemo(() => mine ? theme.palette.primary : theme.palette.backgroundSecondary, [mine]);
+
   return (
     <li
       className={className(bubbleStyle, !profile ? 'no-profile' : null, mine ? 'mine' : null)}
       style={style({
-        '--bubble-background': theme.palette.primary.main,
-        '--bubble-color': theme.palette.primary.contrastText,
+        '--bubble-background': bubbleColor.main,
+        '--bubble-color': bubbleColor.contrastText,
         '--align': mine ? 'row-reverse' : 'row',
       })}
     >

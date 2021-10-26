@@ -13,7 +13,7 @@ const inputStyle = css`
   padding: 8px;
 
   outline: none;
-  border: solid 2px transparent;
+  border: none;
   border-radius: 100px;
 
   background: var(--background);
@@ -24,15 +24,15 @@ const inputStyle = css`
   justify-contents: center;
   align-items: center;
 
-  transition: border-radius 0.25s, border-color 0.25s;
+  transition: box-shadow 0.25s, border-radius 0.25s;
 
   &:hover {
-    border-color: var(--border-color);
+    border-radius: 4px;
   }
 
   &:focus {
     border-radius: 4px;
-    border-color: var(--border-color);
+    box-shadow: inset -2px -2px 12px rgba(255, 255, 255, 1), inset 2px 2px 12px rgba(0, 0, 0, 0.1);
   }
 
   &::placeholder {

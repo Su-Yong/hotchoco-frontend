@@ -1,6 +1,7 @@
 import ChatBubble from '@/components/chat/ChatBubble';
 import ImageContent from '@/components/chat/content/ImageContent';
 import TextContent from '@/components/chat/content/TextContent';
+import Profile from '@/components/chat/Profile';
 import Button from '@/components/common/Button';
 import Card from '@/components/common/Card';
 import Typography from '@/components/common/Typography';
@@ -50,7 +51,7 @@ const TestPage = (): JSX.Element => {
                 sender
               </Typography>
             }
-            profile={<div style={{ width: 24, height: 24, background: 'blue' }} />}
+            profile={<Profile url={'https://dummyimage.com/120x120/000/fff'} />}
             readers={['1', '2']}
             time={new Date()}
           >

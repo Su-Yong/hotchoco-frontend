@@ -9,6 +9,7 @@ import ErrorPage from '@/pages/ErrorPage';
 import TestPage from '@/pages/TestPage';
 import { ThemeProvider } from '@/theme';
 import { themeObject } from '@/store/theme';
+import ChatPage from './pages/ChatPage';
 
 const bodyStyle = css`
   width: 100vw;
@@ -27,6 +28,7 @@ const App = () => {
     <ThemeProvider theme={theme}>
       <div className={bodyStyle}>
         <Route path={'/login'} component={LoginPage} />
+        <Route path={'/chat'} component={ChatPage} />
         <Route path={'/test'} component={TestPage} />
         <Route component={ErrorPage} />
       </div>

@@ -15,6 +15,7 @@
     "jotai": "^1.4.0",
     "react": "^17.0.0",
     "react-dom": "^17.0.0",
+    "react-virtuoso": "^2.2.4",
     "rooks": "^5.7.3",
     "swr": "^1.0.1",
     "wouter": "^2.8.0-alpha.1"
