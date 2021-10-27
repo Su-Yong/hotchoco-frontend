@@ -11,8 +11,6 @@ export interface ProfileProps {
   url?: string;
 }
 
-const Profile = ({ url }: ProfileProps): JSX.Element => (
-  <img className={profileStyle} src={url} />
-);
+const Profile = ({ url }: ProfileProps): JSX.Element => <img className={profileStyle} src={url} />;
 
 export default Profile;

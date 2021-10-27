@@ -1,5 +1,6 @@
 import { useTheme } from '@/theme';
 import className from '@/utils/className';
+import ColorUtil from '@/utils/Color';
 import style from '@/utils/style';
 import { css } from '@linaria/core';
 import React, { PropsWithChildren, useMemo } from 'react';
@@ -8,6 +9,8 @@ import Typography from '../common/Typography';
 const senderStyle = css`
   grid-row: 1;
   grid-column: 2 / span 2;
+
+  margin-bottom: 4px;
 
   .mine > & {
     grid-column: 1 / span 2;
@@ -56,6 +59,9 @@ const bubbleStyle = css`
   grid-gap: 4px;
   row-gap: 0;
 
+  padding: 8px;
+  padding-top: 0px;
+
   &.mine {
     justify-items: end;
     grid-template-columns: 1fr auto 48px;
@@ -81,7 +87,8 @@ export interface ChatBubbleProps {
 const ChatBubble = ({ mine, sender, profile, time, readers, children }: PropsWithChildren<ChatBubbleProps>): JSX.Element => {
   const theme = useTheme();
 
-  const bubbleColor = useMemo(() => mine ? theme.palette.primary : theme.palette.backgroundSecondary, [mine]);
+  const bubbleColor = useMemo(() => (mine ? theme.palette.primary : theme.palette.backgroundSecondary), [mine]);
+  const blackShadowColor = useMemo(() => ColorUtil.alpha(theme.palette.black.main, 0.1), []);
 
   return (
     <li
@@ -90,6 +97,7 @@ const ChatBubble = ({ mine, sender, profile, time, readers, children }: PropsWit
         '--bubble-background': bubbleColor.main,
         '--bubble-color': bubbleColor.contrastText,
         '--align': mine ? 'row-reverse' : 'row',
+        '--black-shadow': blackShadowColor,
       })}
     >
       <div className={senderStyle}>{sender}</div>

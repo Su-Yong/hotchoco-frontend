@@ -2,11 +2,18 @@ import ChatBubble from '@/components/chat/ChatBubble';
 import ImageContent from '@/components/chat/content/ImageContent';
 import TextContent from '@/components/chat/content/TextContent';
 import Profile from '@/components/chat/Profile';
+import Room from '@/components/chat/Room';
 import Button from '@/components/common/Button';
 import Card from '@/components/common/Card';
 import Typography from '@/components/common/Typography';
 import { css } from '@linaria/core';
 import { useCallback, useState } from 'react';
+
+const containerStyle = css`
+  max-width: 60%;
+  height: 100vh;
+  overflow: auto;
+`;
 
 const chatListStyle = css`
   width: 100%;
@@ -25,7 +32,7 @@ const TestPage = (): JSX.Element => {
   }, []);
 
   return (
-    <div>
+    <div className={containerStyle}>
       <Typography type={'h1'}>Test Page</Typography>
       <Card>
         <Typography>ChatBubble</Typography>
@@ -115,6 +122,32 @@ const TestPage = (): JSX.Element => {
             </TextContent>
           </ChatBubble>
         </ul>
+      </Card>
+
+      <Typography type={'h1'}>ChatRoomList</Typography>
+      <Card>
+        <Room
+          name={'테스트 채팅방 1'}
+          description={'대충 설명 1'}
+          image={<img src={'https://dummyimage.com/120x120/000/fff'} />}
+          info={new Date().toLocaleTimeString()}
+          badge={<div style={{ width: 24, height: 24, background: 'red', borderRadius: 24 }}>1</div>}
+        />
+        <Room
+          name={'테스트 채팅방 2'}
+          description={'대충 설명 2'}
+          image={<img src={'https://dummyimage.com/120x120/000/fff'} />}
+          info={new Date().toLocaleTimeString()}
+          badge={<div style={{ width: 24, height: 24, background: 'red', borderRadius: 24 }}>1</div>}
+        />
+        <Room
+          actived
+          name={'테스트 채팅방 3'}
+          description={'대충 설명 3'}
+          image={<img src={'https://dummyimage.com/120x120/000/fff'} />}
+          info={new Date().toLocaleTimeString()}
+          badge={<div style={{ width: 24, height: 24, background: 'red', borderRadius: 24 }}>1</div>}
+        />
       </Card>
     </div>
   );

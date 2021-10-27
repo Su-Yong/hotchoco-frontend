@@ -8,12 +8,10 @@ import React, { useMemo } from 'react';
 import { Virtuoso } from 'react-virtuoso';
 
 const containerStyle = css`
-  width: 60%;
+  width: 100%;
   height: 100%;
   display: flex;
   flex-flow: column;
-
-  background: #eaf1f3;
 `;
 
 export interface ChatRoomContainerProps {
@@ -21,17 +19,13 @@ export interface ChatRoomContainerProps {
   chatRoomId: string;
 }
 
-const ChatRoomContainer = ({
-  users,
-  chatRoomId,
-}: ChatRoomContainerProps): JSX.Element => {
-
+const ChatRoomContainer = ({ users, chatRoomId }: ChatRoomContainerProps): JSX.Element => {
   const profiles = useMemo(() => {
     const urls: string[] = users.map(() => {
       const r = '0' + Math.floor(Math.random() * 255).toString(16);
       const g = '0' + Math.floor(Math.random() * 255).toString(16);
       const b = '0' + Math.floor(Math.random() * 255).toString(16);
-  
+
       return `https://dummyimage.com/120x120/${r.slice(-2)}${g.slice(-2)}${b.slice(-2)}/fff`;
     });
 
@@ -45,24 +39,22 @@ const ChatRoomContainer = ({
   }, [users]);
 
   return (
-  <div className={containerStyle}>
-    <Virtuoso
-      data={data.data}
-      itemContent={(index, content) => (
-        <ChatBubble
-          mine={data.users[index] === 'Velvet Natera'}
-          profile={profiles.get(data.users[index])}
-          sender={<Typography type={'body3'}>{data.users[index]}</Typography>}
-          readers={['1', '2', '3']}
-          time={new Date()}
-        >
-          <TextContent>
-            {content}
-          </TextContent>
-        </ChatBubble>
-      )}
-    />
-  </div>
+    <div className={containerStyle}>
+      <Virtuoso
+        data={data.data}
+        itemContent={(index, content) => (
+          <ChatBubble
+            mine={data.users[index] === 'Velvet Natera'}
+            profile={profiles.get(data.users[index])}
+            sender={<Typography type={'body3'}>{data.users[index]}</Typography>}
+            readers={['1', '2', '3']}
+            time={new Date()}
+          >
+            <TextContent>{content}</TextContent>
+          </ChatBubble>
+        )}
+      />
+    </div>
   );
 };
 

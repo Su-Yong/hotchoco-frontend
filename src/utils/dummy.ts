@@ -160,7 +160,34 @@ const SENTENCES = [
   'Vivamus dictum erat nulla, sit amet accumsan dolor scelerisque eu.',
   'In nec eleifend ex, pellentesque dapibus sapien.',
   'Duis a mollis nisi.',
-  'Sed ornare nisl sit amet dolor pellentesque, eu fermentum leo interdum.',
+  `
+  LOREM IPSUM FONT GENERATOR IMAGES PLUGINS GENERATORS ENGLISH Lorem Ipsum Generator Generate Lorem Ipsum placeholder text. Select the number of
+  characters, words, sentences or paragraphs, and hit generate! GENERATED LOREM IPSUM 5 PARAGRAPHS COPY Lorem ipsum dolor sit amet, consectetur
+  adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Porttitor rhoncus dolor purus non. Et malesuada fames ac
+  turpis egestas integer eget aliquet. Aliquet enim tortor at auctor. Blandit libero volutpat sed cras ornare arcu dui. Nulla pellentesque dignissim
+  enim sit amet. Augue mauris augue neque gravida in fermentum et sollicitudin. Feugiat pretium nibh ipsum consequat. Leo integer malesuada nunc vel
+  risus. Morbi tempus iaculis urna id volutpat lacus laoreet non. At erat pellentesque adipiscing commodo elit. Pharetra vel turpis nunc eget lorem
+  dolor sed. Non nisi est sit amet facilisis magna etiam tempor. Arcu cursus vitae congue mauris rhoncus aenean vel. Eget mi proin sed libero enim.
+  Mattis molestie a iaculis at erat pellentesque. Placerat in egestas erat imperdiet sed. Laoreet suspendisse interdum consectetur libero id
+  faucibus. Enim ut tellus elementum sagittis vitae et. Sollicitudin ac orci phasellus egestas tellus rutrum. In iaculis nunc sed augue lacus
+  viverra vitae congue. Eget duis at tellus at urna condimentum mattis. Nunc consequat interdum varius sit amet. Sollicitudin tempor id eu nisl nunc
+  mi ipsum. Elit eget gravida cum sociis natoque penatibus et magnis dis. Nibh praesent tristique magna sit amet purus. Sit amet dictum sit amet
+  justo. Arcu vitae elementum curabitur vitae nunc sed. Ipsum faucibus vitae aliquet nec ullamcorper sit amet risus nullam. Erat pellentesque
+  adipiscing commodo elit. Dolor purus non enim praesent elementum facilisis leo vel fringilla. Pulvinar sapien et ligula ullamcorper malesuada
+  proin libero. Euismod elementum nisi quis eleifend. Ut enim blandit volutpat maecenas. Purus ut faucibus pulvinar elementum integer enim neque
+  volutpat ac. Proin nibh nisl condimentum id venenatis a condimentum. Et magnis dis parturient montes nascetur ridiculus mus. Pellentesque elit
+  eget gravida cum sociis. Est lorem ipsum dolor sit. Id eu nisl nunc mi. Tincidunt arcu non sodales neque sodales ut. Nullam vehicula ipsum a arcu
+  cursus. Fusce id velit ut tortor pretium viverra suspendisse potenti. Diam sit amet nisl suscipit adipiscing bibendum. Eu consequat ac felis
+  donec. Interdum velit euismod in pellentesque massa placerat duis. Habitasse platea dictumst vestibulum rhoncus est pellentesque. Vivamus at augue
+  eget arcu dictum. Maecenas ultricies mi eget mauris pharetra et ultrices neque. Nunc scelerisque viverra mauris in aliquam. In cursus turpis massa
+  tincidunt dui ut ornare. Bibendum ut tristique et egestas quis. Viverra mauris in aliquam sem fringilla ut morbi tincidunt augue. Mauris commodo
+  quis imperdiet massa tincidunt. Pharetra magna ac placerat vestibulum lectus mauris ultrices. Vitae suscipit tellus mauris a diam maecenas sed
+  enim ut. At erat pellentesque adipiscing commodo elit. Id aliquet risus feugiat in ante metus dictum at tempor. Tortor at auctor urna nunc id
+  cursus. Mauris vitae ultricies leo integer malesuada. Senectus et netus et malesuada fames ac. Tincidunt tortor aliquam nulla facilisi cras
+  fermentum. Sem nulla pharetra diam sit. Diam donec adipiscing tristique risus nec feugiat in fermentum. Felis eget velit aliquet sagittis id
+  consectetur purus ut. Pretium fusce id velit ut tortor pretium viverra suspendisse potenti. At auctor urna nunc id cursus metus. Est lorem ipsum
+  dolor sit. Mi eget mauris pharetra et ultrices neque ornare. In pellentesque massa placerat duis. Dictum varius duis at consectetur lorem donec
+  massa sapien faucibus. © 2015 — 2021 PRIVACY POLICY SITEMAP FONT GENERATOR IMAGES PLUGINS GENERATORS SHARE THE LOREM WA SAI`,
   'Sed eget mauris condimentum, molestie justo eu, feugiat felis.',
   'Nunc suscipit leo non dui blandit, ac malesuada ex consequat.',
   'Morbi varius placerat congue.',
@@ -181,9 +208,21 @@ const SENTENCES = [
 
 const users = NAMES.filter((it) => NAMES.findIndex((target) => target === it));
 
+const repeat = <T extends unknown>(arr: T[], times: number): T[] => {
+  let result: T[] = [];
+
+  for (let i = 0; i < times; i++) {
+    result = result.concat(arr);
+  }
+
+  return result;
+};
+
 const data = {
-  users: [...users, ...users, ...users],
-  data: [...SENTENCES, ...SENTENCES, ...SENTENCES],
-}
+  users: repeat(users, 100),
+  data: repeat(SENTENCES, 100),
+};
+
+console.log('data length', data.data.length);
 
 export default data;
