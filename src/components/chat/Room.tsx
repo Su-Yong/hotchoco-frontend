@@ -6,8 +6,6 @@ import React from 'react';
 import Typography from '../common/Typography';
 
 const roomStyle = css`
-  width: 100%;
-
   position: relative;
   display: grid;
   grid-template-columns: 48px 1fr auto;
@@ -23,8 +21,6 @@ const roomStyle = css`
 
   &:hover {
     transform: translateX(8px);
-    padding-left: 0;
-    padding-right: 0;
     background: var(--background);
   }
 
@@ -36,7 +32,9 @@ const roomStyle = css`
     background: transparent;
 
     border-radius: 16px;
-    left: -24px;
+    left: -16px;
+
+    transition: background 0.25s;
   }
 
   &:hover::before {
