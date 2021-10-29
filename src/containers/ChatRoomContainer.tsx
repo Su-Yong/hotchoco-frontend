@@ -46,7 +46,7 @@ const ChatRoomContainer = ({ users, initChats, chatRoomId }: ChatRoomContainerPr
       const rgb = ((toBigInt(user.id) * toBigInt(chatRoomId)) % (0xffffffn + 1n)).toString(16);
       result.set(
         user.id,
-        <Typography key={user.id} type={'body3'} style={{ color: `0x${rgb}` }}>
+        <Typography key={user.id} type={'body3'} style={{ color: `#${rgb}` }}>
           {user.name}
         </Typography>,
       );
@@ -64,7 +64,7 @@ const ChatRoomContainer = ({ users, initChats, chatRoomId }: ChatRoomContainerPr
             mine={chat.id === clientUser.id}
             profile={profiles.get(chat.sender.id)}
             sender={senders.get(chat.sender.id)}
-            readers={['1', '2', '3']}
+            readers={chat.readers}
             time={new Date(chat.timestamp)}
           >
             <TextContent>{chat.content}</TextContent>

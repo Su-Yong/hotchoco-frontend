@@ -8,28 +8,32 @@ export interface RoomListContainerProps {
 }
 
 const RoomListContainer = ({ rooms }: RoomListContainerProps): JSX.Element => {
-  const roomImages = useMemo(() => {
-    const urls: string[] = rooms.map(() => {
-      const r = '0' + Math.floor(Math.random() * 255).toString(16);
-      const g = '0' + Math.floor(Math.random() * 255).toString(16);
-      const b = '0' + Math.floor(Math.random() * 255).toString(16);
 
-      return `https://dummyimage.com/120x120/${r.slice(-2)}${g.slice(-2)}${b.slice(-2)}/fff`;
+  const images = useMemo(() => {
+    const result = new Map<string, JSX.Element>();
+
+    rooms.forEach((room) => {
+      if (room.image) {
+        result.set(room.id, <img src={room.image} alt={room.name} />);
+      } else {
+        result.set(room.id, <div>WIP</div>);
+      }
     });
 
-    const map = new Map<string, JSX.Element>();
-    let index = 0;
-    for (const room of rooms) {
-      map.set(room, <img src={urls[index++]} />);
-    }
-
-    return map;
+    return result;
   }, [rooms]);
 
   return (
     <Virtuoso
       data={rooms}
-      itemContent={(_, room) => <Room name={room} description={'no description'} image={roomImages.get(room)} info={new Date().toLocaleTimeString()} />}
+      itemContent={(_, room) => (
+        <Room
+          name={room.name}
+          description={room.lastChat?.content ?? ''}
+          image={images.get(room.id)}
+          info={room.lastChat?.timestamp ? new Date(room.lastChat.timestamp).toLocaleString() : ''}
+        />
+      )}
     />
   );
 };

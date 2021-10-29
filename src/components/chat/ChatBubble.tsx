@@ -1,4 +1,5 @@
 import { useTheme } from '@/theme';
+import User from '@/types/User';
 import className from '@/utils/className';
 import ColorUtil from '@/utils/Color';
 import style from '@/utils/style';
@@ -81,7 +82,7 @@ export interface ChatBubbleProps {
   sender?: JSX.Element;
   profile?: JSX.Element;
   time?: Date;
-  readers?: string[]; // TODO: string[] -> User[]
+  readers?: User[];
 }
 
 const ChatBubble = ({ mine, sender, profile, time, readers, children }: PropsWithChildren<ChatBubbleProps>): JSX.Element => {

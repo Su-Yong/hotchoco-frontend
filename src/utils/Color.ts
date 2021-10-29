@@ -28,11 +28,27 @@ export const alpha = (color: string, alpha: number): string => {
   return `rgba(${r}, ${g}, ${b}, ${alpha})`;
 };
 
+export const random = (mode: 'rgba' | 'hex' = 'hex'): string => {
+  const color = (~~(Math.random() * 0xffffff)).toString(16);
+  const hex = `000000${color}`.slice(-6);
+
+  if (mode === 'hex') {
+    return `#${hex}`;
+  }
+
+  const r = parseInt(hex.slice(0, 2), 16);
+  const g = parseInt(hex.slice(2, 4), 16);
+  const b = parseInt(hex.slice(4, 6), 16);
+
+  return `rgba(${r}, ${g}, ${b}, 1)`;
+};
+
 const ColorUtil = {
   shade,
   darken,
   lighten,
   alpha,
+  random,
 };
 
 export default ColorUtil;

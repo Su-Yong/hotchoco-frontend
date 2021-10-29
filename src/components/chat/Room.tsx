@@ -34,16 +34,22 @@ const roomStyle = css`
     border-radius: 16px;
     left: -16px;
 
-    transition: background 0.25s;
+    transition: background 0.25s, height 0.25s;
   }
 
   &:hover::before {
+    height: 24px;
     background: var(--primary);
   }
 `;
 
 const activeRoomStyle = css`
-  background: var(--background-second);
+  transform: translateX(8px);
+
+  &::before {
+    height: 36px;
+    background: var(--primary);
+  }
 `;
 
 const imageStyle = css`
@@ -91,7 +97,6 @@ const Room = ({ name, description, image, info, badge, actived }: RoomProps): JS
       className={className(roomStyle, actived ? activeRoomStyle : null)}
       style={style({
         '--background': theme.palette.backgroundPrimary.main,
-        '--background-second': theme.palette.backgroundSecondary.main,
         '--primary': theme.palette.primary.main,
       })}
     >
