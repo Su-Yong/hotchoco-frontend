@@ -1,9 +1,10 @@
 import Room from '@/components/chat/Room';
 import { useMemo } from 'react';
 import { Virtuoso } from 'react-virtuoso';
+import RoomType from '@/types/Room';
 
 export interface RoomListContainerProps {
-  rooms: string[]; // TODO: string[] -> Room[];
+  rooms: RoomType[];
 }
 
 const RoomListContainer = ({ rooms }: RoomListContainerProps): JSX.Element => {

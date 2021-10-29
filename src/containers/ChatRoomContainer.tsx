@@ -2,9 +2,13 @@ import ChatBubble from '@/components/chat/ChatBubble';
 import TextContent from '@/components/chat/content/TextContent';
 import Profile from '@/components/chat/Profile';
 import Typography from '@/components/common/Typography';
+import useClientUser from '@/hooks/useClientUser';
+import Chat from '@/types/Chat';
+import User from '@/types/User';
 import data from '@/utils/dummy';
+import toBigInt from '@/utils/toBigint';
 import { css } from '@linaria/core';
-import React, { useMemo } from 'react';
+import React, { useMemo, useState } from 'react';
 import { Virtuoso } from 'react-virtuoso';
 
 const containerStyle = css`
@@ -15,42 +19,55 @@ const containerStyle = css`
 `;
 
 export interface ChatRoomContainerProps {
-  users: string[]; // string[] -> User[]
+  users: User[];
+  initChats?: Chat[];
   chatRoomId: string;
 }
 
-const ChatRoomContainer = ({ users, chatRoomId }: ChatRoomContainerProps): JSX.Element => {
-  const profiles = useMemo(() => {
-    const urls: string[] = users.map(() => {
-      const r = '0' + Math.floor(Math.random() * 255).toString(16);
-      const g = '0' + Math.floor(Math.random() * 255).toString(16);
-      const b = '0' + Math.floor(Math.random() * 255).toString(16);
+const ChatRoomContainer = ({ users, initChats, chatRoomId }: ChatRoomContainerProps): JSX.Element => {
+  const clientUser = useClientUser();
 
-      return `https://dummyimage.com/120x120/${r.slice(-2)}${g.slice(-2)}${b.slice(-2)}/fff`;
+  const [chatList, setChatList] = useState<Chat[]>(initChats ?? []);
+
+  const profiles = useMemo(() => {
+    const result = new Map<string, JSX.Element>();
+
+    users.forEach((user) => {
+      result.set(user.id, <Profile key={user.id} url={user.profile} />);
     });
 
-    const map = new Map<string, JSX.Element>();
-    let index = 0;
-    for (const user of users) {
-      map.set(user, <Profile url={urls[index++]} />);
-    }
-
-    return map;
+    return result;
   }, [users]);
+
+  const senders = useMemo(() => {
+    const result = new Map<string, JSX.Element>();
+
+    users.forEach((user) => {
+      const rgb = ((toBigInt(user.id) * toBigInt(chatRoomId)) % (0xffffffn + 1n)).toString(16);
+      result.set(
+        user.id,
+        <Typography key={user.id} type={'body3'} style={{ color: `0x${rgb}` }}>
+          {user.name}
+        </Typography>,
+      );
+    });
+
+    return result;
+  }, [users, chatRoomId]);
 
   return (
     <div className={containerStyle}>
       <Virtuoso
-        data={data.data}
-        itemContent={(index, content) => (
+        data={chatList}
+        itemContent={(_, chat) => (
           <ChatBubble
-            mine={data.users[index] === 'Velvet Natera'}
-            profile={profiles.get(data.users[index])}
-            sender={<Typography type={'body3'}>{data.users[index]}</Typography>}
+            mine={chat.id === clientUser.id}
+            profile={profiles.get(chat.sender.id)}
+            sender={senders.get(chat.sender.id)}
             readers={['1', '2', '3']}
-            time={new Date()}
+            time={new Date(chat.timestamp)}
           >
-            <TextContent>{content}</TextContent>
+            <TextContent>{chat.content}</TextContent>
           </ChatBubble>
         )}
       />
