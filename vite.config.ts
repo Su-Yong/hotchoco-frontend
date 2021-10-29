@@ -6,6 +6,7 @@ import css from 'rollup-plugin-css-only';
 import { defineConfig } from 'vite';
 
 export default defineConfig({
+  root: path.resolve(__dirname, 'src'),
   resolve: {
     alias: [
       {

@@ -219,8 +219,8 @@ const repeat = <T extends unknown>(arr: T[], times: number): T[] => {
 };
 
 const data = {
-  users: repeat(users, 100),
-  data: repeat(SENTENCES, 100),
+  users: repeat(users, 1000),
+  data: repeat(SENTENCES, 1000),
 };
 
 console.log('data length', data.data.length);

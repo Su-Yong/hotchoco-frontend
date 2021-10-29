@@ -26,7 +26,7 @@ const ChatPage = () => {
 
   return (
     <div className={containerStyle}>
-      <RoomListContainer rooms={['그냥 방1', '테스트방 1', '아무거나', '뭐하지']}/>
+      <RoomListContainer rooms={['그냥 방1', '테스트방 1', '아무거나', '뭐하지']} />
       <ChatRoomContainer users={data.users} chatRoomId={'test'} />
     </div>
   );
