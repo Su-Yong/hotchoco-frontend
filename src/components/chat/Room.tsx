@@ -17,7 +17,7 @@ const roomStyle = css`
 
   padding: 8px;
 
-  transition: transform 0.25s, background 0.25s;
+  transition: transform 0.25s, background 0.25s, padding-right 0.25s;
 
   &:hover {
     transform: translateX(8px);
@@ -38,13 +38,13 @@ const roomStyle = css`
   }
 
   &:hover::before {
-    height: 24px;
     background: var(--primary);
   }
 `;
 
 const activeRoomStyle = css`
   transform: translateX(8px);
+  padding-right: 16px;
 
   &::before {
     height: 36px;

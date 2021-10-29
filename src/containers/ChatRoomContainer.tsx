@@ -1,3 +1,8 @@
+import { useMemo, useState } from 'react';
+
+import { css } from '@linaria/core';
+import { Virtuoso } from 'react-virtuoso';
+
 import ChatBubble from '@/components/chat/ChatBubble';
 import TextContent from '@/components/chat/content/TextContent';
 import Profile from '@/components/chat/Profile';
@@ -5,11 +10,7 @@ import Typography from '@/components/common/Typography';
 import useClientUser from '@/hooks/useClientUser';
 import Chat from '@/types/Chat';
 import User from '@/types/User';
-import data from '@/utils/dummy';
 import toBigInt from '@/utils/toBigint';
-import { css } from '@linaria/core';
-import React, { useMemo, useState } from 'react';
-import { Virtuoso } from 'react-virtuoso';
 
 const containerStyle = css`
   width: 100%;
@@ -22,6 +23,7 @@ export interface ChatRoomContainerProps {
   users: User[];
   initChats?: Chat[];
   chatRoomId: string;
+  // chatReceiver: EventEmitter; // TODO: need typing
 }
 
 const ChatRoomContainer = ({ users, initChats, chatRoomId }: ChatRoomContainerProps): JSX.Element => {
@@ -61,7 +63,7 @@ const ChatRoomContainer = ({ users, initChats, chatRoomId }: ChatRoomContainerPr
         data={chatList}
         itemContent={(_, chat) => (
           <ChatBubble
-            mine={chat.id === clientUser.id}
+            mine={chat.sender.id === clientUser.id}
             profile={profiles.get(chat.sender.id)}
             sender={senders.get(chat.sender.id)}
             readers={chat.readers}

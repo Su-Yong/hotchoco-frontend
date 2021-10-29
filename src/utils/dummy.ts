@@ -20,7 +20,6 @@ const rooms: Room[] = Array.from({ length: 10 }).map(() => ({
   image: `https://dummyimage.com/120x120/${ColorUtil.random().slice(-6)}/${ColorUtil.random().slice(-6)}`,
   isGroup: true,
   lastChat: undefined,
-  unreadChat: 0,
 }));
 
 const chats: Chat[] = Array.from({ length: 10000 }).map(() => (
@@ -34,6 +33,11 @@ const chats: Chat[] = Array.from({ length: 10000 }).map(() => (
     emotion: new Map(),
   }
 ));
+
+rooms.forEach((room) => {
+  room.lastChat = chats[Math.random() * chats.length | 0];
+  room.unreadChat = Math.random() * 1500 | 0;
+});
 
 const dummy = {
   users,
