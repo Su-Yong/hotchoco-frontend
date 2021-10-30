@@ -21,13 +21,23 @@ const ChatPage = () => {
   const isMobile = useMediaMatch('(max-width: 600px)');
 
   if (isMobile) {
-    return <ChatRoomContainer users={dummy.users} chatRoomId={dummy.rooms[0].id} initChats={dummy.chats} />;
+    return (
+      <ChatRoomContainer
+        users={dummy.users}
+        chatRoomId={dummy.rooms[0].id}
+        initChats={dummy.chats}
+      />
+    );
   }
 
   return (
     <div className={containerStyle}>
       <RoomListContainer rooms={dummy.rooms} />
-      <ChatRoomContainer users={dummy.users} chatRoomId={dummy.rooms[0].id} initChats={dummy.chats} />
+      <ChatRoomContainer
+        users={dummy.users}
+        chatRoomId={dummy.rooms[0].id}
+        initChats={dummy.chats}
+      />
     </div>
   );
 };
