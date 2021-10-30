@@ -1,12 +1,12 @@
-import { useMemo } from 'react';
+import React from 'react';
 
 import { css } from '@linaria/core';
-import { useRoute } from 'wouter';
 
 import ChatRoomContainer from '@/containers/ChatRoomContainer';
 import RoomListContainer from '@/containers/RoomListContainer';
 import dummy from '@/utils/dummy';
 import useRoom from '@/hooks/useRoom';
+import { useMediaMatch } from 'rooks';
 
 const containerStyle = css`
   width: 100%;
@@ -21,8 +21,11 @@ const containerStyle = css`
   }
 `;
 
-const chatStyle = css`
-  flex: 1;
+const emptyStyle = css`
+  display: flex;
+  flex-flow: column;
+  justify-content: center;
+  align-items: center;
 
   @media (max-width: 600px) {
     display: none;
@@ -31,26 +34,16 @@ const chatStyle = css`
 
 const ChatPage = (): JSX.Element => {
   const [roomId] = useRoom();
+  const isMobile = useMediaMatch('(max-width: 600px)');
 
   return (
     <div className={containerStyle}>
-      <RoomListContainer rooms={dummy.rooms} />
-      <div className={chatStyle}>
-        {
-          roomId
-            ? (
-              <ChatRoomContainer
-                users={dummy.users}
-                chatRoomId={roomId}
-                initChats={dummy.chats}
-              />
-            ) : (
-              <div>
-                채팅방을 선택해주세요.
-              </div>
-            )
-        }
-      </div>
+      {isMobile && roomId ? undefined : <RoomListContainer rooms={dummy.rooms} />}
+      {roomId ? (
+        <ChatRoomContainer users={dummy.users} chatRoomId={roomId} initChats={dummy.chats} />
+      ) : (
+        <div className={emptyStyle}>채팅방을 선택해주세요.</div>
+      )}
     </div>
   );
 };
