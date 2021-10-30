@@ -1,7 +1,7 @@
-import { useTheme } from "@/theme";
-import style from "@/utils/style";
-import { css } from "@linaria/core";
-import Typography from "../common/Typography";
+import { useTheme } from '@/theme';
+import style from '@/utils/style';
+import { css } from '@linaria/core';
+import Typography from '../common/Typography';
 
 const badgeStyle = css`
   height: 24px;

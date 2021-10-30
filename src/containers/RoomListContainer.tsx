@@ -32,21 +32,15 @@ const RoomListContainer = ({ rooms }: RoomListContainerProps): JSX.Element => {
     <Virtuoso
       data={rooms}
       itemContent={(_, room) => (
-        <div 
-          onClick={() => setSelectRoom(room)}
-        >
-        <Room
-          name={room.name}
-          description={room.lastChat?.content ?? ''}
-          image={images.get(room.id)}
-          info={room.lastChat?.timestamp ? new Date(room.lastChat.timestamp).toLocaleString() : ''}
-          actived={selectRoom?.id === room.id}
-          badge={(
-            (room.unreadChat ?? 0) > 0
-              ? <UnreadBadge count={room.unreadChat ?? 0} />
-              : undefined
-          )}
-        />
+        <div onClick={() => setSelectRoom(room)}>
+          <Room
+            name={room.name}
+            description={room.lastChat?.content ?? ''}
+            image={images.get(room.id)}
+            info={room.lastChat?.timestamp ? new Date(room.lastChat.timestamp).toLocaleString() : ''}
+            actived={selectRoom?.id === room.id}
+            badge={(room.unreadChat ?? 0) > 0 ? <UnreadBadge count={room.unreadChat ?? 0} /> : undefined}
+          />
         </div>
       )}
     />
