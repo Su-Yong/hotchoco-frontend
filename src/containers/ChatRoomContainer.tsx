@@ -10,7 +10,7 @@ import Typography from '@/components/common/Typography';
 import useClientUser from '@/hooks/useClientUser';
 import Chat from '@/types/Chat';
 import User from '@/types/User';
-import toBigInt from '@/utils/toBigint';
+import toBigInt from '@/utils/toBigInt';
 
 const containerStyle = css`
   width: 100%;
