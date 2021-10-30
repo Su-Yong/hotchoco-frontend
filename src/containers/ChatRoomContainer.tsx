@@ -11,12 +11,32 @@ import useClientUser from '@/hooks/useClientUser';
 import Chat from '@/types/Chat';
 import User from '@/types/User';
 import toBigInt from '@/utils/toBigInt';
+import ChatHeader from '@/components/ChatHeader';
+import { useTheme } from '@/theme';
+import style from '@/utils/style';
 
 const containerStyle = css`
   width: 100%;
   height: 100%;
   display: flex;
   flex-flow: column;
+
+  background: var(--background);
+
+  position: relative;
+`;
+
+const headerStyle = css`
+  position: absolute;
+  z-index: 10;
+  top: 0;
+  left: 0;
+  right: 0;
+`;
+
+const topStyle = css`
+  width: 100%;
+  height: 56px;
 `;
 
 export interface ChatRoomContainerProps {
@@ -24,12 +44,17 @@ export interface ChatRoomContainerProps {
   initChats?: Chat[];
   chatRoomId: string;
   // chatReceiver: EventEmitter; // TODO: need typing
+
+  onBack?: () => void,
 }
 
-const ChatRoomContainer = ({ users, initChats, chatRoomId }: ChatRoomContainerProps): JSX.Element => {
+const ChatRoomContainer = ({ users, initChats, chatRoomId, onBack }: ChatRoomContainerProps): JSX.Element => {
+  const theme = useTheme();
   const clientUser = useClientUser();
 
   const [chatList, setChatList] = useState<Chat[]>(initChats ?? []);
+
+  const background = useMemo(() => theme.palette.backgroundPrimary.main, [theme]);
 
   const profiles = useMemo(() => {
     const result = new Map<string, JSX.Element>();
@@ -58,9 +83,23 @@ const ChatRoomContainer = ({ users, initChats, chatRoomId }: ChatRoomContainerPr
   }, [users, chatRoomId]);
 
   return (
-    <div className={containerStyle}>
+    <div
+      className={containerStyle}
+      style={style({
+        '--background': background,
+      })}
+    >
+      <div className={headerStyle}>
+        <ChatHeader
+          chatRoomId={chatRoomId}
+          onBack={onBack}
+        />
+      </div>
       <Virtuoso
         data={chatList}
+        components={{
+          Header: () => <div className={topStyle} />
+        }}
         itemContent={(_, chat) => (
           <ChatBubble
             mine={chat.sender.id === clientUser.id}

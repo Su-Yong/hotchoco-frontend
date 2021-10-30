@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useCallback } from 'react';
 
 import { css } from '@linaria/core';
 
@@ -33,14 +33,23 @@ const emptyStyle = css`
 `;
 
 const ChatPage = (): JSX.Element => {
-  const [roomId] = useRoom();
+  const [roomId, setRoom] = useRoom();
   const isMobile = useMediaMatch('(max-width: 600px)');
+
+  const onBack = useCallback(() => {
+    setRoom();
+  }, []);
 
   return (
     <div className={containerStyle}>
       {isMobile && roomId ? undefined : <RoomListContainer rooms={dummy.rooms} />}
       {roomId ? (
-        <ChatRoomContainer users={dummy.users} chatRoomId={roomId} initChats={dummy.chats} />
+        <ChatRoomContainer
+          users={dummy.users}
+          chatRoomId={roomId}
+          initChats={dummy.chats}
+          onBack={onBack}
+        />
       ) : (
         <div className={emptyStyle}>채팅방을 선택해주세요.</div>
       )}
