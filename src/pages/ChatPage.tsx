@@ -1,6 +1,6 @@
 import ChatRoomContainer from '@/containers/ChatRoomContainer';
 import RoomListContainer from '@/containers/RoomListContainer';
-import data from '@/utils/dummy';
+import dummy from '@/utils/dummy';
 import { css } from '@linaria/core';
 import { useMediaMatch } from 'rooks';
 
@@ -21,13 +21,23 @@ const ChatPage = () => {
   const isMobile = useMediaMatch('(max-width: 600px)');
 
   if (isMobile) {
-    return <ChatRoomContainer users={data.users} chatRoomId={'test'} />;
+    return (
+      <ChatRoomContainer
+        users={dummy.users}
+        chatRoomId={dummy.rooms[0].id}
+        initChats={dummy.chats}
+      />
+    );
   }
 
   return (
     <div className={containerStyle}>
-      <RoomListContainer rooms={['그냥 방1', '테스트방 1', '아무거나', '뭐하지']}/>
-      <ChatRoomContainer users={data.users} chatRoomId={'test'} />
+      <RoomListContainer rooms={dummy.rooms} />
+      <ChatRoomContainer
+        users={dummy.users}
+        chatRoomId={dummy.rooms[0].id}
+        initChats={dummy.chats}
+      />
     </div>
   );
 };

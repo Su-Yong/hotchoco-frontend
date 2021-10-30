@@ -28,7 +28,7 @@ const LightTheme: Theme = {
     },
     red: {
       main: '#f44336',
-      contrastText: '#000000',
+      contrastText: '#ffffff',
     },
     green: {
       main: '#4caf50',
