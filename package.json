@@ -22,6 +22,8 @@
     "wouter": "^2.8.0-alpha.1"
   },
   "devDependencies": {
+    "@iconify/icons-mdi": "^1.1.37",
+    "@iconify/react": "^3.0.1",
     "@linaria/rollup": "^3.0.0-beta.13",
     "@linaria/shaker": "^3.0.0-beta.13",
     "@types/color-rgba": "^2.1.0",

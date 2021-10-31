@@ -1,18 +1,20 @@
-import { useMemo, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 
 import { Virtuoso } from 'react-virtuoso';
 
 import Room from '@/components/chat/Room';
 import RoomType from '@/types/Room';
-import Nullish from '@/types/Nullish';
 import UnreadBadge from '@/components/chat/UnreadBadge';
+import useRoom from '@/hooks/useRoom';
 
 export interface RoomListContainerProps {
   rooms: RoomType[];
 }
 
 const RoomListContainer = ({ rooms }: RoomListContainerProps): JSX.Element => {
-  const [selectRoom, setSelectRoom] = useState<RoomType | Nullish>();
+  const [roomId, setRoom] = useRoom();
+
+  const selectRoom = useMemo(() => rooms.find((it) => it.id === roomId), [roomId, rooms]);
 
   const images = useMemo(() => {
     const result = new Map<string, JSX.Element>();
@@ -32,7 +34,7 @@ const RoomListContainer = ({ rooms }: RoomListContainerProps): JSX.Element => {
     <Virtuoso
       data={rooms}
       itemContent={(_, room) => (
-        <div onClick={() => setSelectRoom(room)}>
+        <div onClick={() => setRoom(room.id)}>
           <Room
             name={room.name}
             description={room.lastChat?.content ?? ''}

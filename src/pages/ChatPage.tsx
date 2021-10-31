@@ -1,7 +1,11 @@
+import React, { useCallback } from 'react';
+
+import { css } from '@linaria/core';
+
 import ChatRoomContainer from '@/containers/ChatRoomContainer';
 import RoomListContainer from '@/containers/RoomListContainer';
 import dummy from '@/utils/dummy';
-import { css } from '@linaria/core';
+import useRoom from '@/hooks/useRoom';
 import { useMediaMatch } from 'rooks';
 
 const containerStyle = css`
@@ -17,27 +21,38 @@ const containerStyle = css`
   }
 `;
 
-const ChatPage = () => {
+const emptyStyle = css`
+  display: flex;
+  flex-flow: column;
+  justify-content: center;
+  align-items: center;
+
+  @media (max-width: 600px) {
+    display: none;
+  }
+`;
+
+const ChatPage = (): JSX.Element => {
+  const [roomId, setRoom] = useRoom();
   const isMobile = useMediaMatch('(max-width: 600px)');
 
-  if (isMobile) {
-    return (
-      <ChatRoomContainer
-        users={dummy.users}
-        chatRoomId={dummy.rooms[0].id}
-        initChats={dummy.chats}
-      />
-    );
-  }
+  const onBack = useCallback(() => {
+    setRoom();
+  }, []);
 
   return (
     <div className={containerStyle}>
-      <RoomListContainer rooms={dummy.rooms} />
-      <ChatRoomContainer
-        users={dummy.users}
-        chatRoomId={dummy.rooms[0].id}
-        initChats={dummy.chats}
-      />
+      {isMobile && roomId ? undefined : <RoomListContainer rooms={dummy.rooms} />}
+      {roomId ? (
+        <ChatRoomContainer
+          users={dummy.users}
+          chatRoomId={roomId}
+          initChats={dummy.chats}
+          onBack={onBack}
+        />
+      ) : (
+        <div className={emptyStyle}>채팅방을 선택해주세요.</div>
+      )}
     </div>
   );
 };
