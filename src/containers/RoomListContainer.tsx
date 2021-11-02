@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useState } from 'react';
+import { useMemo } from 'react';
 
 import { Virtuoso } from 'react-virtuoso';
 
@@ -6,6 +6,11 @@ import Room from '@/components/chat/Room';
 import RoomType from '@/types/Room';
 import UnreadBadge from '@/components/chat/UnreadBadge';
 import useRoom from '@/hooks/useRoom';
+import { css } from '@linaria/core';
+
+const containerStyle = css`
+  overflow-x: hidden;
+`;
 
 export interface RoomListContainerProps {
   rooms: RoomType[];
@@ -32,6 +37,7 @@ const RoomListContainer = ({ rooms }: RoomListContainerProps): JSX.Element => {
 
   return (
     <Virtuoso
+      className={containerStyle}
       data={rooms}
       itemContent={(_, room) => (
         <div onClick={() => setRoom(room.id)}>
