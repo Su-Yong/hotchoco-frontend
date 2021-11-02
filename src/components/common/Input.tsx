@@ -27,12 +27,12 @@ const inputStyle = css`
   transition: box-shadow 0.25s, border-radius 0.25s;
 
   &:hover {
-    border-radius: 4px;
+    box-shadow: inset 0 0 0 1px var(--border-color);
   }
 
   &:focus {
     border-radius: 4px;
-    box-shadow: inset -2px -2px 12px rgba(255, 255, 255, 1), inset 2px 2px 12px rgba(0, 0, 0, 0.1);
+    box-shadow: inset 0 0 0 1px var(--border-color);
   }
 
   &::placeholder {

@@ -1,8 +1,7 @@
 import { css } from '@linaria/core';
-import Button from '@/components/common/Button';
-import Card from '@/components/common/Card';
-import Input from '@/components/common/Input';
 import Typography from '@/components/common/Typography';
+import LoginContainer from '@/containers/LoginContainer';
+import AuthContainer from '@/containers/AuthContainer';
 
 const titleStyle = css`
   justify-content: center;
@@ -11,25 +10,14 @@ const titleStyle = css`
   margin-bottom: 16px;
 `;
 
-const cardStyle = css`
-  padding: 16px;
-
-  gap: 8px;
-
-  align-items: end;
-`;
-
 const LoginPage = (): JSX.Element => {
   return (
     <div>
       <Typography type={'h1'} className={titleStyle}>
         Hotchoco
       </Typography>
-      <Card className={cardStyle}>
-        <Input type={'email'} placeholder={'email'} />
-        <Input type={'password'} placeholder={'password'} />
-        <Button>로그인</Button>
-      </Card>
+      <LoginContainer />
+      <AuthContainer />
     </div>
   );
 };
