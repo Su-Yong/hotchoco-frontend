@@ -1,7 +1,7 @@
 import React from 'react';
 
 import { css } from '@linaria/core';
-import { Route } from 'wouter';
+import { Redirect, Route, Switch } from 'wouter';
 import { useAtom } from 'jotai';
 
 import LoginPage from '@/pages/LoginPage';
@@ -9,6 +9,7 @@ import ErrorPage from '@/pages/ErrorPage';
 import TestPage from '@/pages/TestPage';
 import { ThemeProvider } from '@/theme';
 import { themeObject } from '@/store/theme';
+import { session as sessionObject } from '@/store/login';
 import ChatPage from './pages/ChatPage';
 
 const bodyStyle = css`
@@ -23,14 +24,24 @@ const bodyStyle = css`
 
 const App = () => {
   const [theme] = useAtom(themeObject);
+  const [session] = useAtom(sessionObject);
 
   return (
     <ThemeProvider theme={theme}>
       <div className={bodyStyle}>
-        <Route path={'/login'} component={LoginPage} />
-        <Route path={'/chat'} component={ChatPage} />
-        <Route path={'/test'} component={TestPage} />
-        <Route component={ErrorPage} />
+        <Switch>
+          <Route path={'/login'} component={LoginPage} />
+          <Route path={'/chat'} component={ChatPage} />
+          <Route path={'/test'} component={TestPage} />
+          <Route path={'/error'} component={ErrorPage} />
+          <Route>
+            {
+              session
+                ? <Redirect to={'/chat'} />
+                : <Redirect to={'/login'} />
+            }
+          </Route>
+        </Switch>
       </div>
     </ThemeProvider>
   );

@@ -93,6 +93,8 @@ const ChatRoomContainer = ({ users, initChats, chatRoomId, onBack }: ChatRoomCon
         <ChatHeader chatRoomId={chatRoomId} onBack={onBack} />
       </div>
       <Virtuoso
+        alignToBottom
+        initialTopMostItemIndex={chatList.length}
         data={chatList}
         components={{
           Header: () => <div className={topStyle} />,

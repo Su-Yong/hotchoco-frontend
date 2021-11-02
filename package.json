@@ -19,6 +19,7 @@
     "react-transition-group": "^4.4.2",
     "react-virtuoso": "^2.2.4",
     "rooks": "^5.7.3",
+    "socket.io-client": "^4.3.2",
     "swr": "^1.0.1",
     "wouter": "^2.8.0-alpha.1"
   },
