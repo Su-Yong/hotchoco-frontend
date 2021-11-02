@@ -45,7 +45,7 @@ export interface ChatRoomContainerProps {
   chatRoomId: string;
   // chatReceiver: EventEmitter; // TODO: need typing
 
-  onBack?: () => void,
+  onBack?: () => void;
 }
 
 const ChatRoomContainer = ({ users, initChats, chatRoomId, onBack }: ChatRoomContainerProps): JSX.Element => {
@@ -90,15 +90,12 @@ const ChatRoomContainer = ({ users, initChats, chatRoomId, onBack }: ChatRoomCon
       })}
     >
       <div className={headerStyle}>
-        <ChatHeader
-          chatRoomId={chatRoomId}
-          onBack={onBack}
-        />
+        <ChatHeader chatRoomId={chatRoomId} onBack={onBack} />
       </div>
       <Virtuoso
         data={chatList}
         components={{
-          Header: () => <div className={topStyle} />
+          Header: () => <div className={topStyle} />,
         }}
         itemContent={(_, chat) => (
           <ChatBubble

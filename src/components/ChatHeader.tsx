@@ -1,11 +1,11 @@
-import { useTheme } from "@/theme";
-import ColorUtil from "@/utils/Color";
-import style from "@/utils/style";
-import { css } from "@linaria/core";
+import { useTheme } from '@/theme';
+import ColorUtil from '@/utils/Color';
+import style from '@/utils/style';
+import { css } from '@linaria/core';
 import { Icon } from '@iconify/react';
 import ArrowLeft from '@iconify/icons-mdi/arrow-left';
-import { useMemo } from "react";
-import Typography from "./common/Typography";
+import { useMemo } from 'react';
+import Typography from './common/Typography';
 
 const containerStyle = css`
   height: 56px;
@@ -41,16 +41,10 @@ export interface ChatHeaderProps {
   onBack?: () => void;
 }
 
-const ChatHeader = ({
-  chatRoomId,
-  onBack,
-}: ChatHeaderProps): JSX.Element => {
+const ChatHeader = ({ chatRoomId, onBack }: ChatHeaderProps): JSX.Element => {
   const theme = useTheme();
 
-  const background = useMemo(
-    () => ColorUtil.alpha(theme.palette.backgroundSecondary.main, 0.1),
-    [theme],
-  );
+  const background = useMemo(() => ColorUtil.alpha(theme.palette.backgroundSecondary.main, 0.1), [theme]);
 
   return (
     <div
@@ -62,9 +56,7 @@ const ChatHeader = ({
       <Typography type={'h4'} onClick={onBack}>
         <Icon icon={ArrowLeft} className={iconStyle} />
       </Typography>
-      <Typography type={'h5'}>
-        {chatRoomId}
-      </Typography>
+      <Typography type={'h5'}>{chatRoomId}</Typography>
     </div>
   );
 };

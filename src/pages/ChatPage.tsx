@@ -36,7 +36,7 @@ const emptyStyle = css`
   flex-flow: column;
   justify-content: center;
   align-items: center;
-  
+
   position: absolute;
 
   @media (max-width: 600px) {
@@ -113,23 +113,11 @@ const ChatPage = (): JSX.Element => {
           '--is-visible': roomId ? 'visible' : 'hidden',
         })}
       >
-        <div className={emptyStyle}>
-          채팅방을 선택해주세요.
-        </div>
+        <div className={emptyStyle}>채팅방을 선택해주세요.</div>
         <Transition in={transition} timeout={250}>
           {(state: string) => (
-            <div
-              className={transitionStyle}
-              data-state={state}
-            >
-              {roomId && (
-                <ChatRoomContainer
-                  users={dummy.users}
-                  chatRoomId={roomId}
-                  initChats={dummy.chats}
-                  onBack={onBack}
-                />
-              )}
+            <div className={transitionStyle} data-state={state}>
+              {roomId && <ChatRoomContainer users={dummy.users} chatRoomId={roomId} initChats={dummy.chats} onBack={onBack} />}
             </div>
           )}
         </Transition>
