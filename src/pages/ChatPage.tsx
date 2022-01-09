@@ -8,6 +8,7 @@ import RoomListContainer from '@/containers/RoomListContainer';
 import dummy from '@/utils/dummy';
 import useRoom from '@/hooks/useRoom';
 import style from '@/utils/style';
+import useManager from '@/hooks/useManager';
 
 const containerStyle = css`
   width: 100%;
@@ -85,8 +86,11 @@ const roomListStyle = css`
 `;
 
 const ChatPage = (): JSX.Element => {
+  const manager = useManager();
   const [roomId, setRoom] = useRoom();
+
   const [transition, setTransition] = useState(false);
+  const [rooms, setRooms] = useState(dummy.rooms);
 
   const onBack = useCallback(() => {
     setTransition(false);
@@ -102,10 +106,25 @@ const ChatPage = (): JSX.Element => {
     }
   }, [roomId]);
 
+  useEffect(() => {
+    const updateRoom = () => {
+      console.log('room update', manager.getRooms());
+      setRooms(manager.getRooms());
+    };
+
+    manager.on('enter', updateRoom);
+    manager.on('exit', updateRoom);
+
+    return () => {
+      manager.removeListener('enter', updateRoom);
+      manager.removeListener('exit', updateRoom);
+    };
+  }, [manager]);
+
   return (
     <div className={containerStyle}>
       <div className={roomListStyle}>
-        <RoomListContainer rooms={dummy.rooms} />
+        <RoomListContainer rooms={rooms} />
       </div>
       <div
         className={roomStyle}
