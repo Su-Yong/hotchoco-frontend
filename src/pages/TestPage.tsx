@@ -6,6 +6,7 @@ import Room from '@/components/chat/Room';
 import Button from '@/components/common/Button';
 import Card from '@/components/common/Card';
 import Typography from '@/components/common/Typography';
+import ChatBubblePlaceholder from '@/components/placeholder/ChatBubblePlaceholder';
 import { css } from '@linaria/core';
 import { useCallback, useState } from 'react';
 
@@ -81,6 +82,12 @@ const TestPage = (): JSX.Element => {
           >
             <TextContent>Third Test ChatBubble</TextContent>
           </ChatBubble>
+          <ChatBubblePlaceholder
+            animationType={'wave'}
+          />
+          <ChatBubblePlaceholder
+            animationType={'pulse'}
+          />
           <ChatBubble
             sender={
               <Typography type={'caption1'} style={{ color: 'red' }}>

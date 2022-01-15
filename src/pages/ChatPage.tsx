@@ -90,7 +90,7 @@ const ChatPage = (): JSX.Element => {
   const [roomId, setRoom] = useRoom();
 
   const [transition, setTransition] = useState(false);
-  const [rooms, setRooms] = useState(dummy.rooms);
+  const [rooms, setRooms] = useState(manager.getRooms());
 
   const onBack = useCallback(() => {
     setTransition(false);

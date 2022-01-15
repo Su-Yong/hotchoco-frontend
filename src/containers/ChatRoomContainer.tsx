@@ -1,7 +1,7 @@
 import { useMemo, useState } from 'react';
 
 import { css } from '@linaria/core';
-import { Virtuoso } from 'react-virtuoso';
+import { Virtuoso, VirtuosoProps } from 'react-virtuoso';
 
 import ChatBubble from '@/components/chat/ChatBubble';
 import TextContent from '@/components/chat/content/TextContent';
@@ -38,6 +38,13 @@ const topStyle = css`
   width: 100%;
   height: 56px;
 `;
+
+const components: VirtuosoProps<Chat>['components'] = {
+  Header: () => <div className={topStyle} />,
+  ScrollSeekPlaceholder: ({ height, index }) => <div />
+};
+
+const computeItemKey: VirtuosoProps<Chat>['computeItemKey'] = (_, { id }) => id;
 
 export interface ChatRoomContainerProps {
   users: User[];
@@ -94,9 +101,9 @@ const ChatRoomContainer = ({ users, initChats, chatRoomId, onBack }: ChatRoomCon
       </div>
       <Virtuoso
         data={chatList}
-        components={{
-          Header: () => <div className={topStyle} />,
-        }}
+        components={components}
+        initialTopMostItemIndex={chatList.length - 1}
+        computeItemKey={computeItemKey}
         itemContent={(_, chat) => (
           <ChatBubble
             mine={chat.sender.id === clientUser.id}
