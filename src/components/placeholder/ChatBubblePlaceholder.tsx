@@ -8,7 +8,7 @@ import Placeholder, { PlaceholderProps } from './Placeholder';
 
 const senderStyle = css`
   width: 60px;
-  height: 18px;
+  height: 24px;
 
   grid-row: 1;
   grid-column: 2 / span 2;
@@ -29,6 +29,8 @@ const profileStyle = css`
   grid-row: 1 / span 2;
   grid-column: 1;
 
+  opacity: var(--profile);
+
   .mine > & {
     grid-column: 3;
   }
@@ -36,7 +38,7 @@ const profileStyle = css`
 
 const contentStyle = css`
   width: 120px;
-  height: 34px;
+  height: 43px;
   
   grid-row: 2;
   grid-column: 2;
@@ -87,16 +89,25 @@ const bubbleStyle = css`
 
 export interface ChatBubblePlaceholderProps extends PlaceholderProps {
   mine?: boolean;
+  profile?: boolean;
 }
 
 const ChatBubblePlaceholder = ({
+  mine,
+  profile = true,
   animationType,
   duration,
 }: ChatBubblePlaceholderProps): JSX.Element => {
   const theme = useTheme();
 
   return (
-    <li className={bubbleStyle}>
+    <li
+      className={className(bubbleStyle, !profile ? 'no-profile' : null, mine ? 'mine' : null)}
+      style={style({
+        '--align': mine ? 'row-reverse' : 'row',
+        '--profile': profile ? '1' : '0',
+      })}
+    >
       <Placeholder animationType={animationType} duration={duration}>
         <div className={senderStyle} />
       </Placeholder>

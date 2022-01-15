@@ -84,6 +84,12 @@ const TestPage = (): JSX.Element => {
           </ChatBubble>
           <ChatBubblePlaceholder
             animationType={'wave'}
+            mine
+            profile={false}
+          />
+          <ChatBubblePlaceholder
+            animationType={'wave'}
+            mine
           />
           <ChatBubblePlaceholder
             animationType={'pulse'}

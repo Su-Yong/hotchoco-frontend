@@ -14,6 +14,7 @@ import toBigInt from '@/utils/toBigInt';
 import ChatHeader from '@/components/ChatHeader';
 import { useTheme } from '@/theme';
 import style from '@/utils/style';
+import ChatBubblePlaceholder from '@/components/placeholder/ChatBubblePlaceholder';
 
 const containerStyle = css`
   width: 100%;
@@ -38,11 +39,6 @@ const topStyle = css`
   width: 100%;
   height: 56px;
 `;
-
-const components: VirtuosoProps<Chat>['components'] = {
-  Header: () => <div className={topStyle} />,
-  ScrollSeekPlaceholder: ({ height, index }) => <div />
-};
 
 const computeItemKey: VirtuosoProps<Chat>['computeItemKey'] = (_, { id }) => id;
 
@@ -101,7 +97,14 @@ const ChatRoomContainer = ({ users, initChats, chatRoomId, onBack }: ChatRoomCon
       </div>
       <Virtuoso
         data={chatList}
-        components={components}
+        components={{
+          Header: () => <div className={topStyle} />,
+          ScrollSeekPlaceholder: ({ index }) => <ChatBubblePlaceholder mine={chatList[index].sender.id === clientUser.id} />
+        }}
+        scrollSeekConfiguration={{
+          enter: (velocity) => Math.abs(velocity) > 50,
+          exit: (velocity) => Math.abs(velocity) < 50,
+        }}
         initialTopMostItemIndex={chatList.length - 1}
         computeItemKey={computeItemKey}
         itemContent={(_, chat) => (
