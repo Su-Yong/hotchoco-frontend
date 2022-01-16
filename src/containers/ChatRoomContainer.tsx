@@ -1,7 +1,7 @@
 import { useMemo, useState } from 'react';
 
 import { css } from '@linaria/core';
-import { Virtuoso } from 'react-virtuoso';
+import { Virtuoso, VirtuosoProps } from 'react-virtuoso';
 
 import ChatBubble from '@/components/chat/ChatBubble';
 import TextContent from '@/components/chat/content/TextContent';
@@ -14,6 +14,9 @@ import toBigInt from '@/utils/toBigInt';
 import ChatHeader from '@/components/ChatHeader';
 import { useTheme } from '@/theme';
 import style from '@/utils/style';
+import ChatBubblePlaceholder from '@/components/placeholder/ChatBubblePlaceholder';
+
+const VELOCITY_BOUNDARY = 600;
 
 const containerStyle = css`
   width: 100%;
@@ -39,23 +42,21 @@ const topStyle = css`
   height: 56px;
 `;
 
+const computeItemKey: VirtuosoProps<Chat>['computeItemKey'] = (_, { id }) => id;
+
 export interface ChatRoomContainerProps {
   users: User[];
-  initChats?: Chat[];
+  chatList: Chat[];
   chatRoomId: string;
-  // chatReceiver: EventEmitter; // TODO: need typing
 
   onBack?: () => void;
 }
 
-const ChatRoomContainer = ({ users, initChats, chatRoomId, onBack }: ChatRoomContainerProps): JSX.Element => {
+const ChatRoomContainer = ({ users, chatList, chatRoomId, onBack }: ChatRoomContainerProps): JSX.Element => {
   const theme = useTheme();
   const clientUser = useClientUser();
 
-  const [chatList, setChatList] = useState<Chat[]>(initChats ?? []);
-
   const background = useMemo(() => theme.palette.backgroundPrimary.main, [theme]);
-
   const profiles = useMemo(() => {
     const result = new Map<string, JSX.Element>();
 
@@ -93,10 +94,25 @@ const ChatRoomContainer = ({ users, initChats, chatRoomId, onBack }: ChatRoomCon
         <ChatHeader chatRoomId={chatRoomId} onBack={onBack} />
       </div>
       <Virtuoso
+        alignToBottom
         data={chatList}
         components={{
           Header: () => <div className={topStyle} />,
+          ScrollSeekPlaceholder: ({ index }) => (
+            <ChatBubblePlaceholder
+              mine={chatList[index].sender.id === clientUser.id}
+              animationType={'wave'}
+            />
+          ),
         }}
+        scrollSeekConfiguration={{
+          enter: (velocity) => Math.abs(velocity) > VELOCITY_BOUNDARY,
+          exit: (velocity) => Math.abs(velocity) < VELOCITY_BOUNDARY - 50,
+        }}
+        atBottomThreshold={120}
+        followOutput={'smooth'}
+        initialTopMostItemIndex={chatList.length - 1}
+        computeItemKey={computeItemKey}
         itemContent={(_, chat) => (
           <ChatBubble
             mine={chat.sender.id === clientUser.id}

@@ -8,6 +8,11 @@ import RoomListContainer from '@/containers/RoomListContainer';
 import dummy from '@/utils/dummy';
 import useRoom from '@/hooks/useRoom';
 import style from '@/utils/style';
+import useManager from '@/hooks/useManager';
+import Room from '@/types/Room';
+import Chat from '@/types/Chat';
+import { useAtom } from 'jotai';
+import { chats } from '@/store/chat';
 
 const containerStyle = css`
   width: 100%;
@@ -51,20 +56,37 @@ const transitionStyle = css`
 
   transition: opacity 0.25s, transform 0.25s;
 
-  &[data-state='entering'] {
-    opacity: 0;
-    transform: translateX(25%);
+  @media (min-width: 600px) {
+    &[data-state='entering'] {
+      opacity: 0;
+      transform: translateX(25%);
+    }
+    &[data-state='entered'] {
+      opacity: 1;
+      transform: translateX(0);
+    }
+    &[data-state='exiting'] {
+      opacity: 0;
+      transform: translateX(-25%);
+    }
+    &[data-state='exited'] {
+      display: none;
+    }
   }
-  &[data-state='entered'] {
-    opacity: 1;
-    transform: translateX(0);
-  }
-  &[data-state='exiting'] {
-    opacity: 0;
-    transform: translateX(-25%);
-  }
-  &[data-state='exited'] {
-    display: none;
+
+  @media (max-width: 600px) {
+    &[data-state='entering'] {
+      transform: translateX(100%);
+    }
+    &[data-state='entered'] {
+      transform: translateX(0);
+    }
+    &[data-state='exiting'] {
+      transform: translateX(100%);
+    }
+    &[data-state='exited'] {
+      display: none;
+    }
   }
 `;
 
@@ -85,8 +107,13 @@ const roomListStyle = css`
 `;
 
 const ChatPage = (): JSX.Element => {
+  const manager = useManager();
   const [roomId, setRoom] = useRoom();
+
   const [transition, setTransition] = useState(false);
+  const [rooms, setRooms] = useState(manager.getRooms());
+
+  const [allChats, updateChats] = useAtom(chats);
 
   const onBack = useCallback(() => {
     setTransition(false);
@@ -102,10 +129,44 @@ const ChatPage = (): JSX.Element => {
     }
   }, [roomId]);
 
+  useEffect(() => {
+    // 같은 array로 판단하여 react가 업데이트 하지 않은것으로 추정됨.
+    // 무슨이유인지는 모르겠지만, 새 Array로 만들어 주니 제대로 렌더링 되는것을 확인할 수 있음
+    // 이전까지는 컴포넌트를 선택해야 리렌더링이 되었음.
+    const updateRoom = () => {
+      const newRooms: Room[] = [...manager.getRooms()];
+      
+      if (roomId && !newRooms.find(({ id }) => id === roomId)) {
+        onBack();
+      }
+
+      setRooms(newRooms);
+    };
+
+    const updateChat = (room: Room, chat: Chat) => {
+      updateChats((it) => {
+        it.set(room.id, [...(it.get(room.id) ?? []), chat]);
+
+        return new Map(it);
+      });
+    };
+
+    updateRoom();
+    manager.on('enter', updateRoom);
+    manager.on('exit', updateRoom);
+    manager.on('chat', updateChat);
+
+    return () => {
+      manager.removeListener('enter', updateRoom);
+      manager.removeListener('exit', updateRoom);
+      manager.removeListener('chat', updateChat);
+    };
+  }, [manager, roomId, onBack]);
+  
   return (
     <div className={containerStyle}>
       <div className={roomListStyle}>
-        <RoomListContainer rooms={dummy.rooms} />
+        <RoomListContainer rooms={rooms} />
       </div>
       <div
         className={roomStyle}
@@ -117,7 +178,14 @@ const ChatPage = (): JSX.Element => {
         <Transition in={transition} timeout={250}>
           {(state: string) => (
             <div className={transitionStyle} data-state={state}>
-              {roomId && <ChatRoomContainer users={dummy.users} chatRoomId={roomId} initChats={dummy.chats} onBack={onBack} />}
+              {roomId && (
+                <ChatRoomContainer
+                  users={dummy.users}
+                  chatRoomId={roomId}
+                  chatList={allChats.get(roomId) ?? []}
+                  onBack={onBack}
+                />
+              )}
             </div>
           )}
         </Transition>
