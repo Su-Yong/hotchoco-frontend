@@ -1,6 +1,6 @@
-import { useEffect, useMemo, useRef, useState } from 'react';
+import React, { useMemo } from 'react';
 
-import { Virtuoso, VirtuosoHandle, VirtuosoProps } from 'react-virtuoso';
+import { Virtuoso, VirtuosoProps } from 'react-virtuoso';
 
 import Room from '@/components/chat/Room';
 import RoomType from '@/types/Room';
@@ -43,7 +43,9 @@ const RoomListContainer = ({ rooms }: RoomListContainerProps): JSX.Element => {
       data={rooms}
       computeItemKey={computeItemKey}
       itemContent={(_, room) => (
-        <div onClick={() => setRoom(room.id)}>
+        <div
+          onClick={() => setRoom(room.id)}
+        >
           <Room
             name={room.name}
             description={room.lastChat?.content ?? ''}

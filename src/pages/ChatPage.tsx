@@ -9,6 +9,7 @@ import dummy from '@/utils/dummy';
 import useRoom from '@/hooks/useRoom';
 import style from '@/utils/style';
 import useManager from '@/hooks/useManager';
+import Room from '@/types/Room';
 
 const containerStyle = css`
   width: 100%;
@@ -52,20 +53,37 @@ const transitionStyle = css`
 
   transition: opacity 0.25s, transform 0.25s;
 
-  &[data-state='entering'] {
-    opacity: 0;
-    transform: translateX(25%);
+  @media (min-width: 600px) {
+    &[data-state='entering'] {
+      opacity: 0;
+      transform: translateX(25%);
+    }
+    &[data-state='entered'] {
+      opacity: 1;
+      transform: translateX(0);
+    }
+    &[data-state='exiting'] {
+      opacity: 0;
+      transform: translateX(-25%);
+    }
+    &[data-state='exited'] {
+      display: none;
+    }
   }
-  &[data-state='entered'] {
-    opacity: 1;
-    transform: translateX(0);
-  }
-  &[data-state='exiting'] {
-    opacity: 0;
-    transform: translateX(-25%);
-  }
-  &[data-state='exited'] {
-    display: none;
+
+  @media (max-width: 600px) {
+    &[data-state='entering'] {
+      transform: translateX(100%);
+    }
+    &[data-state='entered'] {
+      transform: translateX(0);
+    }
+    &[data-state='exiting'] {
+      transform: translateX(100%);
+    }
+    &[data-state='exited'] {
+      display: none;
+    }
   }
 `;
 
@@ -111,9 +129,16 @@ const ChatPage = (): JSX.Element => {
     // 무슨이유인지는 모르겠지만, 새 Array로 만들어 주니 제대로 렌더링 되는것을 확인할 수 있음
     // 이전까지는 컴포넌트를 선택해야 리렌더링이 되었음.
     const updateRoom = () => {
-      setRooms([...manager.getRooms()]);
+      const newRooms: Room[] = [...manager.getRooms()];
+      
+      if (roomId && !newRooms.find(({ id }) => id === roomId)) {
+        onBack();
+      }
+
+      setRooms(newRooms);
     };
 
+    updateRoom();
     manager.on('enter', updateRoom);
     manager.on('exit', updateRoom);
 
@@ -121,7 +146,7 @@ const ChatPage = (): JSX.Element => {
       manager.removeListener('enter', updateRoom);
       manager.removeListener('exit', updateRoom);
     };
-  }, [manager]);
+  }, [manager, roomId, onBack]);
 
   return (
     <div className={containerStyle}>
