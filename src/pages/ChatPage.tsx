@@ -10,6 +10,9 @@ import useRoom from '@/hooks/useRoom';
 import style from '@/utils/style';
 import useManager from '@/hooks/useManager';
 import Room from '@/types/Room';
+import Chat from '@/types/Chat';
+import { useAtom } from 'jotai';
+import { chats } from '@/store/chat';
 
 const containerStyle = css`
   width: 100%;
@@ -110,6 +113,8 @@ const ChatPage = (): JSX.Element => {
   const [transition, setTransition] = useState(false);
   const [rooms, setRooms] = useState(manager.getRooms());
 
+  const [allChats, updateChats] = useAtom(chats);
+
   const onBack = useCallback(() => {
     setTransition(false);
 
@@ -138,16 +143,27 @@ const ChatPage = (): JSX.Element => {
       setRooms(newRooms);
     };
 
+    const updateChat = (room: Room, chat: Chat) => {
+      console.log('update chat!', chat);
+      updateChats((it) => {
+        it.set(room.id, [...(it.get(room.id) ?? []), chat]);
+
+        return new Map(it);
+      });
+    };
+
     updateRoom();
     manager.on('enter', updateRoom);
     manager.on('exit', updateRoom);
+    manager.on('chat', updateChat);
 
     return () => {
       manager.removeListener('enter', updateRoom);
       manager.removeListener('exit', updateRoom);
+      manager.removeListener('chat', updateChat);
     };
   }, [manager, roomId, onBack]);
-
+  
   return (
     <div className={containerStyle}>
       <div className={roomListStyle}>
@@ -163,7 +179,14 @@ const ChatPage = (): JSX.Element => {
         <Transition in={transition} timeout={250}>
           {(state: string) => (
             <div className={transitionStyle} data-state={state}>
-              {roomId && <ChatRoomContainer users={dummy.users} chatRoomId={roomId} initChats={dummy.chats} onBack={onBack} />}
+              {roomId && (
+                <ChatRoomContainer
+                  users={dummy.users}
+                  chatRoomId={roomId}
+                  chatList={allChats.get(roomId) ?? []}
+                  onBack={onBack}
+                />
+              )}
             </div>
           )}
         </Transition>

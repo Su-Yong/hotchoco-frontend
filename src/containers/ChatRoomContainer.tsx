@@ -46,18 +46,15 @@ const computeItemKey: VirtuosoProps<Chat>['computeItemKey'] = (_, { id }) => id;
 
 export interface ChatRoomContainerProps {
   users: User[];
-  initChats?: Chat[];
+  chatList: Chat[];
   chatRoomId: string;
-  // chatReceiver: EventEmitter; // TODO: need typing
 
   onBack?: () => void;
 }
 
-const ChatRoomContainer = ({ users, initChats, chatRoomId, onBack }: ChatRoomContainerProps): JSX.Element => {
+const ChatRoomContainer = ({ users, chatList, chatRoomId, onBack }: ChatRoomContainerProps): JSX.Element => {
   const theme = useTheme();
   const clientUser = useClientUser();
-
-  const [chatList, setChatList] = useState<Chat[]>(initChats ?? []);
 
   const background = useMemo(() => theme.palette.backgroundPrimary.main, [theme]);
 
