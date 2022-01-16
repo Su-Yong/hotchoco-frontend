@@ -23,23 +23,23 @@ const roomStyle = css`
 
   transition: transform 0.25s, background 0.25s, padding-right 0.25s;
 
+  &::before {
+    content: '';
+    width: 16px;
+    height: 24px;
+    position: absolute;
+    background: transparent;
+
+    border-radius: 16px;
+    left: -16px;
+
+    transition: background 0.25s, height 0.25s, left 0.25s;
+  }
+
   @media (hover: hover) {
     &:hover {
       transform: translateX(8px);
       background: var(--background);
-    }
-
-    &::before {
-      content: '';
-      width: 16px;
-      height: 24px;
-      position: absolute;
-      background: transparent;
-
-      border-radius: 16px;
-      left: -16px;
-
-      transition: background 0.25s, height 0.25s;
     }
 
     &:hover::before {
@@ -66,8 +66,13 @@ const activeRoomStyle = css`
   }
 
   @media (hover: none) {
-    transform: scale(1.05);
     background: var(--pressed-background);
+
+    &::before {
+      left: -12px;
+      height: 36px;
+      background: var(--primary);
+    }
   }
 `;
 
