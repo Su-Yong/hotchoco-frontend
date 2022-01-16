@@ -20,19 +20,39 @@ const containerStyle = css`
   padding-left: 16px;
   padding-right: 16px;
 
+  user-select: none;
+
   background: var(--background);
   backdrop-filter: blur(8px);
 `;
 
-const iconStyle = css`
-  transition: transform 0.25s;
+const centerStyle = css`
+  display: flex;
+  flex-flow: row;
+  justify-content: center;
+  align-items: center;
+`;
 
-  &:hover {
-    transform: translateX(-4px);
+const iconStyle = css`
+  cursor: pointer;
+  border-radius: 300px;
+
+  transition: transform 0.25s, background 0.25s;
+
+  @media (hover: hover) {
+    &:hover {
+      transform: translateX(-4px);
+    }
+
+    &:active {
+      transform: translateX(0) scale(1.25);
+    }
   }
 
-  &:active {
-    transform: translateX(0) scale(1.25);
+  @media (hover: none) {
+    &:active {
+      background: var(--active);
+    }
   }
 `;
 
@@ -44,16 +64,18 @@ export interface ChatHeaderProps {
 const ChatHeader = ({ chatRoomId, onBack }: ChatHeaderProps): JSX.Element => {
   const theme = useTheme();
 
-  const background = useMemo(() => ColorUtil.alpha(theme.palette.backgroundSecondary.main, 0.1), [theme]);
+  const background = useMemo(() => ColorUtil.alpha(theme.palette.backgroundSecondary.main, 0.3), [theme]);
+  const active = useMemo(() => ColorUtil.alpha(ColorUtil.darken(theme.palette.backgroundSecondary.main, 0.2), 0.5), [theme]);
 
   return (
     <div
       className={containerStyle}
       style={style({
         '--background': background,
+        '--active': active,
       })}
     >
-      <Typography type={'h4'} onClick={onBack}>
+      <Typography type={'h4'} onClick={onBack} className={centerStyle}>
         <Icon icon={ArrowLeft} className={iconStyle} />
       </Typography>
       <Typography type={'h5'}>{chatRoomId}</Typography>

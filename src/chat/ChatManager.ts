@@ -16,27 +16,21 @@ const randomTimeout = (func: () => void, range = 5000, delay = 3000) => {
 };
 
 const isKeyOf = <T extends unknown>(key: unknown, parent: T): key is keyof T => {
-  return !!(
-    typeof key === 'string'
-      && typeof parent === 'object'
-      && key && parent
-      && key in (parent as object) && (parent as object).hasOwnProperty(key)
-    );
-}
+  return !!(typeof key === 'string' && typeof parent === 'object' && key && parent && key in (parent as object) && (parent as object).hasOwnProperty(key));
+};
 
 const dummyMessage = `Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.`;
 const createDummyMessage = () => {
-  const [first, second] = [Math.random(), Math.random()]
-    .map((it) => ~~(it * dummyMessage.length))
-    .sort((a, b) => a - b);
-  
+  const [first, second] = [Math.random(), Math.random()].map((it) => ~~(it * dummyMessage.length)).sort((a, b) => a - b);
+
   return dummyMessage.substring(first, second);
 };
 
 class ChatManager extends EventEmitter<Events> {
   private rooms: Room[] = [];
 
-  constructor() { // dummy
+  constructor() {
+    // dummy
     super();
 
     const randomUpdateRooms = () => {
@@ -73,18 +67,17 @@ class ChatManager extends EventEmitter<Events> {
 
         this.emit('chat', room, newChat);
       });
-    }
+    };
 
     randomUpdateRooms();
     // randomTimeout(randomUpdateRooms);
     randomTimeout(randomUpdateMessage, 3000, 1000);
   }
 
-  send<CHAT extends Chat>(chat: CHAT) {
-    
-  }
+  send<CHAT extends Chat>(chat: CHAT) {}
 
-  getRooms() { // TODO
+  getRooms() {
+    // TODO
     return this.rooms;
   }
 }

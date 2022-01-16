@@ -135,7 +135,7 @@ const ChatPage = (): JSX.Element => {
     // 이전까지는 컴포넌트를 선택해야 리렌더링이 되었음.
     const updateRoom = () => {
       const newRooms: Room[] = [...manager.getRooms()];
-      
+
       if (roomId && !newRooms.find(({ id }) => id === roomId)) {
         onBack();
       }
@@ -162,7 +162,7 @@ const ChatPage = (): JSX.Element => {
       manager.removeListener('chat', updateChat);
     };
   }, [manager, roomId, onBack]);
-  
+
   return (
     <div className={containerStyle}>
       <div className={roomListStyle}>
@@ -178,14 +178,7 @@ const ChatPage = (): JSX.Element => {
         <Transition in={transition} timeout={250}>
           {(state: string) => (
             <div className={transitionStyle} data-state={state}>
-              {roomId && (
-                <ChatRoomContainer
-                  users={dummy.users}
-                  chatRoomId={roomId}
-                  chatList={allChats.get(roomId) ?? []}
-                  onBack={onBack}
-                />
-              )}
+              {roomId && <ChatRoomContainer users={dummy.users} chatRoomId={roomId} chatList={allChats.get(roomId) ?? []} onBack={onBack} />}
             </div>
           )}
         </Transition>

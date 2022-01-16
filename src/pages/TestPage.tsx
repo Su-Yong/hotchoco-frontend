@@ -82,18 +82,9 @@ const TestPage = (): JSX.Element => {
           >
             <TextContent>Third Test ChatBubble</TextContent>
           </ChatBubble>
-          <ChatBubblePlaceholder
-            animationType={'wave'}
-            mine
-            profile={false}
-          />
-          <ChatBubblePlaceholder
-            animationType={'wave'}
-            mine
-          />
-          <ChatBubblePlaceholder
-            animationType={'pulse'}
-          />
+          <ChatBubblePlaceholder animationType={'wave'} mine profile={false} />
+          <ChatBubblePlaceholder animationType={'wave'} mine />
+          <ChatBubblePlaceholder animationType={'pulse'} />
           <ChatBubble
             sender={
               <Typography type={'caption1'} style={{ color: 'red' }}>

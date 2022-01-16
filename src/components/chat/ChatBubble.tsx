@@ -35,6 +35,18 @@ const contentStyle = css`
   color: var(--bubble-color);
   border: none;
   border-radius: 4px;
+
+  transition: all 0.1s;
+
+  @media (hover: hover) {
+    &:hover {
+      box-shadow: 0 0 0 4px var(--bubble-accent) inset;
+    }
+  }
+
+  &:active {
+    background: var(--bubble-accent);
+  }
 `;
 
 const infoStyle = css`
@@ -75,6 +87,12 @@ const bubbleStyle = css`
     grid-row: 2;
     grid-column: 1;
   }
+
+  @media (min-width: 600px) {
+    max-width: max(60%, 360px);
+
+    margin-left: var(--left-margin);
+  }
 `;
 
 export interface ChatBubbleProps {
@@ -89,6 +107,7 @@ const ChatBubble = ({ mine, sender, profile, time, readers, children }: PropsWit
   const theme = useTheme();
 
   const bubbleColor = useMemo(() => (mine ? theme.palette.primary : theme.palette.backgroundSecondary), [mine]);
+  const bubbleAccentColor = useMemo(() => ColorUtil.darken(bubbleColor.main, 0.2), [bubbleColor]);
   const blackShadowColor = useMemo(() => ColorUtil.alpha(theme.palette.black.main, 0.1), []);
 
   return (
@@ -96,8 +115,10 @@ const ChatBubble = ({ mine, sender, profile, time, readers, children }: PropsWit
       className={className(bubbleStyle, !profile ? 'no-profile' : null, mine ? 'mine' : null)}
       style={style({
         '--bubble-background': bubbleColor.main,
+        '--bubble-accent': bubbleAccentColor,
         '--bubble-color': bubbleColor.contrastText,
         '--align': mine ? 'row-reverse' : 'row',
+        '--left-margin': mine ? 'auto' : '0',
         '--black-shadow': blackShadowColor,
       })}
     >
