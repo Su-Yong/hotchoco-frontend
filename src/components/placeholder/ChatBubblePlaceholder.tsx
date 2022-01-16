@@ -39,7 +39,7 @@ const profileStyle = css`
 const contentStyle = css`
   width: 120px;
   height: 43px;
-  
+
   grid-row: 2;
   grid-column: 2;
 
@@ -92,12 +92,7 @@ export interface ChatBubblePlaceholderProps extends PlaceholderProps {
   profile?: boolean;
 }
 
-const ChatBubblePlaceholder = ({
-  mine,
-  profile = true,
-  animationType,
-  duration,
-}: ChatBubblePlaceholderProps): JSX.Element => {
+const ChatBubblePlaceholder = ({ mine, profile = true, animationType, duration }: ChatBubblePlaceholderProps): JSX.Element => {
   const theme = useTheme();
 
   return (
@@ -118,8 +113,7 @@ const ChatBubblePlaceholder = ({
         <div className={contentStyle} />
       </Placeholder>
       <Placeholder animationType={animationType} duration={duration}>
-        <div className={infoStyle}>
-      </div>
+        <div className={infoStyle}></div>
       </Placeholder>
     </li>
   );

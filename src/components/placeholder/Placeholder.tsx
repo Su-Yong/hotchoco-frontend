@@ -15,7 +15,7 @@ const waveStyle = css`
     0% {
       background-position: 0 0;
     }
-    
+
     100% {
       background-position: 240px 0;
     }
@@ -29,7 +29,7 @@ const pulseStyle = css`
     0% {
       background: var(--background);
     }
-    
+
     50% {
       background: var(--accent);
     }
@@ -45,37 +45,30 @@ export interface PlaceholderProps {
   duration?: number;
 }
 
-const Placeholder = ({
-  animationType,
-  duration: initDuration,
-  children,
-}: PlaceholderProps & { children: React.ReactElement }): JSX.Element => {
+const Placeholder = ({ animationType, duration: initDuration, children }: PlaceholderProps & { children: React.ReactElement }): JSX.Element => {
   const theme = useTheme();
 
   const animationStyle = useMemo(() => {
     if ((animationType ?? 'wave') === 'wave') return waveStyle;
     else return pulseStyle;
   }, [animationType]);
-  
+
   const duration = useMemo(() => {
     if (typeof initDuration === 'number') return `${initDuration}s`;
 
     return '2s';
   }, [initDuration]);
 
-  return React.cloneElement(
-    children,
-    {
-      ...children.props,
-      className: className(children.props.className, animationStyle),
-      style: style({
-        ...children.props.style,
-        '--background': theme.palette.backgroundSecondary.main,
-        '--accent': ColorUtil.darken(theme.palette.backgroundSecondary.main, 0.05),
-        '--duration': duration,
-      }),
-    },
-  );
+  return React.cloneElement(children, {
+    ...children.props,
+    className: className(children.props.className, animationStyle),
+    style: style({
+      ...children.props.style,
+      '--background': theme.palette.backgroundSecondary.main,
+      '--accent': ColorUtil.darken(theme.palette.backgroundSecondary.main, 0.05),
+      '--duration': duration,
+    }),
+  });
 };
 
 export default Placeholder;

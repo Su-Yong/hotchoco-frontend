@@ -33,8 +33,6 @@ class ChatBuilder {
       return new ReplyChat(this.sender, this.target, this.value ?? '');
     }
 
-    
-
     this.reset();
   }
 

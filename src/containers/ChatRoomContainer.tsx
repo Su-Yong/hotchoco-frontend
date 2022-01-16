@@ -98,12 +98,7 @@ const ChatRoomContainer = ({ users, chatList, chatRoomId, onBack }: ChatRoomCont
         data={chatList}
         components={{
           Header: () => <div className={topStyle} />,
-          ScrollSeekPlaceholder: ({ index }) => (
-            <ChatBubblePlaceholder
-              mine={chatList[index].sender.id === clientUser.id}
-              animationType={'wave'}
-            />
-          ),
+          ScrollSeekPlaceholder: ({ index }) => <ChatBubblePlaceholder mine={chatList[index].sender.id === clientUser.id} animationType={'wave'} />,
         }}
         scrollSeekConfiguration={{
           enter: (velocity) => Math.abs(velocity) > VELOCITY_BOUNDARY,

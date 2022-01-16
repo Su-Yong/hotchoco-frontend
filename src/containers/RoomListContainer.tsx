@@ -36,16 +36,14 @@ const RoomListContainer = ({ rooms }: RoomListContainerProps): JSX.Element => {
 
     return result;
   }, [rooms]);
-  
+
   return (
     <Virtuoso
       className={containerStyle}
       data={rooms}
       computeItemKey={computeItemKey}
       itemContent={(_, room) => (
-        <div
-          onClick={() => setRoom(room.id)}
-        >
+        <div onClick={() => setRoom(room.id)}>
           <Room
             name={room.name}
             description={room.lastChat?.content ?? ''}

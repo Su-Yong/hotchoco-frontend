@@ -13,7 +13,7 @@ const roomStyle = css`
   grid-template-rows: auto auto;
   align-items: center;
   grid-column-gap: 8px;
-  
+
   user-select: none;
   cursor: pointer;
 

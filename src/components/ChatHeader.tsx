@@ -31,19 +31,19 @@ const centerStyle = css`
   flex-flow: row;
   justify-content: center;
   align-items: center;
-  `;
+`;
 
 const iconStyle = css`
   cursor: pointer;
   border-radius: 300px;
-  
+
   transition: transform 0.25s, background 0.25s;
 
   @media (hover: hover) {
     &:hover {
       transform: translateX(-4px);
     }
-  
+
     &:active {
       transform: translateX(0) scale(1.25);
     }
