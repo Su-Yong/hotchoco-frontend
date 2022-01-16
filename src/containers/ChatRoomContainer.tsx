@@ -16,6 +16,8 @@ import { useTheme } from '@/theme';
 import style from '@/utils/style';
 import ChatBubblePlaceholder from '@/components/placeholder/ChatBubblePlaceholder';
 
+const VELOCITY_BOUNDARY = 600;
+
 const containerStyle = css`
   width: 100%;
   height: 100%;
@@ -99,11 +101,16 @@ const ChatRoomContainer = ({ users, initChats, chatRoomId, onBack }: ChatRoomCon
         data={chatList}
         components={{
           Header: () => <div className={topStyle} />,
-          ScrollSeekPlaceholder: ({ index }) => <ChatBubblePlaceholder mine={chatList[index].sender.id === clientUser.id} />
+          ScrollSeekPlaceholder: ({ index }) => (
+            <ChatBubblePlaceholder
+              mine={chatList[index].sender.id === clientUser.id}
+              animationType={'wave'}
+            />
+          ),
         }}
         scrollSeekConfiguration={{
-          enter: (velocity) => Math.abs(velocity) > 50,
-          exit: (velocity) => Math.abs(velocity) < 50,
+          enter: (velocity) => Math.abs(velocity) > VELOCITY_BOUNDARY,
+          exit: (velocity) => Math.abs(velocity) < VELOCITY_BOUNDARY - 50,
         }}
         initialTopMostItemIndex={chatList.length - 1}
         computeItemKey={computeItemKey}

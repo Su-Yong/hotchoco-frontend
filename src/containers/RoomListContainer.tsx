@@ -1,6 +1,6 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 
-import { Virtuoso, VirtuosoProps } from 'react-virtuoso';
+import { Virtuoso, VirtuosoHandle, VirtuosoProps } from 'react-virtuoso';
 
 import Room from '@/components/chat/Room';
 import RoomType from '@/types/Room';
@@ -21,8 +21,6 @@ export interface RoomListContainerProps {
 const RoomListContainer = ({ rooms }: RoomListContainerProps): JSX.Element => {
   const [roomId, setRoom] = useRoom();
 
-  const [updatedRooms, updateRooms] = useState(rooms);
-
   const selectRoom = useMemo(() => rooms.find((it) => it.id === roomId), [roomId, rooms]);
 
   const images = useMemo(() => {
@@ -38,15 +36,11 @@ const RoomListContainer = ({ rooms }: RoomListContainerProps): JSX.Element => {
 
     return result;
   }, [rooms]);
-
-  useEffect(() => {
-    updateRooms(rooms);
-  }, [rooms]);
-
+  
   return (
     <Virtuoso
       className={containerStyle}
-      data={updatedRooms}
+      data={rooms}
       computeItemKey={computeItemKey}
       itemContent={(_, room) => (
         <div onClick={() => setRoom(room.id)}>

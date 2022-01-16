@@ -46,8 +46,6 @@ class ChatManager extends EventEmitter<Events> {
         const [removal] = this.rooms.splice(Math.floor(Math.random() * this.rooms.length), 1);
         this.emit('exit', removal, dummy.users[0], dummy.chats[0]);
       }
-
-      console.log('update!', this.rooms);
     };
 
     randomTimeout(randomUpdateRooms);

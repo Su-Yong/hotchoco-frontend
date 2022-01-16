@@ -107,9 +107,11 @@ const ChatPage = (): JSX.Element => {
   }, [roomId]);
 
   useEffect(() => {
+    // 같은 array로 판단하여 react가 업데이트 하지 않은것으로 추정됨.
+    // 무슨이유인지는 모르겠지만, 새 Array로 만들어 주니 제대로 렌더링 되는것을 확인할 수 있음
+    // 이전까지는 컴포넌트를 선택해야 리렌더링이 되었음.
     const updateRoom = () => {
-      console.log('room update', manager.getRooms());
-      setRooms(manager.getRooms());
+      setRooms([...manager.getRooms()]);
     };
 
     manager.on('enter', updateRoom);
