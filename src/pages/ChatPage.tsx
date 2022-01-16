@@ -144,7 +144,6 @@ const ChatPage = (): JSX.Element => {
     };
 
     const updateChat = (room: Room, chat: Chat) => {
-      console.log('update chat!', chat);
       updateChats((it) => {
         it.set(room.id, [...(it.get(room.id) ?? []), chat]);
 

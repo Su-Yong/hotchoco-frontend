@@ -57,7 +57,6 @@ const ChatRoomContainer = ({ users, chatList, chatRoomId, onBack }: ChatRoomCont
   const clientUser = useClientUser();
 
   const background = useMemo(() => theme.palette.backgroundPrimary.main, [theme]);
-
   const profiles = useMemo(() => {
     const result = new Map<string, JSX.Element>();
 
@@ -95,6 +94,7 @@ const ChatRoomContainer = ({ users, chatList, chatRoomId, onBack }: ChatRoomCont
         <ChatHeader chatRoomId={chatRoomId} onBack={onBack} />
       </div>
       <Virtuoso
+        alignToBottom
         data={chatList}
         components={{
           Header: () => <div className={topStyle} />,
@@ -109,6 +109,8 @@ const ChatRoomContainer = ({ users, chatList, chatRoomId, onBack }: ChatRoomCont
           enter: (velocity) => Math.abs(velocity) > VELOCITY_BOUNDARY,
           exit: (velocity) => Math.abs(velocity) < VELOCITY_BOUNDARY - 50,
         }}
+        atBottomThreshold={120}
+        followOutput={'smooth'}
         initialTopMostItemIndex={chatList.length - 1}
         computeItemKey={computeItemKey}
         itemContent={(_, chat) => (

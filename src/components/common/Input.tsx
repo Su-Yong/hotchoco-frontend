@@ -63,8 +63,6 @@ const Input = ({ typographyType = 'body3', icon, help, children, ...props }: Pro
     };
   }, [typographyType, theme.typography]);
 
-  console.log(props);
-
   return (
     <input
       {...props}
