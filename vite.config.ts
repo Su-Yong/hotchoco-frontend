@@ -5,10 +5,8 @@ import css from 'rollup-plugin-css-only';
 
 import { defineConfig, loadEnv } from 'vite';
 
-const host = 'localhost'
-
 export default ({ mode }) => {
-  process.env = { ...process.env, ...loadEnv(mode, process.cwd()) };
+  process.env = { ...process.env, ...loadEnv(mode, process.cwd(), '') };
 
   return defineConfig({
     server: {

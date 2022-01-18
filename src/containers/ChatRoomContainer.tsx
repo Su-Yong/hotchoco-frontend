@@ -15,6 +15,8 @@ import ChatHeader from '@/components/ChatHeader';
 import { useTheme } from '@/theme';
 import style from '@/utils/style';
 import ChatBubblePlaceholder from '@/components/placeholder/ChatBubblePlaceholder';
+import ChatInput from '@/components/ChatInput';
+import { styled } from '@linaria/react';
 
 const VELOCITY_BOUNDARY = 600;
 
@@ -37,7 +39,15 @@ const headerStyle = css`
   right: 0;
 `;
 
-const topStyle = css`
+const inputStyle = css`
+  position: absolute;
+  z-index: 10;
+  bottom: 0;
+  left: 0;
+  right: 0;
+`;
+
+const gapElement = styled.div`
   width: 100%;
   height: 56px;
 `;
@@ -97,7 +107,8 @@ const ChatRoomContainer = ({ users, chatList, chatRoomId, onBack }: ChatRoomCont
         alignToBottom
         data={chatList}
         components={{
-          Header: () => <div className={topStyle} />,
+          Header: gapElement,
+          Footer: gapElement,
           ScrollSeekPlaceholder: ({ index }) => <ChatBubblePlaceholder mine={chatList[index].sender.id === clientUser.id} animationType={'wave'} />,
         }}
         scrollSeekConfiguration={{
@@ -127,6 +138,9 @@ const ChatRoomContainer = ({ users, chatList, chatRoomId, onBack }: ChatRoomCont
           );
       }}
       />
+      <div className={inputStyle}>
+        <ChatInput />
+      </div>
     </div>
   );
 };
