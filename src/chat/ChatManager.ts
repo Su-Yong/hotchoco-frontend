@@ -71,7 +71,7 @@ class ChatManager extends EventEmitter<Events> {
 
     randomUpdateRooms();
     // randomTimeout(randomUpdateRooms);
-    randomTimeout(randomUpdateMessage, 3000, 1000);
+    randomTimeout(randomUpdateMessage, 1000, 500);
   }
 
   send<CHAT extends Chat>(chat: CHAT) {}

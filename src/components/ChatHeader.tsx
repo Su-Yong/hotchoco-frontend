@@ -39,7 +39,7 @@ const iconStyle = css`
 
   transition: transform 0.25s, background 0.25s;
 
-  @media (hover: hover) {
+  @media (pointer: fine) {
     &:hover {
       transform: translateX(-4px);
     }
@@ -49,7 +49,7 @@ const iconStyle = css`
     }
   }
 
-  @media (hover: none) {
+  @media (pointer: coarse), (pointer: none) {
     &:active {
       background: var(--active);
     }

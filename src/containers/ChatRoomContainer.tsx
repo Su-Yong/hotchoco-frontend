@@ -108,17 +108,24 @@ const ChatRoomContainer = ({ users, chatList, chatRoomId, onBack }: ChatRoomCont
         followOutput={'smooth'}
         initialTopMostItemIndex={chatList.length - 1}
         computeItemKey={computeItemKey}
-        itemContent={(_, chat) => (
-          <ChatBubble
-            mine={chat.sender.id === clientUser.id}
-            profile={profiles.get(chat.sender.id)}
-            sender={senders.get(chat.sender.id)}
-            readers={chat.readers}
-            time={new Date(chat.timestamp)}
-          >
-            <TextContent>{chat.content}</TextContent>
-          </ChatBubble>
-        )}
+        itemContent={(index, chat) => {
+          let isHideProfile = false;
+          let isHideSender = false;
+          if (index < chatList.length - 1) isHideProfile = chat.sender.id === chatList[index + 1].sender.id;
+          if (index > 0) isHideSender = chat.sender.id === chatList[index - 1].sender.id;
+
+          return (
+            <ChatBubble
+              mine={chat.sender.id === clientUser.id}
+              profile={isHideProfile ? undefined : profiles.get(chat.sender.id)}
+              sender={isHideSender ? undefined : senders.get(chat.sender.id)}
+              readers={chat.readers}
+              time={new Date(chat.timestamp)}
+            >
+              <TextContent>{chat.content}</TextContent>
+            </ChatBubble>
+          );
+      }}
       />
     </div>
   );

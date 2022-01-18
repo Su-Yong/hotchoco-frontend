@@ -38,7 +38,7 @@ const contentStyle = css`
 
   transition: all 0.1s;
 
-  @media (hover: hover) {
+  @media (pointer: fine) {
     &:hover {
       box-shadow: 0 0 0 4px var(--bubble-accent) inset;
     }
@@ -111,7 +111,7 @@ const ChatBubble = ({ mine, sender, profile, time, readers, children }: PropsWit
   const blackShadowColor = useMemo(() => ColorUtil.alpha(theme.palette.black.main, 0.1), []);
 
   return (
-    <li
+    <div
       className={className(bubbleStyle, !profile ? 'no-profile' : null, mine ? 'mine' : null)}
       style={style({
         '--bubble-background': bubbleColor.main,
@@ -129,7 +129,7 @@ const ChatBubble = ({ mine, sender, profile, time, readers, children }: PropsWit
         <Typography type={'caption1'}>{time?.toLocaleTimeString()}</Typography>
         <Typography type={'caption1'}>{readers?.length ?? 0}</Typography>
       </div>
-    </li>
+    </div>
   );
 };
 
