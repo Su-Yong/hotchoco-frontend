@@ -34,7 +34,7 @@ const containerStyle = css`
 `;
 
 const headerStyle = css`
-  position: fixed;
+  position: absolute;
   z-index: 10;
   top: 0;
   left: 0;
@@ -42,7 +42,7 @@ const headerStyle = css`
 `;
 
 const inputStyle = css`
-  position: fixed;
+  position: absolute;
   z-index: 10;
   bottom: 0;
   left: 0;
