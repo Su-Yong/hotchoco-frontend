@@ -10,7 +10,7 @@ interface Chat {
   content: string;
   readers: User[];
   emotion: Map<string, Emotion>; // string is User's id
-  metadata?: unknown; // JSON
+  metadata?: Record<string, unknown>; // JSON
 }
 
 export default Chat;

@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 
 import { css } from '@linaria/core';
 import { Virtuoso, VirtuosoProps } from 'react-virtuoso';
@@ -15,8 +15,10 @@ import ChatHeader from '@/components/ChatHeader';
 import { useTheme } from '@/theme';
 import style from '@/utils/style';
 import ChatBubblePlaceholder from '@/components/placeholder/ChatBubblePlaceholder';
-import ChatInput from '@/components/ChatInput';
+import ChatInput, { ChatInputProps } from '@/components/ChatInput';
 import { styled } from '@linaria/react';
+import useManager from '@/hooks/useManager';
+import RequestableChat from '@/types/request/RequestableChat';
 
 const VELOCITY_BOUNDARY = 600;
 
@@ -65,6 +67,25 @@ export interface ChatRoomContainerProps {
 const ChatRoomContainer = ({ users, chatList, chatRoomId, onBack }: ChatRoomContainerProps): JSX.Element => {
   const theme = useTheme();
   const clientUser = useClientUser();
+  const manager = useManager();
+
+  const room = useMemo(() => manager.getRooms().find(({ id }) => id === chatRoomId), [chatRoomId, manager]);
+
+  const onSubmit: NonNullable<ChatInputProps['onSubmit']> = useCallback((chatdata) => {
+    if (room) {
+      const chat: RequestableChat<unknown> = {
+        room,
+        sender: clientUser,
+        ...chatdata,
+      };
+
+      manager.send(chat);
+
+      return true;
+    }
+
+    return false;
+  }, [manager]);
 
   const background = useMemo(() => theme.palette.backgroundPrimary.main, [theme]);
   const profiles = useMemo(() => {
@@ -139,7 +160,7 @@ const ChatRoomContainer = ({ users, chatList, chatRoomId, onBack }: ChatRoomCont
       }}
       />
       <div className={inputStyle}>
-        <ChatInput />
+        <ChatInput onSubmit={onSubmit} />
       </div>
     </div>
   );

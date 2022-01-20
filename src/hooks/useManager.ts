@@ -1,4 +1,4 @@
-import ChatManager from '@/chat/ChatManager';
+import ChatManager from '@/ChatManager';
 import { useMemo } from 'react';
 
 const dummy = new ChatManager();

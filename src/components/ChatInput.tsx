@@ -4,9 +4,10 @@ import AddIcon from '@iconify/icons-mdi/add';
 import SendIcon from '@iconify/icons-mdi/send';
 import { useTheme } from '@/theme';
 import style from '@/utils/style';
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useMemo, useRef, useState } from 'react';
 import ColorUtil from '@/utils/Color';
 import TextareaAutosize from 'react-textarea-autosize';
+import RequestableChat from '@/types/request/RequestableChat';
 
 const containerStyle = css`
   min-height: 56px;
@@ -52,14 +53,34 @@ const textAreaStyle = css`
   flex: 1;
 `;
 
-const ChatInput = (): JSX.Element => {
+export interface ChatInputProps {
+  onSubmit?: (chatdata: Omit<RequestableChat<unknown>, 'sender' | 'room'>) => boolean;
+}
+
+const ChatInput = ({ onSubmit }: ChatInputProps): JSX.Element => {
   const theme = useTheme();
 
+  const inputRef = useRef<HTMLTextAreaElement>(null);
   const [lineHeight, setLineHeight] = useState<string | number>('auto');
 
   const onHeightChange = useCallback((rowHeight: number) => {
     setLineHeight(rowHeight <= 24 ? '24px' : 'auto');
   }, []);
+
+  const onClickSend = useCallback(() => {
+    if (!inputRef.current) return;
+    const value = inputRef.current.value;
+
+    if (value) {
+      const result = onSubmit?.({
+        content: value,
+      });
+
+      if (result) {
+        inputRef.current.value = '';
+      }
+    }
+  }, [inputRef]);
 
   const background = useMemo(() => ColorUtil.alpha(theme.palette.backgroundSecondary.main, 0.5), [theme]);
   const buttonBackground = useMemo(() => ColorUtil.alpha(ColorUtil.darken(theme.palette.backgroundSecondary.main, 0.2), 0.5), [theme]);
@@ -81,6 +102,7 @@ const ChatInput = (): JSX.Element => {
     >
       <Icon icon={AddIcon} className={buttonStyle} />
       <TextareaAutosize
+        ref={inputRef}
         maxRows={6}
         className={textAreaStyle}
         onHeightChange={onHeightChange}
@@ -92,6 +114,7 @@ const ChatInput = (): JSX.Element => {
           '--button-background': primaryColor,
           '--button-color': primaryText,
         })}
+        onClick={onClickSend}
       />
     </div>
   );

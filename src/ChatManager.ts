@@ -1,6 +1,10 @@
 import ChatEvent from '@/events/ChatEvent';
 import RoomEvent from '@/events/RoomEvent';
 import Chat from '@/types/Chat';
+import { isImageChat } from '@/types/request/ImageChat';
+import { isReplyChat } from '@/types/request/ReplyChat';
+import RequestableChat from '@/types/request/RequestableChat';
+import { isTextChat } from '@/types/request/TextChat';
 import Room from '@/types/Room';
 import ColorUtil from '@/utils/Color';
 import dummy from '@/utils/dummy';
@@ -74,7 +78,23 @@ class ChatManager extends EventEmitter<Events> {
     randomTimeout(randomUpdateMessage, 1000, 500);
   }
 
-  send<CHAT extends Chat>(chat: CHAT) {}
+  send<CHAT extends RequestableChat<unknown>>(chat: CHAT) {
+    const newChat: Chat = {
+      id: nanoid(),
+      sender: chat.sender,
+      room: chat.room,
+      timestamp: new Date().getTime(),
+      content: '',
+      readers: chat.room.users.slice(0, ~~(Math.random() * chat.room.users.length)),
+      emotion: new Map(),
+    };
+
+    if (isTextChat(chat)) newChat.content = chat.content.toString();
+    if (isReplyChat(chat)) newChat.metadata = { ...newChat.metadata, reply: chat.target.id };
+    if (isImageChat(chat)) newChat.metadata = { ...newChat.metadata, todo: true }; // TODO: insert image data
+
+    this.emit('chat', chat.room, newChat);
+  }
 
   getRooms() {
     // TODO
