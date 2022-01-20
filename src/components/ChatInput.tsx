@@ -79,6 +79,7 @@ const ChatInput = ({ onFile, onSubmit }: ChatInputProps): JSX.Element => {
 
       if (result) {
         inputRef.current.value = '';
+        inputRef.current.focus();
       }
     }
   }, [inputRef, onSubmit]);

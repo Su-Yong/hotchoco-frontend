@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { css } from '@linaria/core';
 import { Transition, TransitionGroup, CSSTransition } from 'react-transition-group';
@@ -14,6 +14,7 @@ import Chat from '@/types/Chat';
 import { useAtom } from 'jotai';
 import { chats } from '@/store/chat';
 import { Route, Router, Switch, useLocation } from 'wouter';
+import { useTheme } from '@/theme';
 
 const containerStyle = css`
   width: 100%;
@@ -60,15 +61,20 @@ position: absolute;
 
 const roomListStyle = css`
   flex: 1;
+  height: 100%;
+  background: var(--background);
 
-  @media (min-width: 600px) {
-    max-width: 360px;
-  }
+  transition: transform 0.5s, filter 0.5s;
 
   @media (max-width: 600px) {
     &[data-in-room='true'] {
-      display: none;
+      transform: translateX(-5%);
+      filter: brightness(50%);
     }
+  }
+
+  @media (min-width: 600px) {
+    max-width: 360px;
   }
 `;
 
@@ -93,6 +99,7 @@ const roomContainerStyle = css`
 `;
 
 const ChatPage = (): JSX.Element => {
+  const theme = useTheme();
   const manager = useManager();
   const [roomId, setRoom] = useRoom();
   const [location] = useLocation();
@@ -111,6 +118,10 @@ const ChatPage = (): JSX.Element => {
     // 이전까지는 컴포넌트를 선택해야 리렌더링이 되었음.
     const updateRoom = () => {
       const newRooms: Room[] = [...manager.getRooms()];
+
+      if (roomId && !newRooms.find(({ id }) => id === roomId)) {
+        onBack();
+      }
 
       setRooms(newRooms);
     };
@@ -133,11 +144,16 @@ const ChatPage = (): JSX.Element => {
       manager.removeListener('exit', updateRoom);
       manager.removeListener('chat', updateChat);
     };
-  }, [manager, roomId]);
+  }, [manager, roomId, onBack]);
 
   return (
-    <div className={containerStyle}>
-      <div className={roomListStyle}>
+    <div
+      className={containerStyle}
+      style={style({
+        '--background': theme.palette.backgroundPrimary.main,
+      })}
+    >
+      <div className={roomListStyle} data-in-room={!!roomId}>
         <RoomListContainer rooms={rooms} />
       </div>
       <TransitionGroup className={roomContainerStyle} data-in-room={!!roomId}>
@@ -145,17 +161,17 @@ const ChatPage = (): JSX.Element => {
           in
           key={location}
           classNames={'room'}
-          timeout={500}
+          timeout={250}
         >
           <Switch location={location}>
             <Route path={'/chat'}>
-              <div className={emptyStyle}>채팅방을 선택해주세요.</div>  
+              <div className={emptyStyle}>채팅방을 선택해주세요.</div>
             </Route>
             <Route path={'/chat/:room_id'}>
               {({ room_id: roomId }) => (
-                  <div className={roomStyle}>
-                    <ChatRoomContainer users={dummy.users} chatRoomId={roomId} chatList={allChats.get(roomId) ?? []} onBack={onBack} />
-                  </div>
+                <div className={roomStyle}>
+                  <ChatRoomContainer users={dummy.users} chatRoomId={roomId} chatList={allChats.get(roomId) ?? []} onBack={onBack} />
+                </div>
               )}
             </Route>
           </Switch>
@@ -166,21 +182,3 @@ const ChatPage = (): JSX.Element => {
 };
 
 export default ChatPage;
-
-/*
-
-      <div
-        className={roomStyle}
-        style={style({
-          '--is-visible': roomId ? 'visible' : 'hidden',
-        })}
-      >
-        <Transition in={transition} timeout={250}>
-          {(state: string) => (
-            <div className={transitionStyle} data-state={state}>
-              {roomId && <ChatRoomContainer users={dummy.users} chatRoomId={roomId} chatList={allChats.get(roomId) ?? []} onBack={onBack} />}
-            </div>
-          )}
-        </Transition>
-      </div>
-*/
