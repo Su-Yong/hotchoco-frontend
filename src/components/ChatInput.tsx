@@ -54,10 +54,11 @@ const textAreaStyle = css`
 `;
 
 export interface ChatInputProps {
+  onFile?: () => void;
   onSubmit?: (chatdata: Omit<RequestableChat<unknown>, 'sender' | 'room'>) => boolean;
 }
 
-const ChatInput = ({ onSubmit }: ChatInputProps): JSX.Element => {
+const ChatInput = ({ onFile, onSubmit }: ChatInputProps): JSX.Element => {
   const theme = useTheme();
 
   const inputRef = useRef<HTMLTextAreaElement>(null);
@@ -80,7 +81,7 @@ const ChatInput = ({ onSubmit }: ChatInputProps): JSX.Element => {
         inputRef.current.value = '';
       }
     }
-  }, [inputRef]);
+  }, [inputRef, onSubmit]);
 
   const background = useMemo(() => ColorUtil.alpha(theme.palette.backgroundSecondary.main, 0.5), [theme]);
   const buttonBackground = useMemo(() => ColorUtil.alpha(ColorUtil.darken(theme.palette.backgroundSecondary.main, 0.2), 0.5), [theme]);
@@ -100,7 +101,7 @@ const ChatInput = ({ onSubmit }: ChatInputProps): JSX.Element => {
         '--line-height': lineHeight,
       })}
     >
-      <Icon icon={AddIcon} className={buttonStyle} />
+      <Icon icon={AddIcon} className={buttonStyle} onClick={onFile} />
       <TextareaAutosize
         ref={inputRef}
         maxRows={6}
