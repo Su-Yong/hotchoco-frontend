@@ -12,7 +12,7 @@ import { useCallback, useState } from 'react';
 
 const containerStyle = css`
   max-width: 60%;
-  height: 100vh;
+  height: 100%;
   overflow: auto;
 `;
 

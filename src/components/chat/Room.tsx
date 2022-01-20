@@ -36,7 +36,7 @@ const roomStyle = css`
     transition: background 0.25s, height 0.25s, left 0.25s;
   }
 
-  @media (hover: hover) {
+  @media (pointer: fine) {
     &:hover {
       transform: translateX(8px);
       background: var(--background);
@@ -47,7 +47,7 @@ const roomStyle = css`
     }
   }
 
-  @media (hover: none) {
+  @media (pointer: coarse), (pointer: none) {
     &:active {
       background: var(--pressed-background);
     }
@@ -55,7 +55,7 @@ const roomStyle = css`
 `;
 
 const activeRoomStyle = css`
-  @media (hover: hover) {
+  @media (pointer: fine) {
     transform: translateX(8px);
     padding-right: 16px;
 
@@ -65,7 +65,7 @@ const activeRoomStyle = css`
     }
   }
 
-  @media (hover: none) {
+  @media (pointer: coarse), (pointer: none) {
     background: var(--pressed-background);
 
     &::before {

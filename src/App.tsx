@@ -12,8 +12,8 @@ import { themeObject } from '@/store/theme';
 import ChatPage from './pages/ChatPage';
 
 const bodyStyle = css`
-  width: 100vw;
-  height: 100vh;
+  width: 100%;
+  height: 100%;
 
   display: flex;
   flex-flow: column;

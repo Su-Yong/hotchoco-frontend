@@ -1,17 +1,17 @@
-class Media {
+class Media<MimeType extends `${string}/${string}`> {
   private file: File;
-  private type: string;
+  private type: MimeType;
 
   constructor(file: File) {
     this.file = file;
-    this.type = this.file.type;
+    this.type = this.file.type as MimeType;
   }
 
   thumbnail() {
     // TODO
   }
 
-  get mime() {
+  get mime(): MimeType {
     return this.type;
   }
 }

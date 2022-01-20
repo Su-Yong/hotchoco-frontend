@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 
 import { css } from '@linaria/core';
 import { Virtuoso, VirtuosoProps } from 'react-virtuoso';
@@ -15,6 +15,10 @@ import ChatHeader from '@/components/ChatHeader';
 import { useTheme } from '@/theme';
 import style from '@/utils/style';
 import ChatBubblePlaceholder from '@/components/placeholder/ChatBubblePlaceholder';
+import ChatInput, { ChatInputProps } from '@/components/ChatInput';
+import { styled } from '@linaria/react';
+import useManager from '@/hooks/useManager';
+import RequestableChat from '@/types/request/RequestableChat';
 
 const VELOCITY_BOUNDARY = 600;
 
@@ -30,14 +34,22 @@ const containerStyle = css`
 `;
 
 const headerStyle = css`
-  position: absolute;
+  position: fixed;
   z-index: 10;
   top: 0;
   left: 0;
   right: 0;
 `;
 
-const topStyle = css`
+const inputStyle = css`
+  position: fixed;
+  z-index: 10;
+  bottom: 0;
+  left: 0;
+  right: 0;
+`;
+
+const gapElement = styled.div`
   width: 100%;
   height: 56px;
 `;
@@ -55,6 +67,25 @@ export interface ChatRoomContainerProps {
 const ChatRoomContainer = ({ users, chatList, chatRoomId, onBack }: ChatRoomContainerProps): JSX.Element => {
   const theme = useTheme();
   const clientUser = useClientUser();
+  const manager = useManager();
+
+  const room = useMemo(() => manager.getRooms().find(({ id }) => id === chatRoomId), [chatRoomId, manager]);
+
+  const onSubmit: NonNullable<ChatInputProps['onSubmit']> = useCallback((chatdata) => {
+    if (room) {
+      const chat: RequestableChat<unknown> = {
+        room,
+        sender: clientUser,
+        ...chatdata,
+      };
+
+      manager.send(chat);
+
+      return true;
+    }
+
+    return false;
+  }, [manager]);
 
   const background = useMemo(() => theme.palette.backgroundPrimary.main, [theme]);
   const profiles = useMemo(() => {
@@ -97,7 +128,8 @@ const ChatRoomContainer = ({ users, chatList, chatRoomId, onBack }: ChatRoomCont
         alignToBottom
         data={chatList}
         components={{
-          Header: () => <div className={topStyle} />,
+          Header: gapElement,
+          Footer: gapElement,
           ScrollSeekPlaceholder: ({ index }) => <ChatBubblePlaceholder mine={chatList[index].sender.id === clientUser.id} animationType={'wave'} />,
         }}
         scrollSeekConfiguration={{
@@ -108,18 +140,28 @@ const ChatRoomContainer = ({ users, chatList, chatRoomId, onBack }: ChatRoomCont
         followOutput={'smooth'}
         initialTopMostItemIndex={chatList.length - 1}
         computeItemKey={computeItemKey}
-        itemContent={(_, chat) => (
-          <ChatBubble
-            mine={chat.sender.id === clientUser.id}
-            profile={profiles.get(chat.sender.id)}
-            sender={senders.get(chat.sender.id)}
-            readers={chat.readers}
-            time={new Date(chat.timestamp)}
-          >
-            <TextContent>{chat.content}</TextContent>
-          </ChatBubble>
-        )}
+        itemContent={(index, chat) => {
+          let isHideProfile = false;
+          let isHideSender = false;
+          if (index < chatList.length - 1) isHideProfile = chat.sender.id === chatList[index + 1].sender.id;
+          if (index > 0) isHideSender = chat.sender.id === chatList[index - 1].sender.id;
+
+          return (
+            <ChatBubble
+              mine={chat.sender.id === clientUser.id}
+              profile={isHideProfile ? undefined : profiles.get(chat.sender.id)}
+              sender={isHideSender ? undefined : senders.get(chat.sender.id)}
+              readers={chat.readers}
+              time={new Date(chat.timestamp)}
+            >
+              <TextContent>{chat.content}</TextContent>
+            </ChatBubble>
+          );
+      }}
       />
+      <div className={inputStyle}>
+        <ChatInput onSubmit={onSubmit} />
+      </div>
     </div>
   );
 };
