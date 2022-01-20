@@ -57,11 +57,13 @@ const iconStyle = css`
 `;
 
 export interface ChatHeaderProps {
-  chatRoomId: string;
+  title: string;
+  enableBack?: boolean;
+
   onBack?: () => void;
 }
 
-const ChatHeader = ({ chatRoomId, onBack }: ChatHeaderProps): JSX.Element => {
+const ChatHeader = ({ title, enableBack = true, onBack }: ChatHeaderProps): JSX.Element => {
   const theme = useTheme();
 
   const background = useMemo(() => ColorUtil.alpha(theme.palette.backgroundSecondary.main, 0.3), [theme]);
@@ -75,10 +77,12 @@ const ChatHeader = ({ chatRoomId, onBack }: ChatHeaderProps): JSX.Element => {
         '--active': active,
       })}
     >
-      <Typography type={'h4'} onClick={onBack} className={centerStyle}>
+      {enableBack && (
+        <Typography type={'h4'} onClick={onBack} className={centerStyle}>
         <Icon icon={ArrowLeft} className={iconStyle} />
-      </Typography>
-      <Typography type={'h5'}>{chatRoomId}</Typography>
+        </Typography>
+      )}
+      <Typography type={'h5'}>{title}</Typography>
     </div>
   );
 };

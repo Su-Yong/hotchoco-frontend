@@ -22,6 +22,13 @@ const profileStyle = css`
   grid-row: 1 / span 2;
   grid-column: 1;
 
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+
+  height: 48px;
+
   .mine > & {
     grid-column: 3;
   }
@@ -75,6 +82,8 @@ const bubbleStyle = css`
   padding: 8px;
   padding-top: 0px;
 
+  position: relative;
+
   &.mine {
     justify-items: end;
     grid-template-columns: 1fr auto 48px;
@@ -83,7 +92,7 @@ const bubbleStyle = css`
   &.no-profile::before {
     content: '';
     width: 48px;
-    height: 48px;
+    height: 24px;
     grid-row: 2;
     grid-column: 1;
   }

@@ -1,7 +1,7 @@
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 
 import { css } from '@linaria/core';
-import { Transition, TransitionGroup, CSSTransition } from 'react-transition-group';
+import { TransitionGroup, CSSTransition } from 'react-transition-group';
 
 import ChatRoomContainer from '@/containers/ChatRoomContainer';
 import RoomListContainer from '@/containers/RoomListContainer';
@@ -13,7 +13,7 @@ import Room from '@/types/Room';
 import Chat from '@/types/Chat';
 import { useAtom } from 'jotai';
 import { chats } from '@/store/chat';
-import { Route, Router, Switch, useLocation } from 'wouter';
+import { Route, Switch, useLocation } from 'wouter';
 import { useTheme } from '@/theme';
 
 const containerStyle = css`
@@ -64,7 +64,7 @@ const roomListStyle = css`
   height: 100%;
   background: var(--background);
 
-  transition: transform 0.5s, filter 0.5s;
+  transition: transform 0.25s, filter 0.25s;
 
   @media (max-width: 600px) {
     &[data-in-room='true'] {
@@ -159,6 +159,7 @@ const ChatPage = (): JSX.Element => {
       <TransitionGroup className={roomContainerStyle} data-in-room={!!roomId}>
         <CSSTransition
           in
+          unmountOnExit
           key={location}
           classNames={'room'}
           timeout={250}

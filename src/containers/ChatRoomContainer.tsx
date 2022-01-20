@@ -122,7 +122,7 @@ const ChatRoomContainer = ({ users, chatList, chatRoomId, onBack }: ChatRoomCont
       })}
     >
       <div className={headerStyle}>
-        <ChatHeader chatRoomId={chatRoomId} onBack={onBack} />
+        <ChatHeader title={room?.name ?? '알 수 없음'} onBack={onBack} />
       </div>
       <Virtuoso
         alignToBottom
@@ -130,11 +130,6 @@ const ChatRoomContainer = ({ users, chatList, chatRoomId, onBack }: ChatRoomCont
         components={{
           Header: gapElement,
           Footer: gapElement,
-          ScrollSeekPlaceholder: ({ index }) => <ChatBubblePlaceholder mine={chatList[index].sender.id === clientUser.id} animationType={'wave'} />,
-        }}
-        scrollSeekConfiguration={{
-          enter: (velocity) => Math.abs(velocity) > VELOCITY_BOUNDARY,
-          exit: (velocity) => Math.abs(velocity) < VELOCITY_BOUNDARY - 50,
         }}
         atBottomThreshold={120}
         followOutput={'smooth'}
