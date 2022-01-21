@@ -10,7 +10,7 @@ const useRoom = (): [string | Nullish, (roomId?: string) => void] => {
     if (id) {
       setLocation(`/chat/${id}`);
     } else {
-      setLocation('/chat');
+      window.history.back();
     }
   }, []);
 
