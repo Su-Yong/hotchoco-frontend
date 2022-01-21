@@ -11,7 +11,7 @@ import useClientUser from '@/hooks/useClientUser';
 import Chat from '@/types/Chat';
 import User from '@/types/User';
 import toBigInt from '@/utils/toBigInt';
-import ChatHeader from '@/components/ChatHeader';
+import Header from '@/components/Header';
 import { useTheme } from '@/theme';
 import style from '@/utils/style';
 import ChatBubblePlaceholder from '@/components/placeholder/ChatBubblePlaceholder';
@@ -19,8 +19,10 @@ import ChatInput, { ChatInputProps } from '@/components/ChatInput';
 import { styled } from '@linaria/react';
 import useManager from '@/hooks/useManager';
 import RequestableChat from '@/types/request/RequestableChat';
+import IconButton from '@/components/common/IconButton';
 
-const VELOCITY_BOUNDARY = 600;
+import ArrowLeft from '@iconify/icons-mdi/arrow-left';
+import Menu from '@iconify/icons-mdi/menu';
 
 const containerStyle = css`
   width: 100%;
@@ -34,7 +36,7 @@ const containerStyle = css`
 `;
 
 const headerStyle = css`
-  position: fixed;
+  position: absolute;
   z-index: 10;
   top: 0;
   left: 0;
@@ -42,7 +44,7 @@ const headerStyle = css`
 `;
 
 const inputStyle = css`
-  position: fixed;
+  position: absolute;
   z-index: 10;
   bottom: 0;
   left: 0;
@@ -71,21 +73,24 @@ const ChatRoomContainer = ({ users, chatList, chatRoomId, onBack }: ChatRoomCont
 
   const room = useMemo(() => manager.getRooms().find(({ id }) => id === chatRoomId), [chatRoomId, manager]);
 
-  const onSubmit: NonNullable<ChatInputProps['onSubmit']> = useCallback((chatdata) => {
-    if (room) {
-      const chat: RequestableChat<unknown> = {
-        room,
-        sender: clientUser,
-        ...chatdata,
-      };
+  const onSubmit: NonNullable<ChatInputProps['onSubmit']> = useCallback(
+    (chatdata) => {
+      if (room) {
+        const chat: RequestableChat<unknown> = {
+          room,
+          sender: clientUser,
+          ...chatdata,
+        };
 
-      manager.send(chat);
+        manager.send(chat);
 
-      return true;
-    }
+        return true;
+      }
 
-    return false;
-  }, [manager]);
+      return false;
+    },
+    [manager],
+  );
 
   const background = useMemo(() => theme.palette.backgroundPrimary.main, [theme]);
   const profiles = useMemo(() => {
@@ -122,7 +127,16 @@ const ChatRoomContainer = ({ users, chatList, chatRoomId, onBack }: ChatRoomCont
       })}
     >
       <div className={headerStyle}>
-        <ChatHeader chatRoomId={chatRoomId} onBack={onBack} />
+        <Header
+          title={room?.name ?? '알 수 없음'}
+          left={
+            <>
+              <IconButton icon={ArrowLeft} onClick={onBack} />
+              <Profile url={room?.image} size={36} />
+            </>
+          }
+          right={<IconButton icon={Menu} />}
+        />
       </div>
       <Virtuoso
         alignToBottom
@@ -130,11 +144,6 @@ const ChatRoomContainer = ({ users, chatList, chatRoomId, onBack }: ChatRoomCont
         components={{
           Header: gapElement,
           Footer: gapElement,
-          ScrollSeekPlaceholder: ({ index }) => <ChatBubblePlaceholder mine={chatList[index].sender.id === clientUser.id} animationType={'wave'} />,
-        }}
-        scrollSeekConfiguration={{
-          enter: (velocity) => Math.abs(velocity) > VELOCITY_BOUNDARY,
-          exit: (velocity) => Math.abs(velocity) < VELOCITY_BOUNDARY - 50,
         }}
         atBottomThreshold={120}
         followOutput={'smooth'}
@@ -157,7 +166,7 @@ const ChatRoomContainer = ({ users, chatList, chatRoomId, onBack }: ChatRoomCont
               <TextContent>{chat.content}</TextContent>
             </ChatBubble>
           );
-      }}
+        }}
       />
       <div className={inputStyle}>
         <ChatInput onSubmit={onSubmit} />

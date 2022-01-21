@@ -1,16 +1,16 @@
-import { useCallback } from 'react';
+import Nullish from '@/types/Nullish';
+import { useCallback, useMemo } from 'react';
 import { useLocation } from 'wouter';
-import useQuery from './useQuery';
 
-const useRoom = (): [string | null, (roomId?: string) => void] => {
-  const [, setLocation] = useLocation();
-  const [, roomId] = useQuery('room');
+const useRoom = (): [string | Nullish, (roomId?: string) => void] => {
+  const [location, setLocation] = useLocation();
+  const roomId = useMemo(() => location.match(/chat\/([^\/]+)/)?.at(1), [location]);
 
   const setRoom = useCallback((id?: string) => {
     if (id) {
-      setLocation(`/chat?room=${id}`);
+      setLocation(`/chat/${id}`);
     } else {
-      setLocation('/chat');
+      window.history.back();
     }
   }, []);
 

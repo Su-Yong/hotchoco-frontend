@@ -1,9 +1,10 @@
 import React from 'react';
 import { css } from '@linaria/core';
+import style from '@/utils/style';
 
 const profileStyle = css`
-  width: 48px;
-  height: 48px;
+  width: var(--size);
+  height: var(--size);
   border-radius: 24px;
 
   user-select: none;
@@ -11,8 +12,19 @@ const profileStyle = css`
 
 export interface ProfileProps {
   url?: string;
+  size?: number;
 }
 
-const Profile = ({ url }: ProfileProps): JSX.Element => <img className={profileStyle} src={url} />;
+const Profile = React.memo(
+  ({ url, size = 48 }: ProfileProps): JSX.Element => (
+    <img
+      style={style({
+        '--size': `${size}px`,
+      })}
+      className={profileStyle}
+      src={url}
+    />
+  ),
+);
 
 export default Profile;

@@ -7,9 +7,32 @@ import RoomType from '@/types/Room';
 import UnreadBadge from '@/components/chat/UnreadBadge';
 import useRoom from '@/hooks/useRoom';
 import { css } from '@linaria/core';
+import { styled } from '@linaria/react';
+import Header from '@/components/Header';
+import IconButton from '@/components/common/IconButton';
+
+import SettingIcon from '@iconify/icons-mdi/settings-outline';
+import SearchIcon from '@iconify/icons-mdi/search';
 
 const containerStyle = css`
+  width: 100%;
+  height: 100%;
+
   overflow-x: hidden;
+
+  position: relative;
+`;
+
+const headerStyle = css`
+  position: absolute;
+  left: 0;
+  right: 0;
+
+  z-index: 20;
+`;
+
+const gapElement = styled.div`
+  height: 56px;
 `;
 
 const computeItemKey: VirtuosoProps<RoomType>['computeItemKey'] = (_, { id }) => id;
@@ -38,23 +61,39 @@ const RoomListContainer = ({ rooms }: RoomListContainerProps): JSX.Element => {
   }, [rooms]);
 
   return (
-    <Virtuoso
-      className={containerStyle}
-      data={rooms}
-      computeItemKey={computeItemKey}
-      itemContent={(_, room) => (
-        <div onClick={() => setRoom(room.id)}>
-          <Room
-            name={room.name}
-            description={room.lastChat?.content ?? ''}
-            image={images.get(room.id)}
-            info={room.lastChat?.timestamp ? new Date(room.lastChat.timestamp).toLocaleString() : ''}
-            actived={selectRoom?.id === room.id}
-            badge={(room.unreadChat ?? 0) > 0 ? <UnreadBadge count={room.unreadChat ?? 0} /> : undefined}
-          />
-        </div>
-      )}
-    />
+    <div className={containerStyle}>
+      <div className={headerStyle}>
+        <Header
+          title={`채팅 (${rooms.length})`}
+          right={
+            <>
+              <IconButton icon={SearchIcon} />
+              <IconButton icon={SettingIcon} />
+            </>
+          }
+        />
+      </div>
+      <Virtuoso
+        data={rooms}
+        computeItemKey={computeItemKey}
+        components={{
+          Header: gapElement,
+          Footer: gapElement,
+        }}
+        itemContent={(_, room) => (
+          <div onClick={() => setRoom(room.id)}>
+            <Room
+              name={room.name}
+              description={room.lastChat?.content ?? ''}
+              image={images.get(room.id)}
+              info={room.lastChat?.timestamp ? new Date(room.lastChat.timestamp).toLocaleString() : ''}
+              actived={selectRoom?.id === room.id}
+              badge={(room.unreadChat ?? 0) > 0 ? <UnreadBadge count={room.unreadChat ?? 0} /> : undefined}
+            />
+          </div>
+        )}
+      />
+    </div>
   );
 };
 

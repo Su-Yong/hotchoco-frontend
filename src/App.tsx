@@ -28,7 +28,7 @@ const App = () => {
     <ThemeProvider theme={theme}>
       <div className={bodyStyle}>
         <Route path={'/login'} component={LoginPage} />
-        <Route path={'/chat'} component={ChatPage} />
+        <Route path={'/chat/:rest*'} component={ChatPage} />
         <Route path={'/test'} component={TestPage} />
         <Route component={ErrorPage} />
       </div>

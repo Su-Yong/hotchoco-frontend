@@ -5,7 +5,7 @@ import SendIcon from '@iconify/icons-mdi/send';
 import { useTheme } from '@/theme';
 import style from '@/utils/style';
 import { useCallback, useMemo, useRef, useState } from 'react';
-import ColorUtil from '@/utils/Color';
+import ColorUtil, { Color } from '@/utils/Color';
 import TextareaAutosize from 'react-textarea-autosize';
 import RequestableChat from '@/types/request/RequestableChat';
 
@@ -79,13 +79,14 @@ const ChatInput = ({ onFile, onSubmit }: ChatInputProps): JSX.Element => {
 
       if (result) {
         inputRef.current.value = '';
+        inputRef.current.focus();
       }
     }
   }, [inputRef, onSubmit]);
 
   const background = useMemo(() => ColorUtil.alpha(theme.palette.backgroundSecondary.main, 0.5), [theme]);
-  const buttonBackground = useMemo(() => ColorUtil.alpha(ColorUtil.darken(theme.palette.backgroundSecondary.main, 0.2), 0.5), [theme]);
-  const inputBackground = useMemo(() => ColorUtil.alpha(ColorUtil.darken(theme.palette.backgroundSecondary.main, 0.3), 0.5), [theme]);
+  const buttonBackground = useMemo(() => Color(theme.palette.backgroundSecondary.main).darken(0.2).alpha(0.5).get(), [theme]);
+  const inputBackground = useMemo(() => Color(theme.palette.backgroundSecondary.main).darken(0.3).alpha(0.5).get(), [theme]);
   const buttonColor = useMemo(() => theme.palette.backgroundSecondary.main, [theme]);
   const primaryColor = useMemo(() => theme.palette.primary.main, [theme]);
   const primaryText = useMemo(() => theme.palette.primary.contrastText, [theme]);
@@ -102,12 +103,7 @@ const ChatInput = ({ onFile, onSubmit }: ChatInputProps): JSX.Element => {
       })}
     >
       <Icon icon={AddIcon} className={buttonStyle} onClick={onFile} />
-      <TextareaAutosize
-        ref={inputRef}
-        maxRows={6}
-        className={textAreaStyle}
-        onHeightChange={onHeightChange}
-      />
+      <TextareaAutosize ref={inputRef} maxRows={6} className={textAreaStyle} onHeightChange={onHeightChange} />
       <Icon
         icon={SendIcon}
         className={buttonStyle}

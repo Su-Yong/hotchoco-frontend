@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState } from 'react';
 
 import { css } from '@linaria/core';
-import { Transition } from 'react-transition-group';
+import { TransitionGroup, CSSTransition } from 'react-transition-group';
 
 import ChatRoomContainer from '@/containers/ChatRoomContainer';
 import RoomListContainer from '@/containers/RoomListContainer';
@@ -13,6 +13,8 @@ import Room from '@/types/Room';
 import Chat from '@/types/Chat';
 import { useAtom } from 'jotai';
 import { chats } from '@/store/chat';
+import { Route, Switch, useLocation } from 'wouter';
+import { useTheme } from '@/theme';
 
 const containerStyle = css`
   width: 100%;
@@ -23,17 +25,24 @@ const containerStyle = css`
 `;
 
 const roomStyle = css`
+  position: absolute;
+  height: 100%;
   flex: 1;
   overflow: hidden;
 
   position: relative;
 
   @media (max-width: 600px) {
-    visibility: var(--is-visible);
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
   }
 `;
 
 const emptyStyle = css`
+  position: absolute;
   width: 100%;
   height: 100%;
 
@@ -42,7 +51,7 @@ const emptyStyle = css`
   justify-content: center;
   align-items: center;
 
-  position: absolute;
+  flex: 1;
 
   @media (max-width: 600px) {
     visibility: hidden;
@@ -50,84 +59,58 @@ const emptyStyle = css`
   }
 `;
 
-const transitionStyle = css`
-  width: 100%;
-  height: 100%;
-
-  transition: opacity 0.25s, transform 0.25s;
-
-  @media (min-width: 600px) {
-    &[data-state='entering'] {
-      opacity: 0;
-      transform: translateX(25%);
-    }
-    &[data-state='entered'] {
-      opacity: 1;
-      transform: translateX(0);
-    }
-    &[data-state='exiting'] {
-      opacity: 0;
-      transform: translateX(-25%);
-    }
-    &[data-state='exited'] {
-      display: none;
-    }
-  }
-
-  @media (max-width: 600px) {
-    &[data-state='entering'] {
-      transform: translateX(100%);
-    }
-    &[data-state='entered'] {
-      transform: translateX(0);
-    }
-    &[data-state='exiting'] {
-      transform: translateX(100%);
-    }
-    &[data-state='exited'] {
-      display: none;
-    }
-  }
-`;
-
 const roomListStyle = css`
   flex: 1;
+  height: 100%;
+  background: var(--background);
+
+  transition: transform 0.25s, filter 0.25s;
+
+  @media (max-width: 600px) {
+    &[data-in-room='true'] {
+      transform: translateX(-5%);
+      filter: brightness(50%);
+    }
+  }
 
   @media (min-width: 600px) {
     max-width: 360px;
+  }
+`;
+
+const roomContainerStyle = css`
+  position: relative;
+
+  @media (min-width: 600px) {
+    flex: 1;
   }
 
   @media (max-width: 600px) {
     position: absolute;
     top: 0;
+    bottom: 0;
     left: 0;
     right: 0;
-    bottom: 0;
+
+    &[data-in-room='false'] {
+      pointer-events: none;
+    }
   }
 `;
 
 const ChatPage = (): JSX.Element => {
+  const theme = useTheme();
   const manager = useManager();
   const [roomId, setRoom] = useRoom();
+  const [location] = useLocation();
 
-  const [transition, setTransition] = useState(false);
   const [rooms, setRooms] = useState(manager.getRooms());
 
   const [allChats, updateChats] = useAtom(chats);
 
   const onBack = useCallback(() => {
-    setTransition(false);
-
-    setTimeout(() => {
-      setRoom();
-    }, 250);
+    setRoom();
   }, []);
-
-  useEffect(() => {
-    if (roomId) {
-      setTransition(true);
-    }
-  }, [roomId]);
 
   useEffect(() => {
     // 같은 array로 판단하여 react가 업데이트 하지 않은것으로 추정됨.
@@ -164,25 +147,31 @@ const ChatPage = (): JSX.Element => {
   }, [manager, roomId, onBack]);
 
   return (
-    <div className={containerStyle}>
-      <div className={roomListStyle}>
+    <div
+      className={containerStyle}
+      style={style({
+        '--background': theme.palette.backgroundPrimary.main,
+      })}
+    >
+      <div className={roomListStyle} data-in-room={!!roomId}>
         <RoomListContainer rooms={rooms} />
       </div>
-      <div
-        className={roomStyle}
-        style={style({
-          '--is-visible': roomId ? 'visible' : 'hidden',
-        })}
-      >
-        <div className={emptyStyle}>채팅방을 선택해주세요.</div>
-        <Transition in={transition} timeout={250}>
-          {(state: string) => (
-            <div className={transitionStyle} data-state={state}>
-              {roomId && <ChatRoomContainer users={dummy.users} chatRoomId={roomId} chatList={allChats.get(roomId) ?? []} onBack={onBack} />}
-            </div>
-          )}
-        </Transition>
-      </div>
+      <TransitionGroup className={roomContainerStyle} data-in-room={!!roomId}>
+        <CSSTransition in unmountOnExit key={location} classNames={'room'} timeout={250}>
+          <Switch location={location}>
+            <Route path={'/chat'}>
+              <div className={emptyStyle}>채팅방을 선택해주세요.</div>
+            </Route>
+            <Route path={'/chat/:room_id'}>
+              {({ room_id: roomId }) => (
+                <div className={roomStyle}>
+                  <ChatRoomContainer users={dummy.users} chatRoomId={roomId} chatList={allChats.get(roomId) ?? []} onBack={onBack} />
+                </div>
+              )}
+            </Route>
+          </Switch>
+        </CSSTransition>
+      </TransitionGroup>
     </div>
   );
 };
