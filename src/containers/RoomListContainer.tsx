@@ -8,7 +8,11 @@ import UnreadBadge from '@/components/chat/UnreadBadge';
 import useRoom from '@/hooks/useRoom';
 import { css } from '@linaria/core';
 import { styled } from '@linaria/react';
-import ChatHeader from '@/components/Header';
+import Header from '@/components/Header';
+import IconButton from '@/components/common/IconButton';
+
+import SettingIcon from '@iconify/icons-mdi/settings-outline';
+import SearchIcon from '@iconify/icons-mdi/search';
 
 const containerStyle = css`
   width: 100%;
@@ -23,6 +27,8 @@ const headerStyle = css`
   position: absolute;
   left: 0;
   right: 0;
+
+  z-index: 20;
 `;
 
 const gapElement = styled.div`
@@ -59,7 +65,13 @@ const RoomListContainer = ({ rooms }: RoomListContainerProps): JSX.Element => {
       className={containerStyle}
     >
       <div className={headerStyle}>
-        <ChatHeader title={`채팅 (${rooms.length})`} enableBack={false} />
+        <Header
+          title={`채팅 (${rooms.length})`}
+          right={<>
+            <IconButton icon={SearchIcon} />
+            <IconButton icon={SettingIcon} />
+          </>}
+        />
       </div>
       <Virtuoso
         data={rooms}
