@@ -1,11 +1,12 @@
 import { useTheme } from '@/theme';
-import ColorUtil from '@/utils/Color';
+import ColorUtil, { Color } from '@/utils/Color';
 import style from '@/utils/style';
 import { css } from '@linaria/core';
 import { Icon } from '@iconify/react';
 import ArrowLeft from '@iconify/icons-mdi/arrow-left';
 import { useMemo } from 'react';
 import Typography from './common/Typography';
+import IconButton from './common/IconButton';
 
 const containerStyle = css`
   height: 56px;
@@ -67,7 +68,7 @@ const ChatHeader = ({ title, enableBack = true, onBack }: ChatHeaderProps): JSX.
   const theme = useTheme();
 
   const background = useMemo(() => ColorUtil.alpha(theme.palette.backgroundSecondary.main, 0.3), [theme]);
-  const active = useMemo(() => ColorUtil.alpha(ColorUtil.darken(theme.palette.backgroundSecondary.main, 0.2), 0.5), [theme]);
+  const active = useMemo(() => Color(theme.palette.backgroundSecondary.main).darken(0.2).alpha(0.5).get(), [theme]);
 
   return (
     <div
@@ -77,11 +78,7 @@ const ChatHeader = ({ title, enableBack = true, onBack }: ChatHeaderProps): JSX.
         '--active': active,
       })}
     >
-      {enableBack && (
-        <Typography type={'h4'} onClick={onBack} className={centerStyle}>
-        <Icon icon={ArrowLeft} className={iconStyle} />
-        </Typography>
-      )}
+      {enableBack && <IconButton icon={ArrowLeft} onClick={onBack} />}
       <Typography type={'h5'}>{title}</Typography>
     </div>
   );

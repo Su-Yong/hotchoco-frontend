@@ -43,6 +43,35 @@ export const random = (mode: 'rgba' | 'hex' = 'hex'): string => {
   return `rgba(${r}, ${g}, ${b}, 1)`;
 };
 
+export const Color = function Color(color: string) {
+  let result = color;
+
+  class ColorBuilder {
+    shade(value: number) {
+      result = shade(result, value);
+      return this;
+    }
+    darken(value: number) {
+      result = darken(result, value);
+      return this;
+    }
+    lighten(value: number) {
+      result = lighten(result, value);
+      return this;
+    }
+    alpha(value: number) {
+      result = alpha(result, value);
+      return this;
+    }
+
+    get() {
+      return result;
+    }
+  }
+  
+  return new ColorBuilder();
+}
+
 const ColorUtil = {
   shade,
   darken,
