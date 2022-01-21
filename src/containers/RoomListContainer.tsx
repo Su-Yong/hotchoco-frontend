@@ -8,7 +8,7 @@ import UnreadBadge from '@/components/chat/UnreadBadge';
 import useRoom from '@/hooks/useRoom';
 import { css } from '@linaria/core';
 import { styled } from '@linaria/react';
-import ChatHeader from '@/components/ChatHeader';
+import ChatHeader from '@/components/Header';
 
 const containerStyle = css`
   width: 100%;

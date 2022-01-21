@@ -7,17 +7,29 @@ import Typography, { TypographyProps } from './Typography';
 
 const iconStyle = css`
   cursor: pointer;
+`;
+
+const centerStyle = css`
+  display: flex;
+  flex-flow: row;
+  justify-content: center;
+  align-items: center;
+
   border-radius: 300px;
+
+  margin: -8px;
+  padding: 8px;
 
   transition: transform 0.25s, background 0.25s;
 
   @media (pointer: fine) {
     &:hover {
-      transform: translateX(-4px);
+      background: var(--active);
     }
 
     &:active {
-      transform: translateX(0) scale(1.25);
+      transform: scale(1.25);
+      background: transparent;
     }
   }
 
@@ -26,13 +38,6 @@ const iconStyle = css`
       background: var(--active);
     }
   }
-`;
-
-const centerStyle = css`
-  display: flex;
-  flex-flow: row;
-  justify-content: center;
-  align-items: center;
 `;
 
 export interface IconButtonProps extends TypographyProps {

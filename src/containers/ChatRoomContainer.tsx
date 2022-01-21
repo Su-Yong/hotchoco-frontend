@@ -11,7 +11,7 @@ import useClientUser from '@/hooks/useClientUser';
 import Chat from '@/types/Chat';
 import User from '@/types/User';
 import toBigInt from '@/utils/toBigInt';
-import ChatHeader from '@/components/ChatHeader';
+import Header from '@/components/Header';
 import { useTheme } from '@/theme';
 import style from '@/utils/style';
 import ChatBubblePlaceholder from '@/components/placeholder/ChatBubblePlaceholder';
@@ -19,8 +19,10 @@ import ChatInput, { ChatInputProps } from '@/components/ChatInput';
 import { styled } from '@linaria/react';
 import useManager from '@/hooks/useManager';
 import RequestableChat from '@/types/request/RequestableChat';
+import IconButton from '@/components/common/IconButton';
 
-const VELOCITY_BOUNDARY = 600;
+import ArrowLeft from '@iconify/icons-mdi/arrow-left';
+import Menu from '@iconify/icons-mdi/menu';
 
 const containerStyle = css`
   width: 100%;
@@ -122,7 +124,14 @@ const ChatRoomContainer = ({ users, chatList, chatRoomId, onBack }: ChatRoomCont
       })}
     >
       <div className={headerStyle}>
-        <ChatHeader title={room?.name ?? '알 수 없음'} onBack={onBack} />
+        <Header
+          title={room?.name ?? '알 수 없음'}
+          left={<>
+            <IconButton icon={ArrowLeft} onClick={onBack} />
+            <Profile url={room?.image} size={36} />
+          </>}
+          right={<IconButton icon={Menu} />}
+        />
       </div>
       <Virtuoso
         alignToBottom

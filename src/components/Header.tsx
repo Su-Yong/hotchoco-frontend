@@ -2,11 +2,8 @@ import { useTheme } from '@/theme';
 import ColorUtil, { Color } from '@/utils/Color';
 import style from '@/utils/style';
 import { css } from '@linaria/core';
-import { Icon } from '@iconify/react';
-import ArrowLeft from '@iconify/icons-mdi/arrow-left';
 import { useMemo } from 'react';
 import Typography from './common/Typography';
-import IconButton from './common/IconButton';
 
 const containerStyle = css`
   height: 56px;
@@ -27,44 +24,32 @@ const containerStyle = css`
   backdrop-filter: blur(8px);
 `;
 
-const centerStyle = css`
+const textContainerStyle = css`
+  flex: 1;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+
   display: flex;
-  flex-flow: row;
+  flex-flow: column;
   justify-content: center;
-  align-items: center;
+  align-items: flex-start;
 `;
 
-const iconStyle = css`
-  cursor: pointer;
-  border-radius: 300px;
-
-  transition: transform 0.25s, background 0.25s;
-
-  @media (pointer: fine) {
-    &:hover {
-      transform: translateX(-4px);
-    }
-
-    &:active {
-      transform: translateX(0) scale(1.25);
-    }
-  }
-
-  @media (pointer: coarse), (pointer: none) {
-    &:active {
-      background: var(--active);
-    }
-  }
+const textStyle = css`
+  width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
 `;
 
-export interface ChatHeaderProps {
+export interface HeaderProps {
   title: string;
-  enableBack?: boolean;
-
-  onBack?: () => void;
+  subtitle?: string;
+  left?: React.ReactNode;
+  right?: React.ReactNode;
 }
 
-const ChatHeader = ({ title, enableBack = true, onBack }: ChatHeaderProps): JSX.Element => {
+const Header = ({ title, subtitle, left, right }: HeaderProps): JSX.Element => {
   const theme = useTheme();
 
   const background = useMemo(() => ColorUtil.alpha(theme.palette.backgroundSecondary.main, 0.3), [theme]);
@@ -78,10 +63,14 @@ const ChatHeader = ({ title, enableBack = true, onBack }: ChatHeaderProps): JSX.
         '--active': active,
       })}
     >
-      {enableBack && <IconButton icon={ArrowLeft} onClick={onBack} />}
-      <Typography type={'h5'}>{title}</Typography>
+      {left}
+      <div className={textContainerStyle}>
+        <Typography type={'h5'} className={textStyle}>{title}</Typography>
+        <Typography type={'h6'} className={textStyle}>{subtitle}</Typography>
+      </div>
+      {right}
     </div>
   );
 };
 
-export default ChatHeader;
+export default Header;
