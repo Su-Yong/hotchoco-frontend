@@ -73,21 +73,24 @@ const ChatRoomContainer = ({ users, chatList, chatRoomId, onBack }: ChatRoomCont
 
   const room = useMemo(() => manager.getRooms().find(({ id }) => id === chatRoomId), [chatRoomId, manager]);
 
-  const onSubmit: NonNullable<ChatInputProps['onSubmit']> = useCallback((chatdata) => {
-    if (room) {
-      const chat: RequestableChat<unknown> = {
-        room,
-        sender: clientUser,
-        ...chatdata,
-      };
+  const onSubmit: NonNullable<ChatInputProps['onSubmit']> = useCallback(
+    (chatdata) => {
+      if (room) {
+        const chat: RequestableChat<unknown> = {
+          room,
+          sender: clientUser,
+          ...chatdata,
+        };
 
-      manager.send(chat);
+        manager.send(chat);
 
-      return true;
-    }
+        return true;
+      }
 
-    return false;
-  }, [manager]);
+      return false;
+    },
+    [manager],
+  );
 
   const background = useMemo(() => theme.palette.backgroundPrimary.main, [theme]);
   const profiles = useMemo(() => {
@@ -126,10 +129,12 @@ const ChatRoomContainer = ({ users, chatList, chatRoomId, onBack }: ChatRoomCont
       <div className={headerStyle}>
         <Header
           title={room?.name ?? '알 수 없음'}
-          left={<>
-            <IconButton icon={ArrowLeft} onClick={onBack} />
-            <Profile url={room?.image} size={36} />
-          </>}
+          left={
+            <>
+              <IconButton icon={ArrowLeft} onClick={onBack} />
+              <Profile url={room?.image} size={36} />
+            </>
+          }
           right={<IconButton icon={Menu} />}
         />
       </div>
@@ -161,7 +166,7 @@ const ChatRoomContainer = ({ users, chatList, chatRoomId, onBack }: ChatRoomCont
               <TextContent>{chat.content}</TextContent>
             </ChatBubble>
           );
-      }}
+        }}
       />
       <div className={inputStyle}>
         <ChatInput onSubmit={onSubmit} />

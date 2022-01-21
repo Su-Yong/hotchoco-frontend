@@ -15,7 +15,7 @@ export default ({ mode }) => {
         host: process.env.HMR_HOST ?? 'localhost',
         protocol: 'wss',
         port: 443,
-      }
+      },
     },
     root: path.resolve(__dirname, 'src'),
     resolve: {
@@ -36,4 +36,4 @@ export default ({ mode }) => {
       }),
     ],
   });
-}
+};

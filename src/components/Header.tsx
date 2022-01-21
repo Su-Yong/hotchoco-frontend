@@ -65,8 +65,12 @@ const Header = ({ title, subtitle, left, right }: HeaderProps): JSX.Element => {
     >
       {left}
       <div className={textContainerStyle}>
-        <Typography type={'h5'} className={textStyle}>{title}</Typography>
-        <Typography type={'h6'} className={textStyle}>{subtitle}</Typography>
+        <Typography type={'h5'} className={textStyle}>
+          {title}
+        </Typography>
+        <Typography type={'h6'} className={textStyle}>
+          {subtitle}
+        </Typography>
       </div>
       {right}
     </div>

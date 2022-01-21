@@ -17,7 +17,7 @@ import SearchIcon from '@iconify/icons-mdi/search';
 const containerStyle = css`
   width: 100%;
   height: 100%;
-  
+
   overflow-x: hidden;
 
   position: relative;
@@ -61,16 +61,16 @@ const RoomListContainer = ({ rooms }: RoomListContainerProps): JSX.Element => {
   }, [rooms]);
 
   return (
-    <div
-      className={containerStyle}
-    >
+    <div className={containerStyle}>
       <div className={headerStyle}>
         <Header
           title={`채팅 (${rooms.length})`}
-          right={<>
-            <IconButton icon={SearchIcon} />
-            <IconButton icon={SettingIcon} />
-          </>}
+          right={
+            <>
+              <IconButton icon={SearchIcon} />
+              <IconButton icon={SettingIcon} />
+            </>
+          }
         />
       </div>
       <Virtuoso

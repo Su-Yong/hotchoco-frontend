@@ -25,7 +25,7 @@ const containerStyle = css`
 `;
 
 const roomStyle = css`
-position: absolute;
+  position: absolute;
   height: 100%;
   flex: 1;
   overflow: hidden;
@@ -42,7 +42,7 @@ position: absolute;
 `;
 
 const emptyStyle = css`
-position: absolute;
+  position: absolute;
   width: 100%;
   height: 100%;
 
@@ -93,7 +93,7 @@ const roomContainerStyle = css`
     right: 0;
 
     &[data-in-room='false'] {
-      pointer-events: none;  
+      pointer-events: none;
     }
   }
 `;
@@ -109,7 +109,7 @@ const ChatPage = (): JSX.Element => {
   const [allChats, updateChats] = useAtom(chats);
 
   const onBack = useCallback(() => {
-      setRoom();
+    setRoom();
   }, []);
 
   useEffect(() => {
@@ -157,13 +157,7 @@ const ChatPage = (): JSX.Element => {
         <RoomListContainer rooms={rooms} />
       </div>
       <TransitionGroup className={roomContainerStyle} data-in-room={!!roomId}>
-        <CSSTransition
-          in
-          unmountOnExit
-          key={location}
-          classNames={'room'}
-          timeout={250}
-        >
+        <CSSTransition in unmountOnExit key={location} classNames={'room'} timeout={250}>
           <Switch location={location}>
             <Route path={'/chat'}>
               <div className={emptyStyle}>채팅방을 선택해주세요.</div>

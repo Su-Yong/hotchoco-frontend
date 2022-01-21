@@ -47,18 +47,18 @@ code {
     transform: translateX(25%);
     opacity: 0;
   }
-  
+
   .room-enter-active {
     transform: translateX(0);
     opacity: 1;
     transition: transform 0.25s, opacity 0.25s;
   }
-  
+
   .room-exit {
     transform: translateX(0);
     opacity: 1;
   }
-  
+
   .room-exit-active {
     transform: translateX(25%);
     opacity: 0;

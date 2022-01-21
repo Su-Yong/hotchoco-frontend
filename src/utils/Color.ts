@@ -68,9 +68,9 @@ export const Color = function Color(color: string) {
       return result;
     }
   }
-  
+
   return new ColorBuilder();
-}
+};
 
 const ColorUtil = {
   shade,

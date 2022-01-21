@@ -15,8 +15,8 @@ export const isImageChat = (chat: RequestableChat<unknown>): chat is ImageChat =
   if (Array.isArray(chat.content)) {
     return chat.content.every((it) => it instanceof Media && allowImageType.some((type) => type === it.mime));
   }
-  
+
   return false;
-}
+};
 
 export default ImageChat;

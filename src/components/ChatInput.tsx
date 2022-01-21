@@ -103,12 +103,7 @@ const ChatInput = ({ onFile, onSubmit }: ChatInputProps): JSX.Element => {
       })}
     >
       <Icon icon={AddIcon} className={buttonStyle} onClick={onFile} />
-      <TextareaAutosize
-        ref={inputRef}
-        maxRows={6}
-        className={textAreaStyle}
-        onHeightChange={onHeightChange}
-      />
+      <TextareaAutosize ref={inputRef} maxRows={6} className={textAreaStyle} onHeightChange={onHeightChange} />
       <Icon
         icon={SendIcon}
         className={buttonStyle}

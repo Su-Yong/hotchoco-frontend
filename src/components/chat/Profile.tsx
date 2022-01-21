@@ -15,14 +15,16 @@ export interface ProfileProps {
   size?: number;
 }
 
-const Profile = React.memo(({ url, size = 48 }: ProfileProps): JSX.Element => (
-  <img
-    style={style({
-      '--size': `${size}px`,
-    })}
-    className={profileStyle}
-    src={url}
-  />
-));
+const Profile = React.memo(
+  ({ url, size = 48 }: ProfileProps): JSX.Element => (
+    <img
+      style={style({
+        '--size': `${size}px`,
+      })}
+      className={profileStyle}
+      src={url}
+    />
+  ),
+);
 
 export default Profile;

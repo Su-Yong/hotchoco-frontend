@@ -50,14 +50,10 @@ const IconButton = ({ type = 'h4', className, icon, ...props }: IconButtonProps)
   const active = useMemo(() => Color(theme.palette.backgroundSecondary.main).darken(0.2).alpha(0.5), [theme]);
 
   return (
-    <Typography
-      {...props}
-      type={type ?? 'h4'}
-      className={centerStyle}
-    >
+    <Typography {...props} type={type ?? 'h4'} className={centerStyle}>
       <Icon icon={icon} className={iconStyle} />
     </Typography>
-  )
+  );
 };
 
 export default IconButton;
