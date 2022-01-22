@@ -110,32 +110,23 @@ const infoStyle = css`
 
 const containerStyle = css`
   flex: 1;
+
+  height: 48px;
+
   display: flex;
   flex-flow: column;
+  justify-content: space-between;
 
   overflow: hidden;
 `;
 
-const firstLineStyle = css`
+const lineStyle = css`
   flex: 1;
 
   display: flex;
   flex-flow: rows;
   justify-content: center;
-  align-items: flex-start;
-
-  gap: 8px;
-`;
-
-const secondLineStyle = css`
-  flex: 1;
-
-  height: 24px;
-
-  display: flex;
-  flex-flow: rows;
-  justify-content: center;
-  align-items: flex-end;
+  align-items: center;
 
   gap: 8px;
 `;
@@ -165,7 +156,7 @@ const Room = ({ name, description, image, info, badge, actived }: RoomProps): JS
     >
       <div className={imageStyle}>{image}</div>
       <div className={containerStyle}>
-        <div className={firstLineStyle}>
+        <div className={lineStyle}>
           <Typography type={'h5'} className={titleStyle}>
             {name}
           </Typography>
@@ -173,7 +164,7 @@ const Room = ({ name, description, image, info, badge, actived }: RoomProps): JS
             {info}
           </Typography>
         </div>
-        <div className={secondLineStyle}>
+        <div className={lineStyle}>
           <Typography type={'body3'} className={descriptionStyle}>
             {description}
           </Typography>
