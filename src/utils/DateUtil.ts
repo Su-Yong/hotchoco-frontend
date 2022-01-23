@@ -23,26 +23,11 @@ const formatRegex = {
   longDayPeriod: /aaa+/gi,
 };
 const format = (before: Date, format: string) => {
-  const [
-    year,
-    month,
-    date,
-    shortHours,
-    hours,
-    minutes,
-    seconds,
-    ms,
-    narrowDay,
-    shortDay,
-    longDay,
-    narrowDayPeriod,
-    shortDayPeriod,
-    longDayPeriod,
-  ] = [
+  const [year, month, date, shortHours, hours, minutes, seconds, ms, narrowDay, shortDay, longDay, narrowDayPeriod, shortDayPeriod, longDayPeriod] = [
     before.getFullYear(),
     before.getMonth(),
     before.getDate(),
-    (before.getHours() - 1) % 12 + 1,
+    ((before.getHours() - 1) % 12) + 1,
     before.getHours(),
     before.getMinutes(),
     before.getSeconds(),
@@ -56,7 +41,7 @@ const format = (before: Date, format: string) => {
   ].map((it) => it.toString());
 
   return format
-  .replace(formatRegex.fullYear, year)
+    .replace(formatRegex.fullYear, year)
     .replace(formatRegex.year, year.slice(-2))
     .replace(formatRegex.month, month)
     .replace(formatRegex.date, date)
@@ -72,10 +57,10 @@ const format = (before: Date, format: string) => {
     .replace(formatRegex.longDay, longDay)
     .replace(formatRegex.shortDay, shortDay)
     .replace(formatRegex.narrowDay, narrowDay)
-    .replace(formatRegex.longDayPeriod, (match) => match.toUpperCase() === match ? longDayPeriod.toUpperCase() : longDayPeriod)
-    .replace(formatRegex.shortDayPeriod, (match) => match.toUpperCase() === match ? shortDayPeriod.toUpperCase() : shortDayPeriod)
-    .replace(formatRegex.narrowDayPeriod, (match) => match.toUpperCase() === match ? narrowDayPeriod.toUpperCase() : narrowDayPeriod);
-}
+    .replace(formatRegex.longDayPeriod, (match) => (match.toUpperCase() === match ? longDayPeriod.toUpperCase() : longDayPeriod))
+    .replace(formatRegex.shortDayPeriod, (match) => (match.toUpperCase() === match ? shortDayPeriod.toUpperCase() : shortDayPeriod))
+    .replace(formatRegex.narrowDayPeriod, (match) => (match.toUpperCase() === match ? narrowDayPeriod.toUpperCase() : narrowDayPeriod));
+};
 
 const toShort = (date: Date, { seconds } = { seconds: false }) => {
   const diff = new Date().getTime() - date.getTime();
@@ -105,7 +90,7 @@ const toLast = (date: Date, { affix } = { affix: '전' }) => {
   }
 
   return format(diff, `${formatString} ${affix}`);
-}
+};
 
 const DateUtil = {
   format,

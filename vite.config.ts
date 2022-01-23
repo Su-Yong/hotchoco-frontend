@@ -1,21 +1,28 @@
 import path from 'path';
 import react from '@vitejs/plugin-react';
 import linaria from '@linaria/rollup';
-import css from 'rollup-plugin-css-only';
 
 import { defineConfig, loadEnv } from 'vite';
 
 export default ({ mode }) => {
-  process.env = { ...process.env, ...loadEnv(mode, process.cwd(), '') };
+  const { NODE_ENV, HMR_HOST }: Record<string, string> = { ...process.env, ...loadEnv(mode, process.cwd(), '') };
+
+  const hmr = HMR_HOST
+    ? {
+        host: HMR_HOST,
+        protocol: 'wss',
+        port: 433,
+      }
+    : undefined;
 
   return defineConfig({
+    build: {
+      target: 'es2020',
+      outDir: path.resolve(__dirname, 'dist'),
+    },
     server: {
       host: 'localhost',
-      hmr: {
-        host: process.env.HMR_HOST ?? 'localhost',
-        protocol: 'wss',
-        port: 443,
-      },
+      hmr,
     },
     root: path.resolve(__dirname, 'src'),
     resolve: {
@@ -29,10 +36,7 @@ export default ({ mode }) => {
     plugins: [
       react(),
       linaria({
-        sourceMap: process.env.NODE_ENV !== 'production',
-      }),
-      css({
-        output: 'styles.css',
+        sourceMap: NODE_ENV !== 'production',
       }),
     ],
   });

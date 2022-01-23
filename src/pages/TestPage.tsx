@@ -48,7 +48,7 @@ const TestPage = (): JSX.Element => {
                 sender
               </Typography>
             }
-            readers={['1', '2']}
+            readers={[]}
             time={new Date()}
           >
             <TextContent>First Test ChatBubble</TextContent>
@@ -60,7 +60,7 @@ const TestPage = (): JSX.Element => {
               </Typography>
             }
             profile={<Profile url={'https://dummyimage.com/120x120/000/fff'} />}
-            readers={['1', '2']}
+            readers={[]}
             time={new Date()}
           >
             <ImageContent>
@@ -77,7 +77,7 @@ const TestPage = (): JSX.Element => {
               </Typography>
             }
             profile={<div style={{ width: 24, height: 24, background: 'brown' }} />}
-            readers={['1', '2']}
+            readers={[]}
             time={new Date()}
           >
             <TextContent>Third Test ChatBubble</TextContent>
@@ -92,7 +92,7 @@ const TestPage = (): JSX.Element => {
               </Typography>
             }
             profile={<div style={{ width: 24, height: 24, background: 'blue' }} />}
-            readers={['1', '2']}
+            readers={[]}
             time={new Date()}
           >
             <TextContent>

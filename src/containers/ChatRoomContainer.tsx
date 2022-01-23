@@ -96,22 +96,25 @@ const ChatRoomContainer = ({ users, chatList, chatRoomId, onBack }: ChatRoomCont
     [manager],
   );
 
-  const onRangeChange: NonNullable<VirtuosoProps<Chat>['rangeChanged']> = useCallback(({ endIndex }) => {
-    if (!room) return;
+  const onRangeChange: NonNullable<VirtuosoProps<Chat>['rangeChanged']> = useCallback(
+    ({ endIndex }) => {
+      if (!room) return;
 
-    const unreads = allUnreadChats.get(room.id);
-    const endChat = chatList.at(endIndex);
+      const unreads = allUnreadChats.get(room.id);
+      const endChat = chatList.at(endIndex);
 
-    if (!endChat || !unreads) return;
+      if (!endChat || !unreads) return;
 
-    const index = unreads.findIndex(({ id }) => id === endChat.id);
-    if (index >= 0) {
-      const result = new Map(allUnreadChats);
-      result.set(room.id, unreads.slice(index, -1));
+      const index = unreads.findIndex(({ id }) => id === endChat.id);
+      if (index >= 0) {
+        const result = new Map(allUnreadChats);
+        result.set(room.id, unreads.slice(index, -1));
 
-      updateUnreadChats(result);
-    }
-  }, [allUnreadChats, room]);
+        updateUnreadChats(result);
+      }
+    },
+    [allUnreadChats, room],
+  );
 
   const background = useMemo(() => theme.palette.backgroundPrimary.main, [theme]);
   const profiles = useMemo(() => {
