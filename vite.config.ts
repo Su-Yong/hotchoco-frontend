@@ -11,7 +11,7 @@ export default ({ mode }) => {
     ? {
         host: HMR_HOST,
         protocol: 'wss',
-        port: 433,
+        port: 443,
       }
     : undefined;
 
