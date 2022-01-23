@@ -13,6 +13,7 @@ import IconButton from '@/components/common/IconButton';
 
 import SettingIcon from '@iconify/icons-mdi/settings-outline';
 import SearchIcon from '@iconify/icons-mdi/search';
+import DateUtil from '@/utils/DateUtil';
 
 const containerStyle = css`
   width: 100%;
@@ -86,7 +87,7 @@ const RoomListContainer = ({ rooms }: RoomListContainerProps): JSX.Element => {
               name={room.name}
               description={room.lastChat?.content ?? ''}
               image={images.get(room.id)}
-              info={room.lastChat?.timestamp ? new Date(room.lastChat.timestamp).toLocaleString() : ''}
+              info={room.lastChat?.timestamp ? DateUtil.toShort(new Date(room.lastChat.timestamp)) : ''}
               actived={selectRoom?.id === room.id}
               badge={(room.unreadChat ?? 0) > 0 ? <UnreadBadge count={room.unreadChat ?? 0} /> : undefined}
             />

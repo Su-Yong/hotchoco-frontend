@@ -23,6 +23,8 @@ import IconButton from '@/components/common/IconButton';
 
 import ArrowLeft from '@iconify/icons-mdi/arrow-left';
 import Menu from '@iconify/icons-mdi/menu';
+import { useAtom } from 'jotai';
+import { unreadChats } from '@/store/chat';
 
 const containerStyle = css`
   width: 100%;
@@ -71,6 +73,8 @@ const ChatRoomContainer = ({ users, chatList, chatRoomId, onBack }: ChatRoomCont
   const clientUser = useClientUser();
   const manager = useManager();
 
+  const [allUnreadChats, updateUnreadChats] = useAtom(unreadChats);
+
   const room = useMemo(() => manager.getRooms().find(({ id }) => id === chatRoomId), [chatRoomId, manager]);
 
   const onSubmit: NonNullable<ChatInputProps['onSubmit']> = useCallback(
@@ -90,6 +94,26 @@ const ChatRoomContainer = ({ users, chatList, chatRoomId, onBack }: ChatRoomCont
       return false;
     },
     [manager],
+  );
+
+  const onRangeChange: NonNullable<VirtuosoProps<Chat>['rangeChanged']> = useCallback(
+    ({ endIndex }) => {
+      if (!room) return;
+
+      const unreads = allUnreadChats.get(room.id);
+      const endChat = chatList.at(endIndex);
+
+      if (!endChat || !unreads) return;
+
+      const index = unreads.findIndex(({ id }) => id === endChat.id);
+      if (index >= 0) {
+        const result = new Map(allUnreadChats);
+        result.set(room.id, unreads.slice(index, -1));
+
+        updateUnreadChats(result);
+      }
+    },
+    [allUnreadChats, room],
   );
 
   const background = useMemo(() => theme.palette.backgroundPrimary.main, [theme]);
@@ -149,6 +173,7 @@ const ChatRoomContainer = ({ users, chatList, chatRoomId, onBack }: ChatRoomCont
         followOutput={'smooth'}
         initialTopMostItemIndex={chatList.length - 1}
         computeItemKey={computeItemKey}
+        rangeChanged={onRangeChange}
         itemContent={(index, chat) => {
           let isHideProfile = false;
           let isHideSender = false;

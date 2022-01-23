@@ -12,7 +12,7 @@ import useManager from '@/hooks/useManager';
 import Room from '@/types/Room';
 import Chat from '@/types/Chat';
 import { useAtom } from 'jotai';
-import { chats } from '@/store/chat';
+import { chats, unreadChats } from '@/store/chat';
 import { Route, Switch, useLocation } from 'wouter';
 import { useTheme } from '@/theme';
 
@@ -107,6 +107,7 @@ const ChatPage = (): JSX.Element => {
   const [rooms, setRooms] = useState(manager.getRooms());
 
   const [allChats, updateChats] = useAtom(chats);
+  const [allUnreadChats, updateUnreadChats] = useAtom(unreadChats);
 
   const onBack = useCallback(() => {
     setRoom();
@@ -127,11 +128,14 @@ const ChatPage = (): JSX.Element => {
     };
 
     const updateChat = (room: Room, chat: Chat) => {
-      updateChats((it) => {
+      const getNewMap = (it: Map<string, Chat[]>) => {
         it.set(room.id, [...(it.get(room.id) ?? []), chat]);
 
         return new Map(it);
-      });
+      };
+
+      updateUnreadChats(getNewMap);
+      updateChats(getNewMap);
     };
 
     updateRoom();
@@ -145,6 +149,12 @@ const ChatPage = (): JSX.Element => {
       manager.removeListener('chat', updateChat);
     };
   }, [manager, roomId, onBack]);
+
+  useEffect(() => {
+    manager.getRooms().forEach((it) => {
+      it.unreadChat = allUnreadChats.get(it.id)?.length;
+    });
+  }, [allUnreadChats, manager]);
 
   return (
     <div

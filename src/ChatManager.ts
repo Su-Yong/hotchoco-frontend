@@ -69,6 +69,7 @@ class ChatManager extends EventEmitter<Events> {
           emotion: new Map(),
         };
 
+        room.lastChat = newChat;
         this.emit('chat', room, newChat);
       });
     };

@@ -7,18 +7,20 @@ import React from 'react';
 import Typography from '../common/Typography';
 
 const roomStyle = css`
-  position: relative;
-  display: grid;
-  grid-template-columns: 48px 1fr auto;
-  grid-template-rows: auto auto;
+  flex: 1;
+
+  display: flex;
+  flex-flow: rows;
+  justify-content: flex-start;
   align-items: center;
-  grid-column-gap: 8px;
+  gap: 8px;
 
   user-select: none;
   cursor: pointer;
 
   background: var(--background);
 
+  position: relative;
   padding: 8px;
 
   transition: transform 0.25s, background 0.25s, padding-right 0.25s;
@@ -80,8 +82,6 @@ const imageStyle = css`
   width: 48px;
   height: 48px;
 
-  grid-row: 1 / 3;
-
   & > * {
     max-width: 100%;
     max-height: 100%;
@@ -89,17 +89,46 @@ const imageStyle = css`
 `;
 
 const titleStyle = css`
-  grid-row: 1 / 2;
-  grid-column: 2 / 3;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
 `;
 
 const descriptionStyle = css`
-  grid-row: 2 / 3;
-  grid-column: 2 / 3;
+  flex: 1;
+
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
 `;
 
 const infoStyle = css`
   justify-self: end;
+  width: fit-content;
+  white-space: nowrap;
+`;
+
+const containerStyle = css`
+  flex: 1;
+
+  height: 48px;
+
+  display: flex;
+  flex-flow: column;
+  justify-content: space-between;
+
+  overflow: hidden;
+`;
+
+const lineStyle = css`
+  flex: 1;
+
+  display: flex;
+  flex-flow: rows;
+  justify-content: center;
+  align-items: center;
+
+  gap: 8px;
 `;
 
 export interface RoomProps {
@@ -126,16 +155,22 @@ const Room = ({ name, description, image, info, badge, actived }: RoomProps): JS
       })}
     >
       <div className={imageStyle}>{image}</div>
-      <Typography type={'h5'} className={titleStyle}>
-        {name}
-      </Typography>
-      <Typography type={'body3'} className={descriptionStyle}>
-        {description}
-      </Typography>
-      <Typography type={'caption1'} className={infoStyle}>
-        {info}
-      </Typography>
-      <div className={infoStyle}>{badge}</div>
+      <div className={containerStyle}>
+        <div className={lineStyle}>
+          <Typography type={'h5'} className={titleStyle}>
+            {name}
+          </Typography>
+          <Typography type={'caption1'} className={infoStyle}>
+            {info}
+          </Typography>
+        </div>
+        <div className={lineStyle}>
+          <Typography type={'body3'} className={descriptionStyle}>
+            {description}
+          </Typography>
+          <div className={infoStyle}>{badge}</div>
+        </div>
+      </div>
     </li>
   );
 };
