@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 import { css } from '@linaria/core';
 import { TransitionGroup, CSSTransition } from 'react-transition-group';
@@ -15,6 +15,7 @@ import { useAtom } from 'jotai';
 import { chats, unreadChats } from '@/store/chat';
 import { Route, Switch, useLocation } from 'wouter';
 import { useTheme } from '@/theme';
+import { Color } from '@/utils/Color';
 
 const containerStyle = css`
   width: 100%;
@@ -60,13 +61,16 @@ const emptyStyle = css`
 `;
 
 const roomListStyle = css`
-  flex: 1;
   height: 100%;
   background: var(--background);
+
+  position: relative;
 
   transition: transform 0.25s, filter 0.25s;
 
   @media (max-width: 600px) {
+    flex: 1;
+
     &[data-in-room='true'] {
       transform: translateX(-5%);
       filter: brightness(50%);
@@ -74,7 +78,33 @@ const roomListStyle = css`
   }
 
   @media (min-width: 600px) {
-    max-width: 360px;
+    min-width: 320px;
+    max-width: 50%;
+    width: var(--size);
+  }
+`;
+
+const dividerStyle = css`
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  right: -4px;
+  width: 8px;
+  height: 100%;
+  z-index: 100;
+
+  cursor: col-resize;
+  background: transparent;
+
+  transition: all 0.1s;
+
+  &:hover {
+    background: var(--select-background);
+  }
+
+  &:active {
+    cursor: col-resize;
+    background: var(--select-active-background);
   }
 `;
 
@@ -104,10 +134,21 @@ const ChatPage = (): JSX.Element => {
   const [roomId, setRoom] = useRoom();
   const [location] = useLocation();
 
+  const roomListRef = useRef<HTMLDivElement>(null);
+  const [size, setSize] = useState(360);
   const [rooms, setRooms] = useState(manager.getRooms());
 
   const [allChats, updateChats] = useAtom(chats);
   const [allUnreadChats, updateUnreadChats] = useAtom(unreadChats);
+
+  const selectBackground = useMemo(() => Color(theme.palette.backgroundSecondary.main).darken(0.1).alpha(0.5).get(), [theme]);
+  const selectActiveBackground = useMemo(() => Color(selectBackground).alpha(1).get(), [selectBackground]);
+
+  const onResize: React.DragEventHandler<HTMLDivElement> = useCallback(({ clientX }) => {
+    if (clientX) {
+      setSize(clientX);
+    }
+  }, [roomListRef]);
 
   const onBack = useCallback(() => {
     setRoom();
@@ -161,10 +202,14 @@ const ChatPage = (): JSX.Element => {
       className={containerStyle}
       style={style({
         '--background': theme.palette.backgroundPrimary.main,
+        '--size': `${size ?? 360}px`,
+        '--select-background': selectBackground,
+        '--select-active-background': selectActiveBackground,
       })}
     >
-      <div className={roomListStyle} data-in-room={!!roomId}>
+      <div ref={roomListRef} className={roomListStyle} data-in-room={!!roomId}>
         <RoomListContainer rooms={rooms} />
+        <div className={dividerStyle} onDrag={onResize} />
       </div>
       <TransitionGroup className={roomContainerStyle} data-in-room={!!roomId}>
         <CSSTransition in unmountOnExit key={location} classNames={'room'} timeout={250}>

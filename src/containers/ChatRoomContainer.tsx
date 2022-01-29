@@ -101,7 +101,7 @@ const ChatRoomContainer = ({ users, chatList, chatRoomId, onBack }: ChatRoomCont
       if (!room) return;
 
       const unreads = allUnreadChats.get(room.id);
-      const endChat = chatList.at(endIndex);
+      const endChat = chatList[endIndex];
 
       if (!endChat || !unreads) return;
 

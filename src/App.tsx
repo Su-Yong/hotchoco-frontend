@@ -7,9 +7,10 @@ import { useAtom } from 'jotai';
 import LoginPage from '@/pages/LoginPage';
 import ErrorPage from '@/pages/ErrorPage';
 import TestPage from '@/pages/TestPage';
+import ChatPage from '@/pages/ChatPage';
+import SettingsPage from '@/pages/SettingsPage';
 import { ThemeProvider } from '@/theme';
 import { themeObject } from '@/store/theme';
-import ChatPage from './pages/ChatPage';
 
 const bodyStyle = css`
   width: 100%;
