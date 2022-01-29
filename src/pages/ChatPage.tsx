@@ -16,6 +16,7 @@ import { chats, unreadChats } from '@/store/chat';
 import { Route, Switch, useLocation } from 'wouter';
 import { useTheme } from '@/theme';
 import { Color } from '@/utils/Color';
+import roomListWidth from '@/store/settings';
 
 const containerStyle = css`
   width: 100%;
@@ -135,7 +136,7 @@ const ChatPage = (): JSX.Element => {
   const [location] = useLocation();
 
   const roomListRef = useRef<HTMLDivElement>(null);
-  const [size, setSize] = useState(360);
+  const [size, setSize] = useAtom(roomListWidth);
   const [rooms, setRooms] = useState(manager.getRooms());
 
   const [allChats, updateChats] = useAtom(chats);
