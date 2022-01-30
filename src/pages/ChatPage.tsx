@@ -16,7 +16,7 @@ import { chats, unreadChats } from '@/store/chat';
 import { Route, Switch, useLocation } from 'wouter';
 import { useTheme } from '@/theme';
 import { Color } from '@/utils/Color';
-import roomListWidth from '@/store/settings';
+import { roomListWidth } from '@/store/settings';
 
 const containerStyle = css`
   width: 100%;

@@ -31,6 +31,7 @@ const App = () => {
         <Route path={'/login'} component={LoginPage} />
         <Route path={'/chat/:rest*'} component={ChatPage} />
         <Route path={'/test'} component={TestPage} />
+        <Route path={'/settings/:rest*'} component={SettingsPage} />
         <Route component={ErrorPage} />
       </div>
     </ThemeProvider>
