@@ -5,8 +5,11 @@ import Profile from '@/components/chat/Profile';
 import Room from '@/components/chat/Room';
 import Button from '@/components/common/Button';
 import Card from '@/components/common/Card';
+import Select from '@/components/common/Select';
+import SelectItem from '@/components/common/SelectItem';
 import Typography from '@/components/common/Typography';
 import ChatBubblePlaceholder from '@/components/placeholder/ChatBubblePlaceholder';
+import { StringLike } from '@/types/common';
 import { css } from '@linaria/core';
 import { useCallback, useState } from 'react';
 
@@ -24,6 +27,7 @@ const chatListStyle = css`
 
 const TestPage = (): JSX.Element => {
   const [count, setCount] = useState(1);
+  const [selectValue, setSelectValue] = useState<StringLike>('init');
 
   const onPlus = useCallback(() => {
     setCount((it) => it + 1);
@@ -152,6 +156,14 @@ const TestPage = (): JSX.Element => {
           info={new Date().toLocaleTimeString()}
           badge={<div style={{ width: 24, height: 24, background: 'red', borderRadius: 24 }}>1</div>}
         />
+      </Card>
+      <Card>
+        {selectValue}
+        <Select value={selectValue} onChange={setSelectValue}>
+          <SelectItem value={'test1'}>테스트</SelectItem>
+          <SelectItem value={'test2'}>안녕</SelectItem>
+          <SelectItem value={'test3'}>이렇게 좀 긴 옵션은 어캐보이지</SelectItem>
+        </Select>
       </Card>
     </div>
   );

@@ -12,6 +12,7 @@ import { Link, Route, Switch, useLocation } from 'wouter';
 import { Icon } from '@iconify/react';
 import CloseIcon from '@iconify/icons-mdi/close';
 import settings from '@/constants/settings';
+import SettingItem from '@/components/settings/SettingItem';
 
 const backdropStyle = css`
   width: 100%;
@@ -211,51 +212,41 @@ const SettingsPage = (): JSX.Element => {
             '--background': backgroundColor,
           })}
         >
-          {settings.map(({ key, title, icon }) => {
-            const target = `/settings/${key}`;
-
-            return (
-              <Link
-                key={key}
-                href={target}
-                className={categoryStyle}
-                data-select={location === target}
-              >
-                { icon && <Icon icon={icon} />}
-                {title}
-              </Link>
-            )
-          })}
+          {settings.map(({ key, title, icon }) => (
+            <Link
+              key={key}
+              replace={location !== '/settings'}
+              href={`/settings/${key}`}
+              className={categoryStyle}
+              data-select={location === `/settings/${key}`}
+            >
+              {icon && <Icon icon={icon} />}
+              {title}
+            </Link>
+          ))}
         </ul>
       </div>
       <TransitionGroup className={panelContainerStyle} data-in-settings={location === '/settings'}>
         <CSSTransition in unmountOnExit key={location} classNames={'room'} timeout={250}>
           <Switch location={location}>
-            {settings.map((it) => {
-              const target = `/settings/${it.key}`;
-
-              return (
-                <Route key={it.key} path={target}>
-                  <div className={panelWrapperStyle}>
-                    <div className={headerWrapperStyle}>
-                      <Header title={it.title} left={<IconButton icon={CloseIcon} onClick={onBack} />} />
-                    </div>
-                    <div className={panelGroupStyle}>
-                      {it.map((setting) => {
-                        return (
-                          <div key={setting.key} className={panelStyle} style={style({
-                            '--background': backgroundColor,
-                          })}>
-                            {setting.icon && <Icon icon={setting.icon} />}
-                            <div className={'title'}>{setting.title}</div>
-                          </div>
-                        );
-                      })}
-                    </div>
+            {settings.map(({ key, title, children }) => (
+              <Route key={key} path={`/settings/${key}`}>
+                <div className={panelWrapperStyle}>
+                  <div className={headerWrapperStyle}>
+                    <Header title={title} left={<IconButton icon={CloseIcon} onClick={onBack} />} />
                   </div>
-                </Route>
-              );
-            })}
+                  <div className={panelGroupStyle}>
+                    {children?.map((it) => (
+                      <SettingItem
+                        settings={it}
+                      >
+                        
+                      </SettingItem>
+                    ))}
+                  </div>
+                </div>
+              </Route>
+            ))}
           </Switch>
         </CSSTransition>
       </TransitionGroup>
