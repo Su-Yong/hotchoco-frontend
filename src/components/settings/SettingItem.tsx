@@ -17,7 +17,7 @@ const containerStyle = css`
   align-items: center;
   gap: 8px;
 
-  background: var(--background);
+  background: var(--th-backgroundSecondary-main);
   box-sizing: border-box;
 `;
 
@@ -38,16 +38,8 @@ const SettingItem = (props: PropsWithChildren<SettingItemProps>) => {
   const title = useMemo(() => ('settings' in props ? props.settings.title : props.title), [props]);
   const icon = useMemo(() => ('settings' in props ? props.settings.icon : props.icon), [props]);
 
-  const backgroundColor = useMemo(() => theme.palette.backgroundSecondary.main, [theme]);
-
   return (
-    <div
-      key={key}
-      className={containerStyle}
-      style={style({
-        '--background': backgroundColor,
-      })}
-    >
+    <div key={key} className={containerStyle}>
       {icon && <Icon icon={icon} />}
       <div className={titleStyle}>{title}</div>
       {props.children}

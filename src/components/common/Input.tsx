@@ -16,8 +16,8 @@ const inputStyle = css`
   border: none;
   border-radius: 100px;
 
-  background: var(--background);
-  color: var(--color);
+  background: var(--th-backgroundSecondary-main);
+  color: var(--th-backgroundSecondary-text);
 
   display: flex;
   flex-flow: column;
@@ -64,19 +64,7 @@ const Input = ({ typographyType = 'body3', icon, help, children, ...props }: Pro
   }, [typographyType, theme.typography]);
 
   return (
-    <input
-      {...props}
-      className={className(inputStyle, props.className)}
-      style={style(
-        {
-          '--background': theme.palette.backgroundSecondary.main,
-          '--color': theme.palette.backgroundSecondary.contrastText,
-          '--border-color': borderColor,
-        },
-        typeStyle,
-        props.style,
-      )}
-    >
+    <input {...props} className={className(inputStyle, props.className)} style={style({ '--border-color': borderColor }, typeStyle, props.style)}>
       {children}
     </input>
   );

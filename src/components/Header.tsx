@@ -20,6 +20,7 @@ const containerStyle = css`
 
   user-select: none;
 
+  color: var(--th-backgroundSecondary-contrastText);
   background: var(--background);
   backdrop-filter: blur(8px);
 `;

@@ -30,8 +30,8 @@ const buttonStyle = css`
 
   border-radius: 24px;
 
-  color: var(--button-color);
-  background: var(--button-background);
+  color: var(--th-primary-contrastText);
+  background: var(--th-primary-main);
 `;
 
 const textAreaStyle = css`
@@ -87,9 +87,6 @@ const ChatInput = ({ onFile, onSubmit }: ChatInputProps): JSX.Element => {
   const background = useMemo(() => ColorUtil.alpha(theme.palette.backgroundSecondary.main, 0.5), [theme]);
   const buttonBackground = useMemo(() => Color(theme.palette.backgroundSecondary.main).darken(0.2).alpha(0.5).get(), [theme]);
   const inputBackground = useMemo(() => Color(theme.palette.backgroundSecondary.main).darken(0.3).alpha(0.5).get(), [theme]);
-  const buttonColor = useMemo(() => theme.palette.backgroundSecondary.main, [theme]);
-  const primaryColor = useMemo(() => theme.palette.primary.main, [theme]);
-  const primaryText = useMemo(() => theme.palette.primary.contrastText, [theme]);
 
   return (
     <div
@@ -97,22 +94,13 @@ const ChatInput = ({ onFile, onSubmit }: ChatInputProps): JSX.Element => {
       style={style({
         '--background': background,
         '--button-background': buttonBackground,
-        '--button-color': buttonColor,
         '--input-background': inputBackground,
         '--line-height': lineHeight,
       })}
     >
       <Icon icon={AddIcon} className={buttonStyle} onClick={onFile} />
       <TextareaAutosize ref={inputRef} maxRows={6} className={textAreaStyle} onHeightChange={onHeightChange} />
-      <Icon
-        icon={SendIcon}
-        className={buttonStyle}
-        style={style({
-          '--button-background': primaryColor,
-          '--button-color': primaryText,
-        })}
-        onClick={onClickSend}
-      />
+      <Icon icon={SendIcon} className={buttonStyle} onClick={onClickSend} />
     </div>
   );
 };

@@ -17,8 +17,8 @@ const buttonStyle = css`
 
   padding: 8px 12px;
 
-  background: var(--background);
-  color: var(--color);
+  background: var(--th-primary-main);
+  color: var(--th-primary-contrastText);
   box-shadow: 0 4px 16px var(--shadow-color);
 
   transition: background 0.25s;
@@ -59,8 +59,6 @@ const Button = ({ type = 'body3', children, ...props }: PropsWithChildren<Button
       className={className(buttonStyle, props.className)}
       style={style(
         {
-          '--background': theme.palette.primary.main,
-          '--color': theme.palette.primary.contrastText,
           '--background-hover': backgroundHover,
           '--background-active': backgroundActive,
           '--shadow-color': shadowColor,

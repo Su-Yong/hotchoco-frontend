@@ -63,7 +63,7 @@ const emptyStyle = css`
 
 const roomListStyle = css`
   height: 100%;
-  background: var(--background);
+  background: var(--th-backgroundPrimary-main);
 
   position: relative;
   user-select: none;
@@ -113,6 +113,8 @@ const dividerStyle = css`
 
 const roomContainerStyle = css`
   position: relative;
+
+  background: var(--th-white-main);
 
   @media (min-width: 600px) {
     flex: 1;
@@ -207,7 +209,6 @@ const ChatPage = (): JSX.Element => {
     <div
       className={containerStyle}
       style={style({
-        '--background': theme.palette.backgroundPrimary.main,
         '--size': `${size ?? 360}px`,
         '--select-background': selectBackground,
         '--select-active-background': selectActiveBackground,

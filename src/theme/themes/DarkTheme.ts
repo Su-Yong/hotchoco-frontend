@@ -11,19 +11,19 @@ const DarkTheme: Theme = {
       contrastText: '#000000',
     },
     backgroundPrimary: {
-      main: '#f1f1f1',
-      contrastText: '#000000',
+      main: '#212121',
+      contrastText: '#ffffff',
     },
     backgroundSecondary: {
-      main: '#e0e0e0',
-      contrastText: '#000000',
+      main: '#424242',
+      contrastText: '#ffffff',
     },
     white: {
-      main: '#2d2d2d',
+      main: '#000000',
       contrastText: '#ffffff',
     },
     black: {
-      main: '#f1f1f1',
+      main: '#ffffff',
       contrastText: '#000000',
     },
     red: {

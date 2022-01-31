@@ -8,7 +8,7 @@ import Typography from './Typography';
 import style from '@/utils/style';
 import { Color } from '@/utils/Color';
 import { StringLike } from '@/types/common';
-import { SelectItemProps } from './SelectItem';
+import SelectItem, { SelectItemProps } from './SelectItem';
 import className from '@/utils/className';
 
 const containerStyle = css`
@@ -78,6 +78,8 @@ const optionContainerStyle = css`
   }
 `;
 
+const SelectItemTypeName = (<SelectItem value={Symbol()} />).type.name;
+
 export interface SelectProps extends Omit<HTMLAttributes<HTMLDivElement>, 'onChange'> {
   value?: StringLike;
   onChange?: (value: StringLike) => void;
@@ -102,7 +104,7 @@ const Select = ({ value: initValue, onChange, children, ...restProps }: PropsWit
   const props: SelectItemProps[] = useMemo(
     () =>
       React.Children.map(children, (child) => {
-        if (React.isValidElement(child) && typeof child.type !== 'string' && child.type.name === 'SelectItem') {
+        if (React.isValidElement(child) && typeof child.type !== 'string' && child.type.name === SelectItemTypeName) {
           return child.props;
         }
       }) ?? [],
@@ -112,7 +114,7 @@ const Select = ({ value: initValue, onChange, children, ...restProps }: PropsWit
   const options = useMemo(
     () =>
       React.Children.map(children, (child) => {
-        if (React.isValidElement(child) && typeof child.type !== 'string' && child.type.name === 'SelectItem') {
+        if (React.isValidElement(child) && typeof child.type !== 'string' && child.type.name === SelectItemTypeName) {
           return React.cloneElement(
             child,
             {
@@ -149,7 +151,7 @@ const Select = ({ value: initValue, onChange, children, ...restProps }: PropsWit
       onClick={onToggle}
     >
       <Typography type={'h5'} className={titleStyle}>
-        {props.find(({ value: it }) => it === value)?.children}
+        {props.find(({ value: it }) => it === value)?.children ?? '----------'}
       </Typography>
       <Icon icon={MoreIcon} />
       <div

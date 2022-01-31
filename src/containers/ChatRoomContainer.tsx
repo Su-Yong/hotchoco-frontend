@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useMemo } from 'react';
 
 import { css } from '@linaria/core';
 import { Virtuoso, VirtuosoProps } from 'react-virtuoso';
@@ -13,8 +13,6 @@ import User from '@/types/User';
 import toBigInt from '@/utils/toBigInt';
 import Header from '@/components/Header';
 import { useTheme } from '@/theme';
-import style from '@/utils/style';
-import ChatBubblePlaceholder from '@/components/placeholder/ChatBubblePlaceholder';
 import ChatInput, { ChatInputProps } from '@/components/ChatInput';
 import { styled } from '@linaria/react';
 import useManager from '@/hooks/useManager';
@@ -32,7 +30,7 @@ const containerStyle = css`
   display: flex;
   flex-flow: column;
 
-  background: var(--background);
+  background: var(--th-backgroundPrimary-main);
 
   position: relative;
 `;
@@ -116,7 +114,6 @@ const ChatRoomContainer = ({ users, chatList, chatRoomId, onBack }: ChatRoomCont
     [allUnreadChats, room],
   );
 
-  const background = useMemo(() => theme.palette.backgroundPrimary.main, [theme]);
   const profiles = useMemo(() => {
     const result = new Map<string, JSX.Element>();
 
@@ -144,12 +141,7 @@ const ChatRoomContainer = ({ users, chatList, chatRoomId, onBack }: ChatRoomCont
   }, [users, chatRoomId]);
 
   return (
-    <div
-      className={containerStyle}
-      style={style({
-        '--background': background,
-      })}
-    >
+    <div className={containerStyle}>
       <div className={headerStyle}>
         <Header
           title={room?.name ?? '알 수 없음'}

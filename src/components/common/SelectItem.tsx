@@ -7,8 +7,8 @@ import { useMemo } from 'react';
 
 const containerStyle = css`
   width: 100%;
-  color: var(--color);
-  background: var(--background);
+  color: var(--th-backgroundSecondary-contrastText);
+  background: var(--th-backgroundSecondary-main);
 
   border-radius: 4px;
   padding: 16px;
@@ -29,12 +29,12 @@ const containerStyle = css`
     background: var(--background-active);
   }
   &:active {
-    box-shadow: var(--background-select) 0 0 0 4px inset;
+    box-shadow: var(--th-primary-main) 0 0 0 4px inset;
   }
 
   &[data-select='true'] {
-    color: var(--color-select);
-    background: var(--background-select);
+    color: var(--th-primary-contrastText);
+    background: var(--th-primary-main);
     border-radius: 40px;
   }
 `;
@@ -48,22 +48,14 @@ export interface SelectItemProps {
 
 const SelectItem = ({ value, children, selected, onClick }: SelectItemProps) => {
   const theme = useTheme();
-  const textCategoryColor = useMemo(() => theme.palette.backgroundSecondary.contrastText, [theme]);
-  const backgroundColor = useMemo(() => theme.palette.backgroundSecondary.main, [theme]);
   const backgroundActiveColor = useMemo(() => Color(theme.palette.backgroundSecondary.main).darken(0.1).get(), [theme]);
-  const textSelectColor = useMemo(() => theme.palette.primary.contrastText, [theme]);
-  const backgroundSelectColor = useMemo(() => Color(theme.palette.primary.main).get(), [theme]);
 
   return (
     <div
       key={value.toString()}
       className={containerStyle}
       style={style({
-        '--color': textCategoryColor,
-        '--color-select': textSelectColor,
         '--background-active': backgroundActiveColor,
-        '--background-select': backgroundSelectColor,
-        '--background': backgroundColor,
       })}
       onClick={() => onClick?.(value)}
       data-select={!!selected}

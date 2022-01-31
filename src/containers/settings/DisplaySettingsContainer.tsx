@@ -18,7 +18,7 @@ const DisplaySettingsContainer = () => {
   const [roomWidth, setRoomWidth] = useAtom(roomListWidth);
 
   const changeTheme = useCallback((it: StringLike) => {
-    setTheme(it.toString() as 'light' | 'dark' | 'system');
+    setTheme(it.toString() as 'light' | 'dark');
   }, []);
   const changeRoomWidth: React.ChangeEventHandler<HTMLInputElement> = useCallback((event) => {
     const value = Number(event.target.value);
@@ -36,7 +36,6 @@ const DisplaySettingsContainer = () => {
           <Select value={theme} className={themeStyle} onChange={changeTheme}>
             <SelectItem value={'light'}>라이트 모드</SelectItem>
             <SelectItem value={'dark'}>다크 모드</SelectItem>
-            <SelectItem value={'system'}>시스템에 맞게</SelectItem>
           </Select>
         </SettingItem>
       )}
