@@ -1,4 +1,3 @@
-
 import DisplayIcon from '@iconify/icons-mdi/tv';
 import ThemeIcon from '@iconify/icons-mdi/palette';
 import RoomWidthIcon from '@iconify/icons-mdi/view-column';
@@ -51,7 +50,7 @@ const settings: Settings[] = [
     title: '정보',
     icon: InfoIcon,
     children: [],
-  }
+  },
 ];
 
 export default settings;

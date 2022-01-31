@@ -16,15 +16,9 @@ const containerStyle = css`
 
 const InfoSettingsContainer = React.memo(() => (
   <div className={containerStyle}>
-    <Typography type={'h1'}>
-      {hotchoco.name}
-    </Typography>
-    <Typography type={'h5'}>
-      버전: {hotchoco.version}
-    </Typography>
-    <Typography type={'h5'}>
-      제작자: {hotchoco.author.name}
-    </Typography>
+    <Typography type={'h1'}>{hotchoco.name}</Typography>
+    <Typography type={'h5'}>버전: {hotchoco.version}</Typography>
+    <Typography type={'h5'}>제작자: {hotchoco.author.name}</Typography>
   </div>
 ));
 

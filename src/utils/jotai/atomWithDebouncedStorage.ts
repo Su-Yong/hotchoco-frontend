@@ -3,11 +3,7 @@ import { atom, WritableAtom } from 'jotai';
 import { atomWithStorage } from 'jotai/utils';
 import { DEFAULT_TIMEOUT } from './atomWithDebounce';
 
-const atomWithDebouncedStorage = <Value>(
-  key: string,
-  initialValue: Value,
-  timeout = DEFAULT_TIMEOUT,
-): WritableAtom<Value, Value> => {
+const atomWithDebouncedStorage = <Value>(key: string, initialValue: Value, timeout = DEFAULT_TIMEOUT): WritableAtom<Value, Value> => {
   const fastAtom = atom<Value | Nullish>(null);
   const storageAtom = atomWithStorage(key, initialValue);
 
@@ -22,8 +18,8 @@ const atomWithDebouncedStorage = <Value>(
       debounce = setTimeout(() => {
         set(storageAtom, value);
       }, timeout);
-    }
+    },
   );
-}
+};
 
 export default atomWithDebouncedStorage;

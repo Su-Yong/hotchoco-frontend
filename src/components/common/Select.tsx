@@ -70,7 +70,7 @@ const optionContainerStyle = css`
   opacity: 0;
   pointer-events: none;
   transition: all 0.25s;
-  
+
   &[data-open='true'] {
     transform: translateY(0);
     pointer-events: auto;
@@ -83,12 +83,7 @@ export interface SelectProps extends Omit<HTMLAttributes<HTMLDivElement>, 'onCha
   onChange?: (value: StringLike) => void;
 }
 
-const Select = ({
-  value: initValue,
-  onChange,
-  children,
-  ...restProps
-}: PropsWithChildren<SelectProps>) => {
+const Select = ({ value: initValue, onChange, children, ...restProps }: PropsWithChildren<SelectProps>) => {
   const theme = useTheme();
 
   const [isOpen, setOpen] = useState(false);
@@ -104,25 +99,33 @@ const Select = ({
     setOpen((it) => !it);
   }, []);
 
-  const props: SelectItemProps[] = useMemo(() => React.Children.map(children, (child) => {
-    if (React.isValidElement(child) && typeof child.type !== 'string' && child.type.name === 'SelectItem') {
-      return child.props;
-    }
-  }) ?? [], [children]);
+  const props: SelectItemProps[] = useMemo(
+    () =>
+      React.Children.map(children, (child) => {
+        if (React.isValidElement(child) && typeof child.type !== 'string' && child.type.name === 'SelectItem') {
+          return child.props;
+        }
+      }) ?? [],
+    [children],
+  );
 
-  const options = useMemo(() => React.Children.map(children, (child) => {
-    if (React.isValidElement(child) && typeof child.type !== 'string' && child.type.name === 'SelectItem') {
-      return React.cloneElement(
-        child,
-        {
-          ...child.props,
-          selected: value === child.props.value,
-          onClick: setValue,
-        },
-        ...child.props.children,
-      );
-    }
-  }), [children, value]);
+  const options = useMemo(
+    () =>
+      React.Children.map(children, (child) => {
+        if (React.isValidElement(child) && typeof child.type !== 'string' && child.type.name === 'SelectItem') {
+          return React.cloneElement(
+            child,
+            {
+              ...child.props,
+              selected: value === child.props.value,
+              onClick: setValue,
+            },
+            ...child.props.children,
+          );
+        }
+      }),
+    [children, value],
+  );
 
   useEffect(() => {
     setValue(initValue);

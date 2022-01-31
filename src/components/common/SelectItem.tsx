@@ -71,6 +71,6 @@ const SelectItem = ({ value, children, selected, onClick }: SelectItemProps) => 
       {children}
     </div>
   );
-}
+};
 
 export default SelectItem;

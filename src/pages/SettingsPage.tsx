@@ -159,7 +159,7 @@ const SettingsPage = (): JSX.Element => {
   const theme = useTheme();
 
   const [location] = useLocation();
-  
+
   const backdropColor = useMemo(() => theme.palette.backgroundPrimary.main, [theme]);
   const textCategoryColor = useMemo(() => theme.palette.backgroundSecondary.contrastText, [theme]);
   const backgroundColor = useMemo(() => theme.palette.backgroundSecondary.main, [theme]);
@@ -182,10 +182,7 @@ const SettingsPage = (): JSX.Element => {
     >
       <div className={categoryContainerStyle}>
         <div className={headerWrapperStyle}>
-          <Header
-            title={'설정'}
-            left={<IconButton icon={ArrowLeft} onClick={onBack} />}
-          />
+          <Header title={'설정'} left={<IconButton icon={ArrowLeft} onClick={onBack} />} />
         </div>
         <ul
           className={categoryGroupStyle}
@@ -218,12 +215,7 @@ const SettingsPage = (): JSX.Element => {
                   <div className={headerWrapperStyle}>
                     <Header title={title} left={<IconButton icon={CloseIcon} onClick={onBack} />} />
                   </div>
-                  <div className={panelGroupStyle}>
-                    {
-                      key === 'display' ? <DisplaySettingsContainer /> :
-                      key === 'info' ? <InfoSettingsContainer /> : null
-                    }
-                  </div>
+                  <div className={panelGroupStyle}>{key === 'display' ? <DisplaySettingsContainer /> : key === 'info' ? <InfoSettingsContainer /> : null}</div>
                 </div>
               </Route>
             ))}

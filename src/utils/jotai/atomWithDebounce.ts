@@ -18,7 +18,7 @@ const atomWithDebounce = <Value, Update>(
       debounce = setTimeout(() => {
         setter(get, set, value);
       }, timeout);
-    }
+    },
   );
 
   return resultAtom;

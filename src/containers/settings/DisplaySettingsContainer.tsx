@@ -22,7 +22,7 @@ const DisplaySettingsContainer = () => {
   }, []);
   const changeRoomWidth: React.ChangeEventHandler<HTMLInputElement> = useCallback((event) => {
     const value = Number(event.target.value);
-    
+
     if (Number.isFinite(value)) setRoomWidth(value);
   }, []);
 
@@ -32,9 +32,7 @@ const DisplaySettingsContainer = () => {
   return (
     <>
       {themeSetting && (
-        <SettingItem
-          settings={themeSetting}
-        >
+        <SettingItem settings={themeSetting}>
           <Select value={theme} className={themeStyle} onChange={changeTheme}>
             <SelectItem value={'light'}>라이트 모드</SelectItem>
             <SelectItem value={'dark'}>다크 모드</SelectItem>
@@ -43,14 +41,12 @@ const DisplaySettingsContainer = () => {
         </SettingItem>
       )}
       {roomWidthSetting && (
-        <SettingItem
-          settings={roomWidthSetting}
-        >
+        <SettingItem settings={roomWidthSetting}>
           <Input value={roomWidth} onChange={changeRoomWidth} />
         </SettingItem>
       )}
     </>
   );
-}
+};
 
 export default DisplaySettingsContainer;

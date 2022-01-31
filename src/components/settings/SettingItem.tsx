@@ -25,16 +25,18 @@ const titleStyle = css`
   flex: 1;
 `;
 
-export type SettingItemProps = {
-  settings: Omit<Settings, 'children'>;
-} | Omit<Settings, 'children'>;
+export type SettingItemProps =
+  | {
+      settings: Omit<Settings, 'children'>;
+    }
+  | Omit<Settings, 'children'>;
 
 const SettingItem = (props: PropsWithChildren<SettingItemProps>) => {
   const theme = useTheme();
 
-  const key = useMemo(() => 'settings' in props ? props.settings.key : props.key, [props]);
-  const title = useMemo(() => 'settings' in props ? props.settings.title : props.title, [props]);
-  const icon = useMemo(() => 'settings' in props ? props.settings.icon : props.icon, [props]);
+  const key = useMemo(() => ('settings' in props ? props.settings.key : props.key), [props]);
+  const title = useMemo(() => ('settings' in props ? props.settings.title : props.title), [props]);
+  const icon = useMemo(() => ('settings' in props ? props.settings.icon : props.icon), [props]);
 
   const backgroundColor = useMemo(() => theme.palette.backgroundSecondary.main, [theme]);
 

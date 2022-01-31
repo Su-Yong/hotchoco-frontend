@@ -147,11 +147,14 @@ const ChatPage = (): JSX.Element => {
   const selectBackground = useMemo(() => Color(theme.palette.backgroundSecondary.main).darken(0.1).alpha(0.5).get(), [theme]);
   const selectActiveBackground = useMemo(() => Color(selectBackground).alpha(1).get(), [selectBackground]);
 
-  const onResize: React.DragEventHandler<HTMLDivElement> = useCallback(({ clientX }) => {
-    if (clientX) {
-      setSize(clientX);
-    }
-  }, [roomListRef]);
+  const onResize: React.DragEventHandler<HTMLDivElement> = useCallback(
+    ({ clientX }) => {
+      if (clientX) {
+        setSize(clientX);
+      }
+    },
+    [roomListRef],
+  );
 
   const onBack = useCallback(() => {
     setRoom();
