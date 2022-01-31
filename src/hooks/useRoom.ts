@@ -4,7 +4,7 @@ import { useLocation } from 'wouter';
 
 const useRoom = (): [string | Nullish, (roomId?: string) => void] => {
   const [location, setLocation] = useLocation();
-  const roomId = useMemo(() => location.match(/chat\/([^\/]+)/)?.at(1), [location]);
+  const roomId = useMemo(() => location.match(/chat\/([^\/]+)/)?.[1], [location]);
 
   const setRoom = useCallback((id?: string) => {
     if (id) {
