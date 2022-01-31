@@ -1,6 +1,6 @@
 import { useTheme } from '@/theme';
 import { css } from '@linaria/core';
-import { HTMLAttributes, PropsWithChildren, useCallback, useEffect, useMemo, useState } from 'react';
+import React, { HTMLAttributes, PropsWithChildren, useCallback, useEffect, useMemo, useState } from 'react';
 
 import MoreIcon from '@iconify/icons-mdi/expand-more';
 import { Icon } from '@iconify/react';
@@ -8,7 +8,8 @@ import Typography from './Typography';
 import style from '@/utils/style';
 import { Color } from '@/utils/Color';
 import { StringLike } from '@/types/common';
-import React from 'react';
+import { SelectItemProps } from './SelectItem';
+import className from '@/utils/className';
 
 const containerStyle = css`
   position: relative;
@@ -68,7 +69,7 @@ const optionContainerStyle = css`
   transform: translateY(-100%);
   opacity: 0;
   pointer-events: none;
-  transition: all 0.5s;
+  transition: all 0.25s;
   
   &[data-open='true'] {
     transform: translateY(0);
@@ -83,9 +84,10 @@ export interface SelectProps extends Omit<HTMLAttributes<HTMLDivElement>, 'onCha
 }
 
 const Select = ({
-  value: initValue = '-----',
+  value: initValue,
   onChange,
   children,
+  ...restProps
 }: PropsWithChildren<SelectProps>) => {
   const theme = useTheme();
 
@@ -101,6 +103,12 @@ const Select = ({
   const onToggle = useCallback(() => {
     setOpen((it) => !it);
   }, []);
+
+  const props: SelectItemProps[] = useMemo(() => React.Children.map(children, (child) => {
+    if (React.isValidElement(child) && typeof child.type !== 'string' && child.type.name === 'SelectItem') {
+      return child.props;
+    }
+  }) ?? [], [children]);
 
   const options = useMemo(() => React.Children.map(children, (child) => {
     if (React.isValidElement(child) && typeof child.type !== 'string' && child.type.name === 'SelectItem') {
@@ -121,13 +129,15 @@ const Select = ({
   }, [initValue]);
 
   useEffect(() => {
-    onChange?.(value);
+    if (value) onChange?.(value);
   }, [value, onChange]);
 
   return (
     <div
-      className={containerStyle}
+      {...restProps}
+      className={className(containerStyle, restProps.className)}
       style={style({
+        ...restProps.style,
         '--background': backgroundColor,
         '--background-hover': backgroundHoverColor,
         '--background-active': backgroundActiveColor,
@@ -136,7 +146,7 @@ const Select = ({
       onClick={onToggle}
     >
       <Typography type={'h5'} className={titleStyle}>
-        {value}
+        {props.find(({ value: it }) => it === value)?.children}
       </Typography>
       <Icon icon={MoreIcon} />
       <div

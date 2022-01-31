@@ -1,6 +1,11 @@
 {
   "name": "hotchoco-frontend",
-  "version": "0.1.0",
+  "version": "0.12.0",
+  "author": {
+    "name": "Su-Yong",
+    "email": "simssy2205@gmail.com",
+    "url": "https://blog.suyong.me"
+  },
   "scripts": {
     "dev": "vite",
     "build": "tsc && vite build",

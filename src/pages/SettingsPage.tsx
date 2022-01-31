@@ -12,7 +12,8 @@ import { Link, Route, Switch, useLocation } from 'wouter';
 import { Icon } from '@iconify/react';
 import CloseIcon from '@iconify/icons-mdi/close';
 import settings from '@/constants/settings';
-import SettingItem from '@/components/settings/SettingItem';
+import DisplaySettingsContainer from '@/containers/settings/DisplaySettingsContainer';
+import InfoSettingsContainer from '@/containers/settings/InfoSettingsContainer';
 
 const backdropStyle = css`
   width: 100%;
@@ -130,6 +131,8 @@ const panelWrapperStyle = css`
   top: 0;
   bottom: 0;
 
+  background: var(--background);
+
   display: flex;
   flex-flow: column;
   justify-content: flex-start;
@@ -150,26 +153,6 @@ const panelGroupStyle = css`
   gap: 8px;
 
   box-sizing: border-box;
-`;
-
-const panelStyle = css`
-  width: 100%;
-
-  border-radius: 4px;
-  padding: 16px;
-
-  display: flex;
-  flex-flow: row;
-  justify-content: flex-start;
-  align-items: center;
-  gap: 8px;
-
-  background: var(--background);
-  box-sizing: border-box;
-
-  & > div.title {
-    flex: 1;
-  }
 `;
 
 const SettingsPage = (): JSX.Element => {
@@ -201,7 +184,7 @@ const SettingsPage = (): JSX.Element => {
         <div className={headerWrapperStyle}>
           <Header
             title={'설정'}
-            left={<IconButton icon={ArrowLeft} />}
+            left={<IconButton icon={ArrowLeft} onClick={onBack} />}
           />
         </div>
         <ul
@@ -227,22 +210,19 @@ const SettingsPage = (): JSX.Element => {
         </ul>
       </div>
       <TransitionGroup className={panelContainerStyle} data-in-settings={location === '/settings'}>
-        <CSSTransition in unmountOnExit key={location} classNames={'room'} timeout={250}>
+        <CSSTransition in unmountOnExit key={location} classNames={'left-in'} timeout={250}>
           <Switch location={location}>
-            {settings.map(({ key, title, children }) => (
+            {settings.map(({ key, title }) => (
               <Route key={key} path={`/settings/${key}`}>
                 <div className={panelWrapperStyle}>
                   <div className={headerWrapperStyle}>
                     <Header title={title} left={<IconButton icon={CloseIcon} onClick={onBack} />} />
                   </div>
                   <div className={panelGroupStyle}>
-                    {children?.map((it) => (
-                      <SettingItem
-                        settings={it}
-                      >
-                        
-                      </SettingItem>
-                    ))}
+                    {
+                      key === 'display' ? <DisplaySettingsContainer /> :
+                      key === 'info' ? <InfoSettingsContainer /> : null
+                    }
                   </div>
                 </div>
               </Route>

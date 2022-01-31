@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React, { useCallback, useMemo } from 'react';
 
 import { Virtuoso, VirtuosoProps } from 'react-virtuoso';
 
@@ -14,6 +14,7 @@ import IconButton from '@/components/common/IconButton';
 import SettingIcon from '@iconify/icons-mdi/settings-outline';
 import SearchIcon from '@iconify/icons-mdi/search';
 import DateUtil from '@/utils/DateUtil';
+import { Link } from 'wouter';
 
 const containerStyle = css`
   width: 100%;
@@ -69,7 +70,9 @@ const RoomListContainer = ({ rooms }: RoomListContainerProps): JSX.Element => {
           right={
             <>
               <IconButton icon={SearchIcon} />
-              <IconButton icon={SettingIcon} />
+              <Link href={'/settings'}>
+                <IconButton icon={SettingIcon} />
+              </Link>
             </>
           }
         />

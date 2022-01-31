@@ -66,6 +66,7 @@ const roomListStyle = css`
   background: var(--background);
 
   position: relative;
+  user-select: none;
 
   transition: transform 0.25s, filter 0.25s;
 
@@ -96,6 +97,7 @@ const dividerStyle = css`
 
   cursor: col-resize;
   background: transparent;
+  user-select: none;
 
   transition: all 0.1s;
 
@@ -210,10 +212,10 @@ const ChatPage = (): JSX.Element => {
     >
       <div ref={roomListRef} className={roomListStyle} data-in-room={!!roomId}>
         <RoomListContainer rooms={rooms} />
-        <div className={dividerStyle} onDrag={onResize} />
+        <div draggable className={dividerStyle} onDrag={onResize} />
       </div>
       <TransitionGroup className={roomContainerStyle} data-in-room={!!roomId}>
-        <CSSTransition in unmountOnExit key={location} classNames={'room'} timeout={250}>
+        <CSSTransition in unmountOnExit key={location} classNames={'left-in'} timeout={250}>
           <Switch location={location}>
             <Route path={'/chat'}>
               <div className={emptyStyle}>채팅방을 선택해주세요.</div>

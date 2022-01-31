@@ -1,7 +1,10 @@
 
 import DisplayIcon from '@iconify/icons-mdi/tv';
+import ThemeIcon from '@iconify/icons-mdi/palette';
+import RoomWidthIcon from '@iconify/icons-mdi/view-column';
 import AccountIcon from '@iconify/icons-mdi/account';
 import ConnectionIcon from '@iconify/icons-mdi/cloud';
+import InfoIcon from '@iconify/icons-mdi/info-circle';
 import { IconifyIcon } from '@iconify/react';
 
 export interface Settings {
@@ -11,11 +14,16 @@ export interface Settings {
   children?: Settings[];
 }
 
-const displaySettings: Settings[] = [
+export const displaySettings: Settings[] = [
   {
-    key: 'use-theme',
+    key: 'theme',
     title: '테마를 설정합니다',
-    icon: DisplayIcon,
+    icon: ThemeIcon,
+  },
+  {
+    key: 'room-list-width',
+    title: '채팅방 리스트의 좌우 폭을 설정합니다',
+    icon: RoomWidthIcon,
   },
 ];
 
@@ -38,6 +46,12 @@ const settings: Settings[] = [
     icon: ConnectionIcon,
     children: [],
   },
+  {
+    key: 'info',
+    title: '정보',
+    icon: InfoIcon,
+    children: [],
+  }
 ];
 
 export default settings;

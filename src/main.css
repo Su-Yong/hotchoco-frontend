@@ -22,44 +22,66 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New', monospace;
 }
 
+.page-enter {
+  transform: translateY(-10%);
+  opacity: 0;
+}
+
+.page-enter-active {
+  transform: translateX(0);
+  opacity: 1;
+  transition: transform 0.25s ease, opacity 0.25s ease;
+}
+
+.page-exit {
+  transform: translateX(0);
+  opacity: 1;
+}
+
+.page-exit-active {
+  transform: translateY(10%);
+  opacity: 0;
+  transition: transform 0.25s ease, opacity 0.25s ease;
+}
+
 @media (max-width: 600px) {
-  .room-enter {
+  .left-in-enter {
     transform: translateX(100%);
   }
 
-  .room-enter-active {
+  .left-in-enter-active {
     transform: translateX(0);
     transition: transform 0.25s;
   }
 
-  .room-exit {
+  .left-in-exit {
     transform: translateX(0);
   }
 
-  .room-exit-active {
+  .left-in-exit-active {
     transform: translateX(100%);
     transition: transform 0.25s;
   }
 }
 
 @media (min-width: 600px) {
-  .room-enter {
+  .left-in-enter {
     transform: translateX(25%);
     opacity: 0;
   }
 
-  .room-enter-active {
+  .left-in-enter-active {
     transform: translateX(0);
     opacity: 1;
     transition: transform 0.25s, opacity 0.25s;
   }
 
-  .room-exit {
+  .left-in-exit {
     transform: translateX(0);
     opacity: 1;
   }
 
-  .room-exit-active {
+  .left-in-exit-active {
     transform: translateX(25%);
     opacity: 0;
     transition: transform 0.25s, opacity 0.25s;
