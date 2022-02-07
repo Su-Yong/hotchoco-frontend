@@ -142,18 +142,18 @@ const ChatRoomContainer = ({ users, chatList, chatRoomId, onBack }: ChatRoomCont
 
   return (
     <div className={containerStyle}>
-      <div className={headerStyle}>
-        <Header
-          title={room?.name ?? '알 수 없음'}
-          left={
-            <>
-              <IconButton icon={ArrowLeft} onClick={onBack} />
-              <Profile url={room?.image} size={36} />
-            </>
-          }
-          right={<IconButton icon={Menu} />}
-        />
-      </div>
+    <div className={headerStyle}>
+      <Header
+        title={room?.name ?? '알 수 없음'}
+        left={
+          <>
+            <IconButton icon={ArrowLeft} onClick={onBack} />
+            <Profile url={room?.image} size={36} />
+          </>
+        }
+        right={<IconButton icon={Menu} />}
+      />
+    </div>
       <Virtuoso
         alignToBottom
         data={chatList}

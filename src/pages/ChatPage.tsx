@@ -114,8 +114,6 @@ const dividerStyle = css`
 const roomContainerStyle = css`
   position: relative;
 
-  background: var(--th-white-main);
-
   @media (min-width: 600px) {
     flex: 1;
   }

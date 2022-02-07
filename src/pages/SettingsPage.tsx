@@ -14,6 +14,7 @@ import CloseIcon from '@iconify/icons-mdi/close';
 import settings from '@/constants/settings';
 import DisplaySettingsContainer from '@/containers/settings/DisplaySettingsContainer';
 import InfoSettingsContainer from '@/containers/settings/InfoSettingsContainer';
+import AccountSettingsContainer from '@/containers/settings/AccountSettingsContainer';
 
 const backdropStyle = css`
   width: 100%;
@@ -131,7 +132,7 @@ const panelWrapperStyle = css`
   top: 0;
   bottom: 0;
 
-  background: var(--background);
+  background: var(--th-backgroundPrimary-main);
 
   display: flex;
   flex-flow: column;
@@ -209,7 +210,13 @@ const SettingsPage = (): JSX.Element => {
                   <div className={headerWrapperStyle}>
                     <Header title={title} left={<IconButton icon={CloseIcon} onClick={onBack} />} />
                   </div>
-                  <div className={panelGroupStyle}>{key === 'display' ? <DisplaySettingsContainer /> : key === 'info' ? <InfoSettingsContainer /> : null}</div>
+                  <div className={panelGroupStyle}>
+                    {
+                      key === 'display' ? <DisplaySettingsContainer /> :
+                      key === 'info' ? <InfoSettingsContainer /> : 
+                      key === 'account' ? <AccountSettingsContainer /> : null
+                    }
+                  </div>
                 </div>
               </Route>
             ))}

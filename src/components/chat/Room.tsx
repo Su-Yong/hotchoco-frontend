@@ -111,8 +111,6 @@ const infoStyle = css`
 const containerStyle = css`
   flex: 1;
 
-  height: 48px;
-
   display: flex;
   flex-flow: column;
   justify-content: space-between;
