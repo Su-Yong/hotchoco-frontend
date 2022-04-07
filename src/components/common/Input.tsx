@@ -68,6 +68,7 @@ const Input = ({ typographyType = 'body3', icon, help, children, ...props }: Pro
   return (
     <input
       {...props}
+      size={props.size ?? 12}
       className={className(inputStyle, props.className)}
       style={style(
         {

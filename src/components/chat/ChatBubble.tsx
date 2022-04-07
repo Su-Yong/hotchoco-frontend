@@ -43,6 +43,8 @@ const contentStyle = css`
   border: none;
   border-radius: 4px;
 
+  white-space: pre-wrap;
+
   transition: all 0.1s;
 
   @media (pointer: fine) {
@@ -117,7 +119,7 @@ const ChatBubble = ({ mine, sender, profile, time, readers, children }: PropsWit
 
   const bubbleColor = useMemo(() => (mine ? theme.palette.primary : theme.palette.backgroundSecondary), [mine]);
   const bubbleAccentColor = useMemo(() => ColorUtil.darken(bubbleColor.main, 0.2), [bubbleColor]);
-  const blackShadowColor = useMemo(() => ColorUtil.alpha(theme.palette.black.main, 0.1), []);
+  const blackShadowColor = useMemo(() => ColorUtil.alpha(theme.palette.black.main, 0.1), [theme]);
 
   return (
     <div

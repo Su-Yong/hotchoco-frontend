@@ -1,8 +1,12 @@
+import useDragEvent from '@/hooks/useDragEvent';
 import { useTheme } from '@/theme';
 import { Color } from '@/utils/Color';
 import style from '@/utils/style';
 import { css } from '@linaria/core';
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+
+const MIN = -8;
+const MAX = 16;
 
 const inputStyle = css`
   display: none;
@@ -14,9 +18,24 @@ const containerStyle = css`
 
   border-radius: 16px;
 
-  background: var(--switch-guide);
+  background: var(--switch-guide-disabled);
+
+  transition: background 0.1s;
+
+  &[data-checked='true'] {
+    background: var(--switch-guide-enabled);
+  }
 
   position: relative;
+
+  &:before {
+    content: '';
+    position: absolute;
+    top: -6px;
+    bottom: -6px;
+    left: -4px;
+    right: -4px;
+  }
 `;
 
 const thumbStyle = css`
@@ -24,41 +43,34 @@ const thumbStyle = css`
   height: 16px;
 
   border-radius: 16px;
-
-  box-shadow: 0 0 0 0 var(--border);
+  border: solid 2px var(--border);
 
   cursor: move;
   user-select: none;
 
   position: absolute;
-  left: var(--position);
+  left: var(--position, ${MIN}px);
   top: -6px;
 
-  transition: background 0.1s, box-shadow 0.1s;
+  transition: background 0.1s, box-shadow 0.1s, border 0.1s;
+  box-sizing: border-box;
 
-  @media (pointer: coarse), (pointer: none) {
-    box-shadow: 0 0 0 2px var(--border);
-  }
-
-  &:hover, &:active {
-    box-shadow: 0 0 0 2px var(--border);
+  @media (pointer: fine) {
+    &:hover, &:active {
+      box-shadow: 0 0 0 2px var(--border);
+    }
   }
 
   &[data-checked='true'] {
     background: var(--switch-thumb-enabled);
+    border: solid 8px var(--switch-thumb-enabled);
   }
 
   &[data-checked='false'] {
     background: var(--switch-thumb-disabled);
-  }
-
-  &[data-animation='true'] {
-    transition: left 0.1s, background 0.1s, box-shadow 0.1s;
+    border: solid 2px var(--border);
   }
 `;
-
-const MIN = -8;
-const MAX = 16;
 
 export interface SwitchProps {
   value?: boolean;
@@ -68,78 +80,44 @@ export interface SwitchProps {
 const Switch = ({ value: initValue = false, onChecked }: SwitchProps) => {
   const theme = useTheme();
 
-  const switchGuide = useMemo(() => Color(theme.palette.backgroundSecondary.main).darken(0.1).get(), [theme]);
+  const switchGuideDisabled = useMemo(() => Color(theme.palette.backgroundSecondary.main).darken(0.1).get(), [theme]);
+  const switchGuideEnabled = useMemo(() => Color(theme.palette.primary.main).darken(0.3).get(), [theme]);
   const switchThumbDisabled = useMemo(() => Color(theme.palette.backgroundSecondary.main).darken(0.3).get(), [theme]);
   const switchThumbEnabled = useMemo(() => Color(theme.palette.primary.main).get(), [theme]);
   const border = useMemo(() => Color(theme.palette.black.main).alpha(0.5).get(), [theme]);
 
+  const ref = useRef<HTMLDivElement>(null);
+  const isMoved = useRef(false);
   const [checked, setChecked] = useState(initValue);
-  const [animation, setAnimation] = useState(false);
-  const [startPosition, setStartPosition] = useState<number | null>(null);
-  const [position, setPosition] = useState<number | null>(null);
 
-  const onDragEnter = useCallback((x: number) => {
-    setStartPosition(x);
-  }, []);
-  const onDrag = useCallback((x: number) => {
-    if (startPosition !== null) {
-      const diff = x - startPosition;
-      const start = checked ? MAX : MIN;
+  const setValue = useCallback((isCheck: boolean) => {
+    ref.current?.setAttribute('style', `--position: ${isCheck ? MAX : MIN}px; transition: left 0.1s, background 0.1s, border 0.1s;`);
+    setTimeout(() => ref.current?.setAttribute('style', `--position: ${isCheck ? MAX : MIN}px;`), 100);
+  }, [ref]);
+
+  const dragEvents = useDragEvent({
+    onDragStart: () => {
+      isMoved.current = false;
+    },
+    onDrag: ({ x }) => {
+      isMoved.current = true;
+      const value = Math.min(Math.max(x + (checked ? MAX : MIN), MIN), MAX);
       
-      setPosition(Math.max(Math.min(start + diff, MAX), MIN));
+      ref.current?.setAttribute('style', `--position: ${value}px`);
+    },
+    onDragEnd: ({ x }) => {
+      const result = (x + (checked ? MAX : MIN)) < (MIN + MAX) / 2 ? false : true;
+      setChecked(result);
+      setValue(result);
     }
-  }, [startPosition, checked]);
-  const onDragEnd = useCallback(() => {
-    if (startPosition !== null && position !== null) {
-      const value = position > (MAX + MIN) / 2;
-
-      setPosition(null);
-      setChecked(value);
-
-      setAnimation(true);
-      setTimeout(() => setAnimation(false), 100);
-    }
-
-    setStartPosition(null);
-  }, [startPosition, position]);
+  }, [isMoved, checked, setValue]);
 
   const onClick = useCallback(() => {
-    setChecked(!checked);
-    setAnimation(true);
-    setTimeout(() => setAnimation(false), 100);
-
-    if (checked) setPosition(MIN);
-    else setPosition(MAX);
-  }, [checked]);
-
-  useEffect(() => {
-    document.addEventListener('mouseup', onDragEnd);
-    document.addEventListener('touchend', onDragEnd);
-    document.addEventListener('touchcancel', onDragEnd);
-
-    return () => {
-      document.removeEventListener('mouseup', onDragEnd);
-      document.removeEventListener('touchend', onDragEnd);
-      document.removeEventListener('touchcancel', onDragEnd);
+    if (!isMoved.current) {
+      setChecked(!checked);
+      setValue(!checked);
     }
-  }, [onDragEnd]);
-
-  useEffect(() => {
-    const mousemove = ({ clientX }: MouseEvent) => onDrag(clientX);
-    const touchmove = ({ touches }: TouchEvent) => {
-      const item = touches.item(0)
-      
-      if (item) onDrag(item.clientX);
-    };
-
-    document.addEventListener('mousemove', mousemove);
-    document.addEventListener('touchmove', touchmove);
-
-    return () => {
-      document.removeEventListener('mousemove', mousemove);
-      document.removeEventListener('touchmove', touchmove);
-    }
-  }, [onDrag]);
+  }, [isMoved, checked, setValue]);
 
   useEffect(() => {
     onChecked?.(checked);
@@ -147,6 +125,7 @@ const Switch = ({ value: initValue = false, onChecked }: SwitchProps) => {
 
   useEffect(() => {
     setChecked(initValue);
+    setValue(initValue);
   }, [initValue]);
 
   return (
@@ -154,21 +133,21 @@ const Switch = ({ value: initValue = false, onChecked }: SwitchProps) => {
       <input type={'checkbox'} className={inputStyle} />
       <label
         style={style({
-          '--switch-guide': switchGuide,
+          '--switch-guide-disabled': switchGuideDisabled,
+          '--switch-guide-enabled': switchGuideEnabled,
           '--switch-thumb-disabled': switchThumbDisabled,
           '--switch-thumb-enabled': switchThumbEnabled,
-          '--position': `${(position ?? (checked ? MAX : MIN))}px`,
           '--border': border,
         })}
         className={containerStyle}
+        data-checked={checked}
         onClick={onClick}
       >
         <div
-          data-animation={animation}
+          ref={ref}
+          {...dragEvents}
           data-checked={checked}
           className={thumbStyle}
-          onTouchStart={({ touches }) => onDragEnter(touches.item(0).clientX)}
-          onMouseDown={({ clientX }) => onDragEnter(clientX)}
         />
       </label>
     </>

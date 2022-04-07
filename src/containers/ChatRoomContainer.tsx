@@ -1,7 +1,7 @@
-import { useCallback, useMemo } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 import { css } from '@linaria/core';
-import { Virtuoso, VirtuosoProps } from 'react-virtuoso';
+import { Virtuoso, VirtuosoHandle, VirtuosoProps } from 'react-virtuoso';
 
 import ChatBubble from '@/components/chat/ChatBubble';
 import TextContent from '@/components/chat/content/TextContent';
@@ -73,6 +73,8 @@ const ChatRoomContainer = ({ users, chatList, chatRoomId, onBack }: ChatRoomCont
 
   const [allUnreadChats, updateUnreadChats] = useAtom(unreadChats);
 
+  const chatListRef = useRef<VirtuosoHandle>(null);
+  const autoScroll = useRef<boolean>(true);
   const room = useMemo(() => manager.getRooms().find(({ id }) => id === chatRoomId), [chatRoomId, manager]);
 
   const onSubmit: NonNullable<ChatInputProps['onSubmit']> = useCallback(
@@ -96,6 +98,9 @@ const ChatRoomContainer = ({ users, chatList, chatRoomId, onBack }: ChatRoomCont
 
   const onRangeChange: NonNullable<VirtuosoProps<Chat>['rangeChanged']> = useCallback(
     ({ endIndex }) => {
+      if (!autoScroll.current && endIndex >= chatList.length - 2) autoScroll.current = true;
+      else if (autoScroll.current && endIndex < chatList.length - 2) autoScroll.current = false;
+
       if (!room) return;
 
       const unreads = allUnreadChats.get(room.id);
@@ -111,7 +116,7 @@ const ChatRoomContainer = ({ users, chatList, chatRoomId, onBack }: ChatRoomCont
         updateUnreadChats(result);
       }
     },
-    [allUnreadChats, room],
+    [allUnreadChats, room, chatList.length],
   );
 
   const profiles = useMemo(() => {
@@ -140,6 +145,16 @@ const ChatRoomContainer = ({ users, chatList, chatRoomId, onBack }: ChatRoomCont
     return result;
   }, [users, chatRoomId]);
 
+  useEffect(() => {
+    if (autoScroll.current) {
+      chatListRef.current?.scrollToIndex({
+        index: chatList.length - 1,
+        behavior: 'smooth',
+        align: 'end',
+      });
+    }
+  }, [autoScroll, chatList.length]);
+
   return (
     <div className={containerStyle}>
     <div className={headerStyle}>
@@ -155,14 +170,13 @@ const ChatRoomContainer = ({ users, chatList, chatRoomId, onBack }: ChatRoomCont
       />
     </div>
       <Virtuoso
+        ref={chatListRef}
         alignToBottom
         data={chatList}
         components={{
           Header: gapElement,
           Footer: gapElement,
         }}
-        atBottomThreshold={120}
-        followOutput={'smooth'}
         initialTopMostItemIndex={chatList.length - 1}
         computeItemKey={computeItemKey}
         rangeChanged={onRangeChange}

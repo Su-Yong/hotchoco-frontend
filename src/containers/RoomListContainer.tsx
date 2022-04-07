@@ -25,6 +25,10 @@ const containerStyle = css`
   position: relative;
 `;
 
+const roomListStyle = css`
+  overflow-x: hidden;
+`;
+
 const headerStyle = css`
   position: absolute;
   left: 0;
@@ -78,6 +82,7 @@ const RoomListContainer = ({ rooms }: RoomListContainerProps): JSX.Element => {
         />
       </div>
       <Virtuoso
+        className={roomListStyle}
         data={rooms}
         computeItemKey={computeItemKey}
         components={{

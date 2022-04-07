@@ -17,6 +17,7 @@ import { Route, Switch, useLocation } from 'wouter';
 import { useTheme } from '@/theme';
 import { Color } from '@/utils/Color';
 import { roomListWidth } from '@/store/settings';
+import useDragEvent from '@/hooks/useDragEvent';
 
 const containerStyle = css`
   width: 100%;
@@ -101,12 +102,14 @@ const dividerStyle = css`
 
   transition: all 0.1s;
 
-  &:hover {
-    background: var(--select-background);
+  
+  @media (pointer: fine) {
+    &:hover {
+      background: var(--select-background);
+    }
   }
 
-  &:active {
-    cursor: col-resize;
+  &:active, &[move='true'] {
     background: var(--select-active-background);
   }
 `;
@@ -147,14 +150,9 @@ const ChatPage = (): JSX.Element => {
   const selectBackground = useMemo(() => Color(theme.palette.backgroundSecondary.main).darken(0.1).alpha(0.5).get(), [theme]);
   const selectActiveBackground = useMemo(() => Color(selectBackground).alpha(1).get(), [selectBackground]);
 
-  const onResize: React.DragEventHandler<HTMLDivElement> = useCallback(
-    ({ clientX }) => {
-      if (clientX) {
-        setSize(clientX);
-      }
-    },
-    [roomListRef],
-  );
+  const dividerDragEvent = useDragEvent<HTMLDivElement>(({ clientX }) => {
+    setSize(clientX);
+  }, []);
 
   const onBack = useCallback(() => {
     setRoom();
@@ -214,7 +212,10 @@ const ChatPage = (): JSX.Element => {
     >
       <div ref={roomListRef} className={roomListStyle} data-in-room={!!roomId}>
         <RoomListContainer rooms={rooms} />
-        <div draggable className={dividerStyle} onDrag={onResize} />
+        <div
+          className={dividerStyle}
+          {...dividerDragEvent}
+        />
       </div>
       <TransitionGroup className={roomContainerStyle} data-in-room={!!roomId}>
         <CSSTransition in unmountOnExit key={location} classNames={'left-in'} timeout={250}>
