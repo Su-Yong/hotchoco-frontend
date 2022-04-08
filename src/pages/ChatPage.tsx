@@ -12,11 +12,12 @@ import useManager from '@/hooks/useManager';
 import Room from '@/types/Room';
 import Chat from '@/types/Chat';
 import { useAtom } from 'jotai';
-import { chats, unreadChats } from '@/store/chat';
+import { CHAT_LIST, UNREAD_CHAT_LIST } from '@/store/chat';
 import { Route, Switch, useLocation } from 'wouter';
 import { useTheme } from '@/theme';
 import { Color } from '@/utils/Color';
-import { roomListWidth } from '@/store/settings';
+import { ROOM_LIST_WIDTH } from '@/store/settings';
+import useDragEvent from '@/hooks/useDragEvent';
 
 const containerStyle = css`
   width: 100%;
@@ -63,7 +64,7 @@ const emptyStyle = css`
 
 const roomListStyle = css`
   height: 100%;
-  background: var(--background);
+  background: var(--th-backgroundPrimary-main);
 
   position: relative;
   user-select: none;
@@ -101,12 +102,14 @@ const dividerStyle = css`
 
   transition: all 0.1s;
 
-  &:hover {
-    background: var(--select-background);
+  
+  @media (pointer: fine) {
+    &:hover {
+      background: var(--select-background);
+    }
   }
 
-  &:active {
-    cursor: col-resize;
+  &:active, &[move='true'] {
     background: var(--select-active-background);
   }
 `;
@@ -138,23 +141,18 @@ const ChatPage = (): JSX.Element => {
   const [location] = useLocation();
 
   const roomListRef = useRef<HTMLDivElement>(null);
-  const [size, setSize] = useAtom(roomListWidth);
+  const [size, setSize] = useAtom(ROOM_LIST_WIDTH);
   const [rooms, setRooms] = useState(manager.getRooms());
 
-  const [allChats, updateChats] = useAtom(chats);
-  const [allUnreadChats, updateUnreadChats] = useAtom(unreadChats);
+  const [allChats, updateChats] = useAtom(CHAT_LIST);
+  const [allUnreadChats, updateUnreadChats] = useAtom(UNREAD_CHAT_LIST);
 
   const selectBackground = useMemo(() => Color(theme.palette.backgroundSecondary.main).darken(0.1).alpha(0.5).get(), [theme]);
   const selectActiveBackground = useMemo(() => Color(selectBackground).alpha(1).get(), [selectBackground]);
 
-  const onResize: React.DragEventHandler<HTMLDivElement> = useCallback(
-    ({ clientX }) => {
-      if (clientX) {
-        setSize(clientX);
-      }
-    },
-    [roomListRef],
-  );
+  const dividerDragEvent = useDragEvent<HTMLDivElement>(({ clientX }) => {
+    setSize(Math.floor(clientX));
+  }, []);
 
   const onBack = useCallback(() => {
     setRoom();
@@ -207,7 +205,6 @@ const ChatPage = (): JSX.Element => {
     <div
       className={containerStyle}
       style={style({
-        '--background': theme.palette.backgroundPrimary.main,
         '--size': `${size ?? 360}px`,
         '--select-background': selectBackground,
         '--select-active-background': selectActiveBackground,
@@ -215,7 +212,10 @@ const ChatPage = (): JSX.Element => {
     >
       <div ref={roomListRef} className={roomListStyle} data-in-room={!!roomId}>
         <RoomListContainer rooms={rooms} />
-        <div draggable className={dividerStyle} onDrag={onResize} />
+        <div
+          className={dividerStyle}
+          {...dividerDragEvent}
+        />
       </div>
       <TransitionGroup className={roomContainerStyle} data-in-room={!!roomId}>
         <CSSTransition in unmountOnExit key={location} classNames={'left-in'} timeout={250}>

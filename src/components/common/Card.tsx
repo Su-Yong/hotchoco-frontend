@@ -10,8 +10,8 @@ const cardStyle = css`
   padding: 8px;
   border-radius: 8px;
 
-  color: var(--color);
-  background: var(--background);
+  color: var(--th-backgroundPrimary-contrastText);
+  background: var(--th-backgroundPrimary-main);
 
   box-shadow: -8px -8px 16px var(--white), 8px 8px 16px var(--black);
 
@@ -35,8 +35,6 @@ const Card = ({ children, ...props }: PropsWithChildren<CardProps>): JSX.Element
       className={className(cardStyle, props.className)}
       style={style(
         {
-          '--color': theme.palette.backgroundPrimary.contrastText,
-          '--background': theme.palette.backgroundPrimary.main,
           '--white': whiteColor,
           '--black': blackColor,
         },

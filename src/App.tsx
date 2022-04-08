@@ -10,8 +10,9 @@ import TestPage from '@/pages/TestPage';
 import ChatPage from '@/pages/ChatPage';
 import SettingsPage from '@/pages/SettingsPage';
 import { ThemeProvider } from '@/theme';
-import { themeObject } from '@/store/theme';
+import { THEME_OBJECT } from '@/store/settings';
 import { TransitionGroup, CSSTransition } from 'react-transition-group';
+import CSSThemeProvider from './providers/CSSThemeProvider';
 
 const bodyStyle = css`
   width: 100%;
@@ -32,42 +33,44 @@ const absoluteStyle = css`
 `;
 
 const App = () => {
-  const [theme] = useAtom(themeObject);
+  const [theme] = useAtom(THEME_OBJECT);
   const [location] = useLocation();
 
   return (
     <ThemeProvider theme={theme}>
-      <TransitionGroup className={bodyStyle}>
-        <CSSTransition in unmountOnExit key={location.split('/')[1]} classNames={'page'} timeout={250}>
-          <Switch location={location}>
-            <Route path={'/login'}>
-              <div className={absoluteStyle}>
-                <LoginPage />
-              </div>
-            </Route>
-            <Route path={'/chat/:rest*'}>
-              <div className={absoluteStyle}>
-                <ChatPage />
-              </div>
-            </Route>
-            <Route path={'/test'}>
-              <div className={absoluteStyle}>
-                <TestPage />
-              </div>
-            </Route>
-            <Route path={'/settings/:rest*'}>
-              <div className={absoluteStyle}>
-                <SettingsPage />
-              </div>
-            </Route>
-            <Route>
-              <div className={absoluteStyle}>
-                <ErrorPage />
-              </div>
-            </Route>
-          </Switch>
-        </CSSTransition>
-      </TransitionGroup>
+      <CSSThemeProvider>
+        <TransitionGroup className={bodyStyle}>
+          <CSSTransition in unmountOnExit key={location.split('/')[1]} classNames={'page'} timeout={250}>
+            <Switch location={location}>
+              <Route path={'/login'}>
+                <div className={absoluteStyle}>
+                  <LoginPage />
+                </div>
+              </Route>
+              <Route path={'/chat/:rest*'}>
+                <div className={absoluteStyle}>
+                  <ChatPage />
+                </div>
+              </Route>
+              <Route path={'/test'}>
+                <div className={absoluteStyle}>
+                  <TestPage />
+                </div>
+              </Route>
+              <Route path={'/settings/:rest*'}>
+                <div className={absoluteStyle}>
+                  <SettingsPage />
+                </div>
+              </Route>
+              <Route>
+                <div className={absoluteStyle}>
+                  <ErrorPage />
+                </div>
+              </Route>
+            </Switch>
+          </CSSTransition>
+        </TransitionGroup>
+      </CSSThemeProvider>
     </ThemeProvider>
   );
 };

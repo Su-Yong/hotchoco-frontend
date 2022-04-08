@@ -1,6 +1,6 @@
 {
   "name": "hotchoco-frontend",
-  "version": "0.12.0",
+  "version": "0.13.0-dev",
   "author": {
     "name": "Su-Yong",
     "email": "simssy2205@gmail.com",
@@ -42,6 +42,7 @@
     "@vitejs/plugin-react": "^1.0.0",
     "prettier": "^2.3.2",
     "typescript": "^4.3.2",
-    "vite": "^2.6.4"
+    "vite": "^2.6.4",
+    "vite-plugin-pwa": "^0.11.13"
   }
 }

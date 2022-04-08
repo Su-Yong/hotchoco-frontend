@@ -6,7 +6,14 @@ import { css } from '@linaria/core';
 import React, { useMemo } from 'react';
 
 const waveStyle = css`
-  background: linear-gradient(to right, var(--background), var(--background) 30%, var(--accent), var(--background) 70%, var(--background));
+  background: linear-gradient(
+    to right,
+    var(--th-backgroundSecondary-main),
+    var(--th-backgroundSecondary-main) 30%,
+    var(--accent),
+    var(--th-backgroundSecondary-main) 70%,
+    var(--th-backgroundSecondary-main)
+  );
   background-size: 240px;
   background-position: 0px;
   animation: background var(--duration) linear infinite;
@@ -27,7 +34,7 @@ const pulseStyle = css`
 
   @keyframes background {
     0% {
-      background: var(--background);
+      background: var(--th-backgroundSecondary-main);
     }
 
     50% {
@@ -35,7 +42,7 @@ const pulseStyle = css`
     }
 
     100% {
-      background: var(--background);
+      background: var(--th-backgroundSecondary-main);
     }
   }
 `;
@@ -64,7 +71,6 @@ const Placeholder = ({ animationType, duration: initDuration, children }: Placeh
     className: className(children.props.className, animationStyle),
     style: style({
       ...children.props.style,
-      '--background': theme.palette.backgroundSecondary.main,
       '--accent': ColorUtil.darken(theme.palette.backgroundSecondary.main, 0.05),
       '--duration': duration,
     }),

@@ -18,7 +18,7 @@ const roomStyle = css`
   user-select: none;
   cursor: pointer;
 
-  background: var(--background);
+  background: var(--th-backgroundPrimary-main);
 
   position: relative;
   padding: 8px;
@@ -41,11 +41,11 @@ const roomStyle = css`
   @media (pointer: fine) {
     &:hover {
       transform: translateX(8px);
-      background: var(--background);
+      background: var(--th-backgroundPrimary-main);
     }
 
     &:hover::before {
-      background: var(--primary);
+      background: var(--th-primary-main);
     }
   }
 
@@ -63,7 +63,7 @@ const activeRoomStyle = css`
 
     &::before {
       height: 36px;
-      background: var(--primary);
+      background: var(--th-primary-main);
     }
   }
 
@@ -73,7 +73,7 @@ const activeRoomStyle = css`
     &::before {
       left: -12px;
       height: 36px;
-      background: var(--primary);
+      background: var(--th-primary-main);
     }
   }
 `;
@@ -92,6 +92,8 @@ const titleStyle = css`
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
+
+  flex-grow: 1;
 `;
 
 const descriptionStyle = css`
@@ -111,8 +113,6 @@ const infoStyle = css`
 const containerStyle = css`
   flex: 1;
 
-  height: 48px;
-
   display: flex;
   flex-flow: column;
   justify-content: space-between;
@@ -125,7 +125,7 @@ const lineStyle = css`
 
   display: flex;
   flex-flow: rows;
-  justify-content: center;
+  justify-content: flex-start;
   align-items: center;
 
   gap: 8px;
@@ -149,8 +149,6 @@ const Room = ({ name, description, image, info, badge, actived }: RoomProps): JS
     <li
       className={className(roomStyle, actived ? activeRoomStyle : null)}
       style={style({
-        '--background': theme.palette.backgroundPrimary.main,
-        '--primary': theme.palette.primary.main,
         '--pressed-background': ColorUtil.darken(theme.palette.backgroundPrimary.main, 0.1),
       })}
     >

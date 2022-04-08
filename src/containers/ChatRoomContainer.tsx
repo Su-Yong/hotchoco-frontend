@@ -1,7 +1,7 @@
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 import { css } from '@linaria/core';
-import { Virtuoso, VirtuosoProps } from 'react-virtuoso';
+import { Virtuoso, VirtuosoHandle, VirtuosoProps } from 'react-virtuoso';
 
 import ChatBubble from '@/components/chat/ChatBubble';
 import TextContent from '@/components/chat/content/TextContent';
@@ -13,8 +13,6 @@ import User from '@/types/User';
 import toBigInt from '@/utils/toBigInt';
 import Header from '@/components/Header';
 import { useTheme } from '@/theme';
-import style from '@/utils/style';
-import ChatBubblePlaceholder from '@/components/placeholder/ChatBubblePlaceholder';
 import ChatInput, { ChatInputProps } from '@/components/ChatInput';
 import { styled } from '@linaria/react';
 import useManager from '@/hooks/useManager';
@@ -24,7 +22,7 @@ import IconButton from '@/components/common/IconButton';
 import ArrowLeft from '@iconify/icons-mdi/arrow-left';
 import Menu from '@iconify/icons-mdi/menu';
 import { useAtom } from 'jotai';
-import { unreadChats } from '@/store/chat';
+import { UNREAD_CHAT_LIST } from '@/store/chat';
 
 const containerStyle = css`
   width: 100%;
@@ -32,7 +30,7 @@ const containerStyle = css`
   display: flex;
   flex-flow: column;
 
-  background: var(--background);
+  background: var(--th-backgroundPrimary-main);
 
   position: relative;
 `;
@@ -73,8 +71,10 @@ const ChatRoomContainer = ({ users, chatList, chatRoomId, onBack }: ChatRoomCont
   const clientUser = useClientUser();
   const manager = useManager();
 
-  const [allUnreadChats, updateUnreadChats] = useAtom(unreadChats);
+  const [allUnreadChats, updateUnreadChats] = useAtom(UNREAD_CHAT_LIST);
 
+  const chatListRef = useRef<VirtuosoHandle>(null);
+  const autoScroll = useRef<boolean>(true);
   const room = useMemo(() => manager.getRooms().find(({ id }) => id === chatRoomId), [chatRoomId, manager]);
 
   const onSubmit: NonNullable<ChatInputProps['onSubmit']> = useCallback(
@@ -98,6 +98,9 @@ const ChatRoomContainer = ({ users, chatList, chatRoomId, onBack }: ChatRoomCont
 
   const onRangeChange: NonNullable<VirtuosoProps<Chat>['rangeChanged']> = useCallback(
     ({ endIndex }) => {
+      if (!autoScroll.current && endIndex >= chatList.length - 2) autoScroll.current = true;
+      else if (autoScroll.current && endIndex < chatList.length - 2) autoScroll.current = false;
+
       if (!room) return;
 
       const unreads = allUnreadChats.get(room.id);
@@ -113,10 +116,9 @@ const ChatRoomContainer = ({ users, chatList, chatRoomId, onBack }: ChatRoomCont
         updateUnreadChats(result);
       }
     },
-    [allUnreadChats, room],
+    [allUnreadChats, room, chatList.length],
   );
 
-  const background = useMemo(() => theme.palette.backgroundPrimary.main, [theme]);
   const profiles = useMemo(() => {
     const result = new Map<string, JSX.Element>();
 
@@ -143,34 +145,38 @@ const ChatRoomContainer = ({ users, chatList, chatRoomId, onBack }: ChatRoomCont
     return result;
   }, [users, chatRoomId]);
 
+  useEffect(() => {
+    if (autoScroll.current) {
+      chatListRef.current?.scrollToIndex({
+        index: chatList.length - 1,
+        behavior: 'smooth',
+        align: 'end',
+      });
+    }
+  }, [autoScroll, chatList.length]);
+
   return (
-    <div
-      className={containerStyle}
-      style={style({
-        '--background': background,
-      })}
-    >
-      <div className={headerStyle}>
-        <Header
-          title={room?.name ?? '알 수 없음'}
-          left={
-            <>
-              <IconButton icon={ArrowLeft} onClick={onBack} />
-              <Profile url={room?.image} size={36} />
-            </>
-          }
-          right={<IconButton icon={Menu} />}
-        />
-      </div>
+    <div className={containerStyle}>
+    <div className={headerStyle}>
+      <Header
+        title={room?.name ?? '알 수 없음'}
+        left={
+          <>
+            <IconButton icon={ArrowLeft} onClick={onBack} />
+            <Profile url={room?.image} size={36} />
+          </>
+        }
+        right={<IconButton icon={Menu} />}
+      />
+    </div>
       <Virtuoso
+        ref={chatListRef}
         alignToBottom
         data={chatList}
         components={{
           Header: gapElement,
           Footer: gapElement,
         }}
-        atBottomThreshold={120}
-        followOutput={'smooth'}
         initialTopMostItemIndex={chatList.length - 1}
         computeItemKey={computeItemKey}
         rangeChanged={onRangeChange}
