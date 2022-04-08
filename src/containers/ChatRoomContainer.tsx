@@ -22,7 +22,7 @@ import IconButton from '@/components/common/IconButton';
 import ArrowLeft from '@iconify/icons-mdi/arrow-left';
 import Menu from '@iconify/icons-mdi/menu';
 import { useAtom } from 'jotai';
-import { unreadChats } from '@/store/chat';
+import { UNREAD_CHAT_LIST } from '@/store/chat';
 
 const containerStyle = css`
   width: 100%;
@@ -71,7 +71,7 @@ const ChatRoomContainer = ({ users, chatList, chatRoomId, onBack }: ChatRoomCont
   const clientUser = useClientUser();
   const manager = useManager();
 
-  const [allUnreadChats, updateUnreadChats] = useAtom(unreadChats);
+  const [allUnreadChats, updateUnreadChats] = useAtom(UNREAD_CHAT_LIST);
 
   const chatListRef = useRef<VirtuosoHandle>(null);
   const autoScroll = useRef<boolean>(true);

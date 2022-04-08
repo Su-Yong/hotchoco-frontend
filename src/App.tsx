@@ -10,7 +10,7 @@ import TestPage from '@/pages/TestPage';
 import ChatPage from '@/pages/ChatPage';
 import SettingsPage from '@/pages/SettingsPage';
 import { ThemeProvider } from '@/theme';
-import { themeObject } from '@/store/settings';
+import { THEME_OBJECT } from '@/store/settings';
 import { TransitionGroup, CSSTransition } from 'react-transition-group';
 import CSSThemeProvider from './providers/CSSThemeProvider';
 
@@ -33,7 +33,7 @@ const absoluteStyle = css`
 `;
 
 const App = () => {
-  const [theme] = useAtom(themeObject);
+  const [theme] = useAtom(THEME_OBJECT);
   const [location] = useLocation();
 
   return (

@@ -12,11 +12,11 @@ import useManager from '@/hooks/useManager';
 import Room from '@/types/Room';
 import Chat from '@/types/Chat';
 import { useAtom } from 'jotai';
-import { chats, unreadChats } from '@/store/chat';
+import { CHAT_LIST, UNREAD_CHAT_LIST } from '@/store/chat';
 import { Route, Switch, useLocation } from 'wouter';
 import { useTheme } from '@/theme';
 import { Color } from '@/utils/Color';
-import { roomListWidth } from '@/store/settings';
+import { ROOM_LIST_WIDTH } from '@/store/settings';
 import useDragEvent from '@/hooks/useDragEvent';
 
 const containerStyle = css`
@@ -141,11 +141,11 @@ const ChatPage = (): JSX.Element => {
   const [location] = useLocation();
 
   const roomListRef = useRef<HTMLDivElement>(null);
-  const [size, setSize] = useAtom(roomListWidth);
+  const [size, setSize] = useAtom(ROOM_LIST_WIDTH);
   const [rooms, setRooms] = useState(manager.getRooms());
 
-  const [allChats, updateChats] = useAtom(chats);
-  const [allUnreadChats, updateUnreadChats] = useAtom(unreadChats);
+  const [allChats, updateChats] = useAtom(CHAT_LIST);
+  const [allUnreadChats, updateUnreadChats] = useAtom(UNREAD_CHAT_LIST);
 
   const selectBackground = useMemo(() => Color(theme.palette.backgroundSecondary.main).darken(0.1).alpha(0.5).get(), [theme]);
   const selectActiveBackground = useMemo(() => Color(selectBackground).alpha(1).get(), [selectBackground]);

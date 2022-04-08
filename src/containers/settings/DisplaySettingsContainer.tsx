@@ -3,7 +3,7 @@ import Select from '@/components/common/Select';
 import SelectItem from '@/components/common/SelectItem';
 import SettingItem from '@/components/settings/SettingItem';
 import { displaySettings } from '@/constants/settings';
-import { roomListWidth, themeType } from '@/store/settings';
+import { ROOM_LIST_WIDTH, THEME_TYPE } from '@/store/settings';
 import { StringLike } from '@/types/common';
 import { css } from '@linaria/core';
 import { useAtom } from 'jotai';
@@ -14,8 +14,8 @@ const themeStyle = css`
 `;
 
 const DisplaySettingsContainer = () => {
-  const [theme, setTheme] = useAtom(themeType);
-  const [roomWidth, setRoomWidth] = useAtom(roomListWidth);
+  const [theme, setTheme] = useAtom(THEME_TYPE);
+  const [roomWidth, setRoomWidth] = useAtom(ROOM_LIST_WIDTH);
 
   const changeTheme = useCallback((it: StringLike) => {
     setTheme(it.toString() as 'light' | 'dark');
