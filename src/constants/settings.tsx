@@ -3,7 +3,7 @@ import ThemeIcon from '@iconify/icons-mdi/palette';
 import RoomWidthIcon from '@iconify/icons-mdi/view-column';
 import AccountIcon from '@iconify/icons-mdi/account';
 import ConnectionIcon from '@iconify/icons-mdi/cloud';
-import ServerIcon from '@iconify/icons-mdi/router';
+import ServerIcon from '@iconify/icons-mdi/server';
 import LogoutIcon from '@iconify/icons-mdi/logout';
 import TimeoutIcon from '@iconify/icons-mdi/schedule';
 import InfoIcon from '@iconify/icons-mdi/info-circle';

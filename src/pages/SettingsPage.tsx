@@ -15,6 +15,7 @@ import settings from '@/constants/settings';
 import DisplaySettingsContainer from '@/containers/settings/DisplaySettingsContainer';
 import InfoSettingsContainer from '@/containers/settings/InfoSettingsContainer';
 import AccountSettingsContainer from '@/containers/settings/AccountSettingsContainer';
+import ConnectSettingsContainer from '@/containers/settings/ConnectSettingsContainer';
 
 const backdropStyle = css`
   width: 100%;
@@ -214,7 +215,8 @@ const SettingsPage = (): JSX.Element => {
                     {
                       key === 'display' ? <DisplaySettingsContainer /> :
                       key === 'info' ? <InfoSettingsContainer /> : 
-                      key === 'account' ? <AccountSettingsContainer /> : null
+                      key === 'account' ? <AccountSettingsContainer /> :
+                      key === 'connection' ? <ConnectSettingsContainer /> : null
                     }
                   </div>
                 </div>

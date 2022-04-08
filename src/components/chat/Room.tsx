@@ -92,6 +92,8 @@ const titleStyle = css`
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
+
+  flex-grow: 1;
 `;
 
 const descriptionStyle = css`
@@ -123,7 +125,7 @@ const lineStyle = css`
 
   display: flex;
   flex-flow: rows;
-  justify-content: center;
+  justify-content: flex-start;
   align-items: center;
 
   gap: 8px;

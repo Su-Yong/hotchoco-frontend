@@ -151,7 +151,7 @@ const ChatPage = (): JSX.Element => {
   const selectActiveBackground = useMemo(() => Color(selectBackground).alpha(1).get(), [selectBackground]);
 
   const dividerDragEvent = useDragEvent<HTMLDivElement>(({ clientX }) => {
-    setSize(clientX);
+    setSize(Math.floor(clientX));
   }, []);
 
   const onBack = useCallback(() => {
