@@ -1,8 +1,8 @@
-import { getVariableName, variable } from '../theme';
+import { getVariableName, variable } from '../../theme';
 import { css } from '@linaria/core';
 import { Component, createEffect, createSignal } from 'solid-js';
 import { JSX } from 'solid-js/jsx-runtime';
-import { model, useDirective } from '../utils/directives';
+import { model, useDirective } from '../../utils/directives';
 import { nanoid } from 'nanoid';
 
 useDirective(model);
@@ -61,22 +61,16 @@ export interface CheckBoxProps extends JSX.InputHTMLAttributes<HTMLInputElement>
 
 const CheckBox: Component<CheckBoxProps> = ({
   id: domId,
-  checked,
   disabled,
   size = 16,
   children,
   ...props
 }) => {
   const id = domId ?? nanoid();
-  const [check, setCheck] = createSignal(checked ?? false);
 
   const sizePixel = `${size}px`;
   const mainColor = disabled ? variable('Color.Grey.300') : variable('Color.Blue.500');
   const secondaryColor = disabled ? variable('Color.Grey.300') : variable('Color.Grey.500');
-
-  createEffect(() => {
-    if (typeof checked === 'boolean') setCheck(checked);
-  }, [checked]);
 
   return (
       <label
@@ -93,7 +87,6 @@ const CheckBox: Component<CheckBoxProps> = ({
           id={id}
           className={inputStyle}
           disabled={disabled}
-          use:model={[check, setCheck, 'checked']}
           {...props}
         />
         <svg viewBox={`0 0 16 16`} className={checkWrapperStyle}>

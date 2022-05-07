@@ -1,6 +1,6 @@
 import { css, cx } from '@linaria/core';
 import { Component, JSX } from 'solid-js';
-import { variable } from '../theme';
+import { variable } from '../../theme';
 
 const buttonStyle = css`
   outline: none;

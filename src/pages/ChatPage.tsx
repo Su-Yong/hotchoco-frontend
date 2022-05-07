@@ -3,13 +3,13 @@ import { createEffect, createSignal } from 'solid-js';
 import type { Component } from 'solid-js';
 import { css } from '@linaria/core';
 import { modularScale, hiDPI } from 'polished';
-import Button from '../components/Button';
+import Button from '../components/common/Button';
 import { createThemeStyle, setTheme, variable } from '../theme';
 import { LightTheme } from '../theme/defined/LightTheme';
 import { DarkTheme } from '../theme/defined/DarkTheme';
-import IconButton from '../components/IconButton';
+import IconButton from '../components/common/IconButton';
 import { VscAccount } from 'solid-icons/vsc';
-import CheckBox from '@/components/CheckBox';
+import CheckBox from '../components/common/CheckBox';
 
 const header = css`
   text-transform: uppercase;
@@ -37,7 +37,7 @@ const ChatPage: Component = () => {
   });
 
   return (
-    <div style={style()}>
+    <div>
       <div className={header}>Test!</div>
       <Button>Hello</Button>
       <Button onClick={onChangeTheme}>change theme</Button>
