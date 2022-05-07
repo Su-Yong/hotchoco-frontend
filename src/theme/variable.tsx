@@ -5,7 +5,7 @@ import { flattenKey } from '../utils';
 export type CSSVariable = `var(${string})`;
 export type CSSVariableName = `--${string}`;
 
-export const getCSSVariables = (theme: Theme) => {
+export const getCSSVariables = (theme: Theme): Record<CSSVariableName, unknown> => {
   const allKeys = Object.keys(flattenKey(theme));
 
   const result: Record<CSSVariableName, unknown> = {};

@@ -7,6 +7,9 @@ import Button from '../components/Button';
 import { createThemeStyle, setTheme, variable } from '../theme';
 import { LightTheme } from '../theme/defined/LightTheme';
 import { DarkTheme } from '../theme/defined/DarkTheme';
+import IconButton from '../components/IconButton';
+import { VscAccount } from 'solid-icons/vsc';
+import CheckBox from '@/components/CheckBox';
 
 const header = css`
   text-transform: uppercase;
@@ -38,8 +41,14 @@ const ChatPage: Component = () => {
       <div className={header}>Test!</div>
       <Button>Hello</Button>
       <Button onClick={onChangeTheme}>change theme</Button>
+      <IconButton size={36} icon={VscAccount} />
+      <CheckBox>테스트</CheckBox>
+      <CheckBox checked size={64}>테스트 size 64</CheckBox>
+      <CheckBox disabled>테스트 disabled</CheckBox>
+      <CheckBox disabled checked>테스트 disabled checked</CheckBox>
     </div>
   );
 };
 
 export default ChatPage;
+

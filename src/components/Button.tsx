@@ -12,8 +12,8 @@ const buttonStyle = css`
 
   color: ${variable('Color.Grey.900')};
   background: ${variable('Color.Blue.500')};
-  box-shadow: 0 4px 8px ${variable('Color.Grey.500')};
-  transition: background ${variable('Animation.duration.short')};
+  transition-duration: ${variable('Animation.duration.short')};
+  transition-timing-function: ${variable('Animation.easing.inOut')};
 
   &:hover {
     background: ${variable('Color.Blue.400')};
