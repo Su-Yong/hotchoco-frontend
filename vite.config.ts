@@ -1,7 +1,52 @@
-import { defineConfig } from 'vite'
-import react from '@vitejs/plugin-react'
+import path from 'path';
 
-// https://vitejs.dev/config/
-export default defineConfig({
-  plugins: [react()]
-})
+import { defineConfig, loadEnv } from 'vite';
+
+import linaria from '@linaria/rollup';
+import solid from 'vite-plugin-solid';
+
+export default ({ mode }) => {
+  const { NODE_ENV, HMR_HOST }: Record<string, string> = { ...process.env, ...loadEnv(mode, process.cwd(), '') };
+
+  const hmr = HMR_HOST
+    ? {
+        host: HMR_HOST,
+        protocol: 'wss',
+        clientPort: 443,
+      }
+    : undefined;
+
+  return defineConfig({
+    mode: NODE_ENV,
+    build: {
+      target: 'es2020',
+      outDir: path.resolve(__dirname, 'dist'),
+    },
+    server: {
+      host: 'localhost',
+      port: 3000,
+      strictPort: true,
+      hmr,
+    },
+    root: path.resolve(__dirname, 'src'),
+    resolve: {
+      alias: [
+        {
+          find: '@',
+          replacement: path.resolve(__dirname, 'src'),
+        },
+      ],
+    },
+    clearScreen: false,
+    plugins: [
+      linaria({
+        babelOptions: {
+          presets: [
+            '@babel/preset-typescript',
+          ],
+        },
+      }),
+      solid(),
+    ],
+  });
+};
