@@ -5,8 +5,8 @@ import Color from 'color';
 import { IconProps, IconTypes } from 'solid-icons';
 import { css, cx } from '@linaria/core';
 
+import { getTheme, variable } from '../../theme';
 import { sx } from '@/utils';
-import { getTheme, variable } from '@/theme';
 
 const iconButtonWrapperStyle = css`
   position: relative;

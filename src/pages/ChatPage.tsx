@@ -10,6 +10,7 @@ import { DarkTheme } from '../theme/defined/DarkTheme';
 import IconButton from '../components/common/IconButton';
 import { VscAccount } from 'solid-icons/vsc';
 import CheckBox from '../components/common/CheckBox';
+import Switch from '@/components/common/Switch';
 
 const header = css`
   text-transform: uppercase;
@@ -46,6 +47,9 @@ const ChatPage: Component = () => {
       <CheckBox checked size={64}>테스트 size 64</CheckBox>
       <CheckBox disabled>테스트 disabled</CheckBox>
       <CheckBox disabled checked>테스트 disabled checked</CheckBox>
+      <Switch>스위치 테스트</Switch>
+      <Switch size={72}>스위치 테스트</Switch>
+      <Switch size={16} disabled>스위치 테스트</Switch>
     </div>
   );
 };

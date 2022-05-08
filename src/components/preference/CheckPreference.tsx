@@ -1,9 +1,6 @@
 import { CheckPreferenceType } from '@/constants/preference';
 import { Component, createSignal } from 'solid-js';
 import CheckBox from '../common/CheckBox';
-import { model, useDirective } from '@/utils/directives';
-
-useDirective(model);
 
 export interface CheckPreferenceProps extends Omit<CheckPreferenceType, 'type'> {
   
@@ -19,13 +16,12 @@ const CheckPreference: Component<CheckPreferenceProps> = ({
 
   return (
     <div>
+      {name}
       <CheckBox
         id={id}
         checked={checked()}
         onChange={(event) => setChecked(event.currentTarget.checked)}
-      >
-        {name}
-      </CheckBox>
+      />
     </div>
   );
 }

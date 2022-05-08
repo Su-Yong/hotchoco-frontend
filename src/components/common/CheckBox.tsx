@@ -1,9 +1,11 @@
-import { getVariableName, variable } from '../../theme';
-import { css } from '@linaria/core';
-import { Component, createEffect, createSignal } from 'solid-js';
+import { Component } from 'solid-js';
 import { JSX } from 'solid-js/jsx-runtime';
-import { model, useDirective } from '../../utils/directives';
+
+import { css } from '@linaria/core';
 import { nanoid } from 'nanoid';
+
+import { variable } from '@/theme';
+import { model, useDirective } from '@/utils/directives';
 
 useDirective(model);
 

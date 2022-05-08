@@ -1,6 +1,5 @@
 import { preferenceGroupList } from '@/constants/preference';
 import PreferenceContainer from '@/containers/PreferenceContainer';
-import { createThemeStyle } from '@/theme';
 import { Component, For } from 'solid-js';
 
 const PreferencePage: Component = () => {

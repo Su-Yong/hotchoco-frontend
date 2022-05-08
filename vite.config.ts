@@ -44,6 +44,13 @@ export default ({ mode }) => {
           presets: [
             '@babel/preset-typescript',
           ],
+          plugins: [
+            ['babel-plugin-module-resolver', {
+              alias: {
+                '@': './src',
+              },
+            }],
+          ],
         },
       }),
       solid(),
