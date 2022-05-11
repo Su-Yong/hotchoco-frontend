@@ -11,6 +11,7 @@ import IconButton from '../components/common/IconButton';
 import { VscAccount } from 'solid-icons/vsc';
 import CheckBox from '../components/common/CheckBox';
 import Switch from '@/components/common/Switch';
+import TextInput from '@/components/common/TextInput';
 
 const header = css`
   text-transform: uppercase;
@@ -50,6 +51,8 @@ const ChatPage: Component = () => {
       <Switch>스위치 테스트</Switch>
       <Switch size={72}>스위치 테스트</Switch>
       <Switch size={16} disabled>스위치 테스트</Switch>
+      <TextInput pattern={'[0-9]+'}/>
+      <TextInput disabled />
     </div>
   );
 };

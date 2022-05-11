@@ -77,7 +77,7 @@ const CheckBox: Component<CheckBoxProps> = ({
 
   return (
       <label
-        for={id} 
+        for={id}
         style={{
           '--check-size': sizePixel,
           '--main-color': mainColor,
