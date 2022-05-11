@@ -6,16 +6,16 @@ export function model(element: HTMLInputElement, value: Accessor<any>) {
   const [field, setField, initAccessName] = value();
   const accessName = (initAccessName ?? 'value') as 'value';
 
-  console.log('model directive', element, field(), accessName);
-
   createRenderEffect(() => {
     element[accessName] = field();
   });
 
-  const onclick = () => setField(element[accessName]);
+  const onInput = () => setField(element[accessName]);
 
-  element.addEventListener('input', onclick);
-  onCleanup(() => element.removeEventListener('input', onclick));
+  element.addEventListener('change', onInput);
+  onCleanup(() => {
+    element.removeEventListener('change', onInput);
+  });
 };
 
 export const useDirective = (...directives: Directive<any, any>[]) => {

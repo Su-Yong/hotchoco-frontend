@@ -17,6 +17,7 @@ const wrapperStyle = css`
   gap: 4px;
 
   cursor: pointer;
+  user-select: none;
 `;
 
 const inputStyle = css`

@@ -21,7 +21,7 @@ const overlayStyle = css`
   position: absolute;
   inset: 0;
   aspect-ratio: 1;
-  z-index: -1;
+  z-index: 0;
 
   background: var(--overlay-color);
   border-radius: 50%;
@@ -40,6 +40,11 @@ const overlayStyle = css`
     opacity: 1;
     transform: scale(1.2);
   }
+`;
+
+const iconStyle = css`
+  position: relative;
+  z-index: 1;
 `;
 
 export interface IconButtonProps extends IconProps {
@@ -74,7 +79,7 @@ const IconButton: Component<IconButtonProps> = ({
         title={title}
         style={style}
         viewBox={viewBox}
-        className={className}
+        className={cx(iconStyle, className)}
       />
     </div>
   );

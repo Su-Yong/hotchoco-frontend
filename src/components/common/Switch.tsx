@@ -1,18 +1,18 @@
 import { variable } from '@/theme';
 import { css } from '@linaria/core';
-import { Component, createEffect, createSignal, onCleanup, onMount } from 'solid-js';
+import { Component, createEffect, createSignal } from 'solid-js';
 import { JSX } from 'solid-js/jsx-runtime';
-import { model, useDirective } from '@/utils/directives';
-useDirective(model);
 
 const wrapperStyle = css`
   display: inline-flex;
-  flex-flow: row;
+  flex-flow: row-reverse;
   justify-content: flex-start;
   align-items: center;
   gap: 4px;
 
   cursor: pointer;
+  touch-action: none;
+  user-select: none;
 `;
 const inputStyle = css`
   display: none;
@@ -47,6 +47,12 @@ const switchThumbStyle = css`
 
   transition-duration: ${variable('Animation.duration.short')};
   transition-timing-function: ${variable('Animation.easing.deceleration')};
+
+  div[data-disabled='false'] label:active + div &,
+  div[data-disabled='false'] &:active,
+  div[data-disabled='false'] &[data-move='true'] {
+    transform: translateX(calc(100% * var(--offset))) scale(0.9);
+  }
 
   &::after {
     content: '';
@@ -83,24 +89,27 @@ const Switch: Component<SwitchProps> = ({
   disabled,
   children,
 }) => {
-  let switchRef: HTMLInputElement | undefined;
+  let switchThumbRef: HTMLDivElement | undefined;
+  let inputRef: HTMLInputElement | undefined;
 
   const [checked, setChecked] = createSignal(initChecked);
   const [offset, setOffset] = createSignal(initChecked ? 1 : 0);
+  const [isMove, setIsMove] = createSignal(false);
 
   const sizePixel = `${size}px`;
   const mainColor = disabled ? variable('Color.Grey.300') : variable('Color.Blue.500');
   const secondaryColor = disabled ? variable('Color.Grey.300') : variable('Color.Grey.500');
 
   let x: number | null = null;
-  let isMove = false;
+  let moved: boolean = false;
   const onEnter = () => {
     x = checked() ? size : 0;
+    setIsMove(true);
   };
   const onMove = (event: PointerEvent) => {
     if (typeof x === 'number') {
-      isMove = true;
       x += event.movementX;
+      moved = true;
 
       const newOffset = Math.min(Math.max(x, 0), size) / size;
       setOffset(newOffset);
@@ -110,58 +119,73 @@ const Switch: Component<SwitchProps> = ({
     if (typeof x === 'number') {
       x += event.movementX;
 
-      if (!isMove) {
-        setChecked(!checked());
-      } else {
+      if (moved) {
         const newOffset = Math.min(Math.max(x, 0), size) / size;
+  
         setChecked(newOffset > 0.5);
         setOffset(newOffset > 0.5 ? 1 : 0);
+      } else {
+        const newValue = !checked();
+        setChecked(newValue);
+        setOffset(newValue ? 1 : 0);
       }
     }
 
     x = null;
-    isMove = false;
+    moved = false;
+    setIsMove(false);
   };
 
-  createEffect(() => {
-    setOffset(checked() ? 1 : 0);
-  }, [checked]);
+  const onInput: JSX.EventHandlerUnion<HTMLInputElement, Event> = (event) => {
+    setChecked(event.currentTarget.checked);
+    setOffset(event.currentTarget.checked ? 1 : 0);
+  };
 
-  createEffect(() => {
+  createEffect((remover: () => void) => {
+    if (remover) remover();
+
     if (!disabled) {
-      switchRef?.addEventListener('pointerdown', onEnter);
-      document.addEventListener('pointermove', onMove);
-      document.addEventListener('pointerup', onEnd);
+      switchThumbRef?.addEventListener('pointerdown', onEnter);
+      document?.addEventListener('pointermove', onMove);
+      document?.addEventListener('pointerup', onEnd);
+      document?.addEventListener('pointercancel', onEnd);
     }
 
     return () => {
-      switchRef?.removeEventListener('pointerdown', onEnter);
-      document.removeEventListener('pointermove', onMove);
-      document.removeEventListener('pointerup', onEnd);
-    }
-  }, [disabled]);
+      switchThumbRef?.removeEventListener('pointerdown', onEnter);
+      document?.removeEventListener('pointermove', onMove);
+      document?.removeEventListener('pointerup', onEnd);
+      document?.removeEventListener('pointercancel', onEnd);
+    };
+  }, () => {});
 
   return (
-    <label
+    <div
       style={{
         '--switch-size': sizePixel,
         '--main-color': mainColor,
         '--secondary-color': secondaryColor,
         '--offset': offset(),
       }}
+      data-disabled={disabled ?? false}
       className={wrapperStyle}
     >
-      <input
-        type={'checkbox'}
-        className={inputStyle}
-        checked={checked()}
-      />
-      <div ref={switchRef} className={switchStyle}>
+      <label>
+        <input
+          ref={inputRef}
+          type={'checkbox'}
+          className={inputStyle}
+          disabled={disabled}
+          checked={checked()}
+          onChange={isMove() ? undefined : onInput}
+        />
+        {children}
+      </label>
+      <div ref={switchThumbRef} className={switchStyle}>
         <div className={switchRailStyle} />
-        <div className={switchThumbStyle}/>
+        <div className={switchThumbStyle} data-move={isMove()} />
       </div>
-      {children}
-    </label>
+    </div>
   );
 }
 

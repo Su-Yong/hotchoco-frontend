@@ -110,7 +110,7 @@ export const accountPreferenceGroup: PreferenceGroupType = {
     {
       id: 'autoLogin',
       name: '자동 로그인',
-      type: 'check',
+      type: 'switch',
       defaultValue: false,
     },
     {
