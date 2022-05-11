@@ -14,6 +14,7 @@ const inputStyle = css`
   box-shadow: 0 -4px 0 -2px var(--box-shadow-color) inset;
 
   padding: 8px;
+  color: ${variable('Color.BLACK')};
   background: var(--background-color);
 
   transition-duration: ${variable('Animation.duration.short')};

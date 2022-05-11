@@ -4,7 +4,7 @@ import type { Component } from 'solid-js';
 import { css } from '@linaria/core';
 import { modularScale, hiDPI } from 'polished';
 import Button from '../components/common/Button';
-import { createThemeStyle, setTheme, variable } from '../theme';
+import { setTheme, variable } from '../theme';
 import { LightTheme } from '../theme/defined/LightTheme';
 import { DarkTheme } from '../theme/defined/DarkTheme';
 import IconButton from '../components/common/IconButton';
@@ -26,8 +26,6 @@ const header = css`
 
 const ChatPage: Component = () => {
   const [themeMode, setThemeMode] = createSignal('light');
-  
-  const style = createThemeStyle();
 
   const onChangeTheme = () => {
     setThemeMode(themeMode() === 'light' ? 'dark' : 'light');

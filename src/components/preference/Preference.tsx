@@ -1,10 +1,11 @@
-import { CheckPreferenceType, PreferenceType, SwitchPreferenceType, TextPreferenceType } from '@/constants/preference';
+import { CheckPreferenceType, NumberPreferenceType, PreferenceType, SwitchPreferenceType, TextPreferenceType } from '@/constants/preference';
 import { Component } from 'solid-js';
 import { Dynamic } from 'solid-js/web';
 import { JSX } from 'solid-js/jsx-runtime';
 import CheckPreference from './CheckPreference';
 import SwitchPreference from './SwitchPreference';
 import TextPreference from './TextPreference';
+import NumberPreference from './NumberPreference';
 
 const components: Record<PreferenceType['type'], (preference: any) => JSX.Element> = {
   check: (preference: CheckPreferenceType) => (
@@ -15,7 +16,14 @@ const components: Record<PreferenceType['type'], (preference: any) => JSX.Elemen
       defaultValue={preference.defaultValue}
     />
   ),
-  number: () => <div>number</div>,
+  number: (preference: NumberPreferenceType) => (
+    <NumberPreference
+      id={preference.id}
+      name={preference.name}
+      value={preference.value}
+      defaultValue={preference.defaultValue}
+    />
+  ),
   text: (preference: TextPreferenceType) => (
     <TextPreference
       id={preference.id}

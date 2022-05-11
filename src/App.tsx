@@ -5,6 +5,7 @@ import type { Component } from 'solid-js';
 import { createThemeStyle, variable } from './theme';
 import { css } from '@linaria/core';
 
+const LoginPage = lazy(() => import('./pages/LoginPage'));
 const ChatPage = lazy(() => import('./pages/ChatPage'));
 const PreferencePage = lazy(() => import('./pages/PreferencePage'));
 
@@ -19,6 +20,7 @@ const App: Component = () => {
   return (
     <div style={themeStyle()} className={bodyStyle}>
       <Routes>
+        <Route path={'/login'} element={<LoginPage />} />
         <Route path={'/chat'} element={<ChatPage />} />
         <Route path={'/preference'} element={<PreferencePage />} />
       </Routes>

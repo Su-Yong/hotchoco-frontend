@@ -1,12 +1,10 @@
 import { Component } from 'solid-js';
 import { JSX } from 'solid-js/jsx-runtime';
 
-import Color from 'color';
 import { IconProps, IconTypes } from 'solid-icons';
 import { css, cx } from '@linaria/core';
 
-import { getTheme, variable } from '../../theme';
-import { sx } from '@/utils';
+import { variable } from '../../theme';
 
 const iconButtonWrapperStyle = css`
   position: relative;
@@ -15,6 +13,10 @@ const iconButtonWrapperStyle = css`
 
   padding: 8px;
   cursor: pointer;
+
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
 `;
 
 const overlayStyle = css`
@@ -23,7 +25,7 @@ const overlayStyle = css`
   aspect-ratio: 1;
   z-index: 0;
 
-  background: var(--overlay-color);
+  background: ${variable('Color.Grey.500')};
   border-radius: 50%;
 
   opacity: 0;
@@ -32,12 +34,12 @@ const overlayStyle = css`
   transition-timing-function: ${variable('Animation.easing.deceleration')};
 
   div:hover > & {
-    opacity: 1;
+    opacity: 0.25;
     transform: scale(1);
   }
 
   div:active > & {
-    opacity: 1;
+    opacity: 0.5;
     transform: scale(1.2);
   }
 `;
@@ -64,12 +66,11 @@ const IconButton: Component<IconButtonProps> = ({
   className,
   outerClassName,
   outerStyle,
+  ...props
 }) => {
-  const overlayColor = Color(getTheme().Color.Grey[500]).fade(0.5);
-
   return (
     <div
-      style={sx({'--overlay-color': overlayColor}, outerStyle)}
+      style={outerStyle}
       className={cx(iconButtonWrapperStyle, outerClassName)}
     >
       <div className={overlayStyle} />
@@ -80,6 +81,7 @@ const IconButton: Component<IconButtonProps> = ({
         style={style}
         viewBox={viewBox}
         className={cx(iconStyle, className)}
+        {...props}
       />
     </div>
   );
