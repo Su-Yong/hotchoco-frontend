@@ -127,11 +127,14 @@ const Animation: Animation = {
     longest: '3000ms',
   },
   easing: {
+    linear: 'linear',
     in: 'in',
     out: 'out',
     inOut: 'in-out',
     acceleration: 'cubic-bezier(0.5, 0, 1, 0.5)',
     deceleration: 'cubic-bezier(0, 0.5, 0.5, 1)',
+    inBack: 'cubic-bezier(0.36, 0, 0.66, -0.56)',
+    outBack: 'cubic-bezier(0.34, 1.56, 0.64, 1)',
   },
 };
 

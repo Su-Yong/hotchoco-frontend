@@ -3,23 +3,37 @@ import { Component, JSX } from 'solid-js';
 import { variable } from '../../theme';
 
 const buttonStyle = css`
+  position: relative;
   outline: none;
   border: none;
   cursor: pointer;
+  z-index: 1;
 
-  border-radius: 8px;
   padding: 8px 12px;
 
-  color: ${variable('Color.Grey.900')};
-  background: ${variable('Color.Blue.500')};
+  color: ${variable('Color.WHITE')};
+  background: transparent;
   transition-duration: ${variable('Animation.duration.short')};
-  transition-timing-function: ${variable('Animation.easing.inOut')};
+  transition-timing-function: ${variable('Animation.easing.deceleration')};
 
-  &:hover {
-    background: ${variable('Color.Blue.400')};
+  &::before {
+    content: '';
+    position: absolute;
+    inset: 2px;
+    z-index: -1;
+
+    background-color: ${variable('Color.BLACK')};
+
+    transition-duration: ${variable('Animation.duration.short')};
+    transition-timing-function: ${variable('Animation.easing.deceleration')};
   }
-  &:active {
-    background: ${variable('Color.Blue.600')};
+
+  &:hover::before {
+    background-color: ${variable('Color.Blue.500')};
+  }
+  &:active::before {
+    inset: 0;
+    background-color: ${variable('Color.Blue.500')};
   }
 `;
 

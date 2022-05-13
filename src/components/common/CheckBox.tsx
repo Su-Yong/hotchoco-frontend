@@ -16,6 +16,8 @@ const wrapperStyle = css`
   align-items: center;
   gap: 4px;
 
+  position: relative;
+  z-index: 0;
   cursor: pointer;
   user-select: none;
 `;
@@ -27,16 +29,54 @@ const inputStyle = css`
 const checkWrapperStyle = css`
   width: var(--check-size);
   height: var(--check-size);
-  border-radius: 4px;
 
-  background: transparent;
-  box-shadow: 0 0 0 1px var(--secondary-color) inset;
+  overflow: visible;
+`;
+
+const hoverStyle = css`
+  fill: ${variable('Color.Grey.500')};
+  opacity: 0;
+
+  transform-origin: center;
+  transition-duration: ${variable('Animation.duration.short')};
+  transition-timing-funciton: ${variable('Animation.easing.deceleration')};
+
+  label:hover > svg > & {
+    opacity: 0.35;
+    transform: scale(1.75);
+  }
+
+  label:active > svg & {
+    opacity: 0.5;
+    transform: scale(2);
+  }
+`;
+
+const checkFrameStyle = css`
+  fill: var(--secondary-color);
+  stroke: var(--secondary-color);
+  stroke-width: 1px;
 
   transition-duration: ${variable('Animation.duration.short')};
   transition-timing-funciton: ${variable('Animation.easing.deceleration')};
 
-  input:checked + & {
-    box-shadow: 0 0 0 calc(var(--check-size) * 0.5) var(--main-color) inset;
+  input:checked + svg > & {
+    fill: var(--main-color);
+    stroke: var(--main-color);
+  }
+`;
+
+const checkInnerStyle = css`
+  fill: ${variable('Color.WHITE')};
+  stroke: none;
+
+  transform-origin: center;
+  transition-duration: ${variable('Animation.duration.short')};
+  transition-timing-funciton: ${variable('Animation.easing.deceleration')};
+
+  input:checked + svg > & {
+    transform: scale(0);
+    opacity: 0;
   }
 `;
 
@@ -49,7 +89,8 @@ const checkStyle = css`
   stroke-dasharray: 16px;
   stroke-dashoffset: 16px;
 
-  transition-duration: ${variable('Animation.duration.short')};
+  transition-delay: calc(${variable('Animation.duration.shorter')} / 1.5);
+  transition-duration: ${variable('Animation.duration.shorter')};
   transition-timing-funciton: ${variable('Animation.easing.deceleration')};
 
   input:checked + svg > & {
@@ -93,6 +134,9 @@ const CheckBox: Component<CheckBoxProps> = ({
           {...props}
         />
         <svg viewBox={`0 0 16 16`} className={checkWrapperStyle}>
+          <circle cx={8} cy={8} r={8} className={hoverStyle} />
+          <path d={'M2 0 L14 0 a2 2 0 0 1 2 2 L16 14 a2 2 0 0 1 -2 2 L2 16 a2 2 0 0 1 -2 -2 L0 2 a2 2 0 0 1 2 -2Z'} className={checkFrameStyle} />
+          <path d={'M2 0 L14 0 a2 2 0 0 1 2 2 L16 14 a2 2 0 0 1 -2 2 L2 16 a2 2 0 0 1 -2 -2 L0 2 a2 2 0 0 1 2 -2Z'} className={checkInnerStyle} />
           <path d={'M3 8 L6.5 12 L13 5'} className={checkStyle}></path>
         </svg>
         {children}

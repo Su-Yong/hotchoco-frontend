@@ -9,11 +9,10 @@ const buttonStyle = css`
   border: none;
   cursor: pointer;
   z-index: 1;
+  user-select: none;
 
   margin: 0;
-  padding: 4px;
-  padding-left: 8px;
-  padding-right: 8px;
+  padding: 8px 12px;
 
   background: transparent;
   color: ${variable('Color.BLACK')};
@@ -24,10 +23,7 @@ const buttonStyle = css`
   &::before {
     content: '';
     position: absolute;
-    left: 8px;
-    right: 8px;
-    top: 4px;
-    bottom: 4px;
+    inset: 2px;
 
     width: 0;
 
@@ -43,7 +39,7 @@ const buttonStyle = css`
     color: ${variable('Color.WHITE')};
 
     &::before {
-      width: calc(100% - 16px);
+      width: calc(100% - 4px);
     }
   }
 

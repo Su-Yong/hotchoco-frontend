@@ -10,15 +10,24 @@ const inputStyle = css`
   --box-shadow-color: var(--secondary-color);
 
   outline: none;
+  border-radius: 0;
   border: 0 solid transparent;
+
+  -webkit-appearance: none;
   box-shadow: 0 -4px 0 -2px var(--box-shadow-color) inset;
 
   padding: 8px;
+  padding-top: 12px;
+  padding-bottom: 12px;
   color: ${variable('Color.BLACK')};
   background: var(--background-color);
 
   transition-duration: ${variable('Animation.duration.short')};
   transition-timing-function: ${variable('Animation.easing.inOut')};
+
+  &:hover {
+    background: var(--background-hover-color);
+  }
 
   &:focus {
     box-shadow: 0 0 0 2px var(--box-shadow-color) inset;
@@ -46,6 +55,7 @@ const TextInput: Component<TextInputProps> = ({
   const mainColor = disabled ? variable('Color.Grey.200') : variable('Color.Blue.500');
   const secondaryColor = disabled ? variable('Color.Grey.300') : variable('Color.Grey.500');
   const backgroundColor = disabled ? variable('Color.Grey.100') : variable('Color.Grey.200');
+  const backgroundHoverColor = disabled ? variable('Color.Grey.100') : variable('Color.Grey.300');
 
   return (
     <input
@@ -57,6 +67,7 @@ const TextInput: Component<TextInputProps> = ({
         '--main-color': mainColor,
         '--secondary-color': secondaryColor,
         '--background-color': backgroundColor,
+        '--background-hover-color': backgroundHoverColor,
       }, props.style)}
     />
   );

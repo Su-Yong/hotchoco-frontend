@@ -39,6 +39,7 @@ const switchThumbStyle = css`
   height: var(--switch-size);
   border-radius: 50%;
 
+  will-change: background, background-size, background-position;
   background: linear-gradient(to right, var(--main-color), var(--secondary-color));
   background-size: calc(var(--switch-size) * 10) var(--switch-size);
   background-position: calc(var(--offset) * var(--switch-size) * 9 + var(--switch-size)) 0px;
@@ -47,6 +48,29 @@ const switchThumbStyle = css`
 
   transition-duration: ${variable('Animation.duration.short')};
   transition-timing-function: ${variable('Animation.easing.deceleration')};
+
+  &::before {
+    content: '';
+    position: absolute;
+    inset: -4px;
+    border-radius: 100%;
+
+    background: ${variable('Color.Grey.500')};
+    opacity: 0;
+    transform: scale(0);
+
+    transition-duration: ${variable('Animation.duration.short')};
+    transition-timing-function: ${variable('Animation.easing.deceleration')};
+  }
+
+  div:hover > div > &::before {
+    opacity: 0.3;
+    transform: scale(1);
+  }
+  div:active > div > &::before {
+    opacity: 0.5;
+    transform: scale(1.25);
+  }
 
   div[data-disabled='false'] label:active + div &,
   div[data-disabled='false'] &:active,
@@ -59,6 +83,8 @@ const switchThumbStyle = css`
     position: absolute;
     inset: 1px;
     border-radius: 50%;
+
+    will-change: transform;
 
     transform: scale(calc(1 - var(--offset)));
     transition-duration: ${variable('Animation.duration.short')};
@@ -100,15 +126,18 @@ const Switch: Component<SwitchProps> = ({
   const mainColor = disabled ? variable('Color.Grey.300') : variable('Color.Blue.500');
   const secondaryColor = disabled ? variable('Color.Grey.300') : variable('Color.Grey.500');
 
+  let lastX: number = 0;
   let x: number | null = null;
   let moved: boolean = false;
-  const onEnter = () => {
+  const onEnter = (event: PointerEvent) => {
     x = checked() ? size : 0;
     setIsMove(true);
+    lastX = event.screenX;
   };
   const onMove = (event: PointerEvent) => {
     if (typeof x === 'number') {
-      x += event.movementX;
+      x += event.movementX ?? event.screenX - lastX;
+      lastX = event.screenX;
       moved = true;
 
       const newOffset = Math.min(Math.max(x, 0), size) / size;
@@ -117,7 +146,8 @@ const Switch: Component<SwitchProps> = ({
   };
   const onEnd = (event: PointerEvent) => {
     if (typeof x === 'number') {
-      x += event.movementX;
+      x += event.movementX ?? event.screenX - lastX;
+      lastX = event.screenX;
 
       if (moved) {
         const newOffset = Math.min(Math.max(x, 0), size) / size;

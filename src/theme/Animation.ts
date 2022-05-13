@@ -11,11 +11,14 @@ export interface AnimationDuration {
 
 export type EasingFunction = string;
 export interface EasingAnimation {
+  linear: EasingFunction;
   in: EasingFunction;
   out: EasingFunction;
   inOut: EasingFunction;
   acceleration: EasingFunction;
   deceleration: EasingFunction;
+  inBack: EasingFunction;
+  outBack: EasingFunction;
 }
 
 export interface Animation {

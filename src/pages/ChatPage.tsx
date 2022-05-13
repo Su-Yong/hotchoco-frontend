@@ -1,56 +1,69 @@
-import { createEffect, createSignal } from 'solid-js';
+import { For } from 'solid-js';
 
 import type { Component } from 'solid-js';
 import { css } from '@linaria/core';
-import { modularScale, hiDPI } from 'polished';
-import Button from '../components/common/Button';
-import { setTheme, variable } from '../theme';
-import { LightTheme } from '../theme/defined/LightTheme';
-import { DarkTheme } from '../theme/defined/DarkTheme';
-import IconButton from '../components/common/IconButton';
-import { VscAccount } from 'solid-icons/vsc';
-import CheckBox from '../components/common/CheckBox';
-import Switch from '@/components/common/Switch';
+import { VscSearch } from 'solid-icons/vsc';
+import ChatRoom from '@/components/chat/ChatRoom';
+
+import { User, ChatRoom as ChatRoomType, Message } from '@/types';
+import { randAvatar, randFileName, randImg, randText, randUuid } from '@ngneat/falso';
 import TextInput from '@/components/common/TextInput';
+import Header from '@/components/Header';
+import IconButton from '@/components/common/IconButton';
 
-const header = css`
-  text-transform: uppercase;
-  font-size: ${modularScale(2)};
+const containerStyle = css`
+  width: 100%;
+  height: 100%;
 
-  ${hiDPI(1.5)} {
-    font-size: ${modularScale(2.5)};
-  }
-
-  color: ${variable('Color.Grey.900')};
+  overflow: auto;
 `;
 
+const userList: User[] = Array.from({ length: 10 })
+  .map((_, i) => ({
+    id: randUuid(),
+    name: randFileName(),
+    profile: randImg(),
+  }));
+
+const messageList: Message[] = Array.from({ length: 10 })
+.map((_, i) => ({
+  id: randUuid(),
+  sender: userList[~~(Math.random() * userList.length)],
+  content: randText(),
+  timestamp: Date.now(),
+}));
+
+const roomList: ChatRoomType[] = Array.from({ length: 10 })
+  .map((_, i) => ({
+    id: randUuid(),
+    title: randText(),
+    type: 'group',
+    members: userList.slice(
+      ...[
+        ~~(Math.random() * userList.length),
+        ~~(Math.random() * userList.length),
+      ].sort((a, b) => a - b)
+    ),
+    thumbnail: randImg(),
+  }));
+
 const ChatPage: Component = () => {
-  const [themeMode, setThemeMode] = createSignal('light');
-
-  const onChangeTheme = () => {
-    setThemeMode(themeMode() === 'light' ? 'dark' : 'light');
-  };
-
-  createEffect(() => {
-    if (themeMode() === 'light') setTheme(LightTheme);
-    if (themeMode() === 'dark') setTheme(DarkTheme);
-  });
-
   return (
-    <div>
-      <div className={header}>Test!</div>
-      <Button>Hello</Button>
-      <Button onClick={onChangeTheme}>change theme</Button>
-      <IconButton size={36} icon={VscAccount} />
-      <CheckBox>테스트</CheckBox>
-      <CheckBox checked size={64}>테스트 size 64</CheckBox>
-      <CheckBox disabled>테스트 disabled</CheckBox>
-      <CheckBox disabled checked>테스트 disabled checked</CheckBox>
-      <Switch>스위치 테스트</Switch>
-      <Switch size={72}>스위치 테스트</Switch>
-      <Switch size={16} disabled>스위치 테스트</Switch>
-      <TextInput pattern={'[0-9]+'}/>
-      <TextInput disabled />
+    <div className={containerStyle}>
+      <Header>
+        채팅
+        <IconButton size={16} icon={VscSearch} />
+      </Header>
+      <For each={roomList}>
+        {(room) => (
+          <ChatRoom
+            room={room}
+            lastMessage={Math.random() > 0.5 ? messageList[~~(Math.random() * messageList.length)] : undefined}
+            unread={~~(Math.random() * 10)}
+            writing={Math.random() > 0.5}
+          />
+        )}
+      </For>
     </div>
   );
 };

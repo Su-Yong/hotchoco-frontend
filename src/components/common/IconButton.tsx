@@ -17,6 +17,9 @@ const iconButtonWrapperStyle = css`
   display: inline-flex;
   justify-content: center;
   align-items: center;
+
+  -webkit-tap-highlight-color: transparent;
+  user-select: none;
 `;
 
 const overlayStyle = css`
