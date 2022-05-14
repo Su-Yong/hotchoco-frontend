@@ -1,6 +1,7 @@
 import { variable } from '@/theme';
 import { ChatRoom as ChatRoomType, Message } from '@/types';
 import { css } from '@linaria/core';
+import { randNumber, seed } from '@ngneat/falso';
 import { Component, createMemo } from 'solid-js';
 import ChatBadge from './ChatBadge';
 
@@ -55,7 +56,7 @@ const containerStyle = css`
   }
 
   & > .title {
-    font-size: 24px;
+    font-size: 18px;
   }
 
   & > .message {
