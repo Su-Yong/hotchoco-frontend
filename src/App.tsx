@@ -11,6 +11,7 @@ import { DarkTheme } from './theme/defined/DarkTheme';
 const LoginPage = lazy(() => import('./pages/LoginPage'));
 const ChatPage = lazy(() => import('./pages/ChatPage'));
 const PreferencePage = lazy(() => import('./pages/PreferencePage'));
+const ChatContainer = lazy(() => import('./containers/ChatContainer'));
 
 const bodyStyle = css`
   background: ${variable('Color.WHITE')};
@@ -36,6 +37,7 @@ const App: Component = () => {
       <Routes>
         <Route path={'/login'} element={<LoginPage />} />
         <Route path={'/chat'} element={<ChatPage />} />
+        <Route path={'/test'} element={<ChatContainer />} />
         <Route path={'/preference'} element={<PreferencePage />} />
       </Routes>
     </div>

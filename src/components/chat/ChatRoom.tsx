@@ -63,6 +63,10 @@ const containerStyle = css`
     font-size: 16px;
     grid-column: 2 / span 1;
     grid-row: 2 / span 1;
+
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
 
   & > .badge {

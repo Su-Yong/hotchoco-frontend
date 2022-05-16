@@ -5,12 +5,11 @@ import { css } from '@linaria/core';
 import { VscSearch } from 'solid-icons/vsc';
 import ChatRoom from '@/components/chat/ChatRoom';
 
-import { User, ChatRoom as ChatRoomType, Message } from '@/types';
-import { randAvatar, randFileName, randImg, randText, randUuid } from '@ngneat/falso';
-import TextInput from '@/components/common/TextInput';
 import Header from '@/components/Header';
 import IconButton from '@/components/common/IconButton';
 import VirtualList from '@/components/virtual/VirtualList';
+import { variable } from '@/theme';
+import { messageList, roomList } from '@/utils/dummy';
 
 const containerStyle = css`
   width: 100%;
@@ -24,46 +23,44 @@ const containerStyle = css`
   align-items: stretch;
 `;
 
-const userList: User[] = Array.from({ length: 10 })
-  .map((_, i) => ({
-    id: randUuid(),
-    name: randFileName(),
-    profile: randImg(),
-  }));
+const headerStyle = css`
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
 
-const messageList: Message[] = Array.from({ length: 10 })
-.map((_, i) => ({
-  id: randUuid(),
-  sender: userList[~~(Math.random() * userList.length)],
-  content: randText(),
-  timestamp: Date.now(),
-}));
+  z-index: 10000;
+  backdrop-filter: blur(16px);
+  
+  &::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+    z-index: -1;
 
-const roomList: ChatRoomType[] = Array.from({ length: 10000 })
-  .map((_, i) => ({
-    id: randUuid(),
-    title: `${i + 1}번쨰 방`,
-    type: 'group',
-    members: userList.slice(
-      ...[
-        ~~(Math.random() * userList.length),
-        ~~(Math.random() * userList.length),
-      ].sort((a, b) => a - b)
-    ),
-    thumbnail: randImg(),
-  }));
+    height: 56px;
+
+    opacity: 0.5;
+    background: ${variable('Color.WHITE')};
+  }
+`;
 
 const ChatPage: Component = () => {
   return (
     <div className={containerStyle}>
-      <Header>
+      <Header
+        className={headerStyle}
+        rightIcon={<IconButton size={16} icon={VscSearch} />}
+      >
         채팅
-        <IconButton size={16} icon={VscSearch} />
       </Header>
       <VirtualList
         items={roomList}
         style={'flex: 1'}
         itemHeight={56}
+        topMargin={56}
       >
         {(room) => (
           <ChatRoom
