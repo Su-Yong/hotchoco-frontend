@@ -1,23 +1,26 @@
 import IconButton from '@/components/common/IconButton';
 import { css, cx } from '@linaria/core';
 import { Component, createEffect, createSignal, Show } from 'solid-js';
-import { VscChevronDown } from 'solid-icons/vsc';
+import { VscChevronDown, VscChevronUp } from 'solid-icons/vsc';
 import { variable } from '@/theme';
 import TextButton from '@/components/common/TextButton';
 
-const LENGTH_LIMIT = 200;
+const LENGTH_LIMIT = 1000;
 
 const containerStyle = css`
   display: inline-flex;
   flex-flow: column;
+  gap: 4px;
+
+  white-space: pre-line;
 `;
 
 const toggleStyle = css`
-  transform: rotate(var(--rotate));
-  /* align-self: center; */
-
-  transition-duration: ${variable('Animation.duration.short')};
-  transition-timing-function: ${variable('Animation.easing.deceleration')};
+  display: flex;
+  flex-flow: row;
+  justify-content: center;
+  align-items: center;
+  gap: 4px;
 `;
 
 export interface TextContentProps {
@@ -45,17 +48,20 @@ const TextContent: Component<TextContentProps> = ({
     return (
       <div className={containerStyle}>
         {visibleContent()}
-        
         <TextButton
           onClick={onToggleCollapse}
           className={toggleStyle}
         >
-        <Show
-          when={collapse()}
-          fallback={'접기'}
-        >
-          펼치기
-      </Show>
+          <Show
+            when={collapse()}
+            fallback={<>
+              <VscChevronUp className={'icon'} />
+              접기
+            </>}
+          >
+            <VscChevronDown className={'icon'} />
+            더보기
+          </Show>
         </TextButton>
       </div>
     );

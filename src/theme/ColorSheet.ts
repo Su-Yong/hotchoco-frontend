@@ -13,6 +13,14 @@ export interface ColorPalette {
   900: Color;
 }
 
+export interface TransparenceSheet {
+  transparent: number;
+  clear: number;
+  translucent: number;
+  vague: number;
+  opaque: number;
+}
+
 export interface ColorSheet {
   WHITE: Color;
   BLACK: Color;
@@ -22,4 +30,6 @@ export interface ColorSheet {
   Red: ColorPalette;
   Green: ColorPalette;
   Blue: ColorPalette;
+
+  Transparency: TransparenceSheet;
 }

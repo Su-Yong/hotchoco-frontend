@@ -5,10 +5,12 @@ import { LightTheme } from './defined/LightTheme';
 
 import type { ColorSheet } from './ColorSheet';
 import type { Animation } from './Animation';
+import { Size } from './Size';
 
 export interface Theme {
   Color: ColorSheet;
   Animation: Animation;
+  Size: Size;
 }
 
 const createTheme = () => {

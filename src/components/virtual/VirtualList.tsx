@@ -46,19 +46,7 @@ export interface VirtualListProps<T> extends Pick<JSX.HTMLAttributes<HTMLDivElem
   innerClassName?: JSX.HTMLAttributes<HTMLDivElement>['className'];
 }
 
-const VirtualList = <T extends unknown>({
-  items,
-  children,
-
-  overscan = 3,
-  itemHeight: initItemHeight,
-  topMargin,
-  bottomMargin,
-
-  innerStyle,
-  innerClassName,
-  ...props
-}: VirtualListProps<T>): JSX.Element => {
+const VirtualList = <T extends unknown>(props: VirtualListProps<T>): JSX.Element => {
   const ignoreClass = nanoid();
 
   const [frameHeight, setFrameHeight] = createSignal(0);
@@ -66,15 +54,15 @@ const VirtualList = <T extends unknown>({
   const [bottomPadding, setBottomPadding] = createSignal(0);
 
   let defaultItemHeight = (
-    typeof initItemHeight === 'function'
+    typeof props.itemHeight === 'function'
       ? DEFAULT_HEIGHT
-      : (initItemHeight ?? DEFAULT_HEIGHT)
+      : (props.itemHeight ?? DEFAULT_HEIGHT)
   );
   let itemHeights = new Map<number, number>();
   const [range, setRange] = createSignal<[number, number]>([0, 30]);
 
   const getHeight = (index: number) => {
-    const defaultValue = typeof initItemHeight === 'function' ? initItemHeight(index) : defaultItemHeight;
+    const defaultValue = typeof props.itemHeight === 'function' ? props.itemHeight(index) : defaultItemHeight;
 
     return Number(itemHeights.get(index) ?? defaultValue);
   };
@@ -91,13 +79,10 @@ const VirtualList = <T extends unknown>({
     let [newStart, newEnd] = calculateVisibleRange(
       [start, end],
       { top, scroll, height },
-      { getHeight, overscan, length: items.length },
+      { getHeight, overscan: props.overscan ?? 5, length: props.items.length },
     );
 
     if (start !== newStart || end !== newEnd) {
-      if (Math.abs(newEnd - newStart) > MAX_COUNT) newEnd = newStart + MAX_COUNT;
-      if (Math.abs(newEnd - newStart) < MIN_COUNT) newEnd = newStart + MIN_COUNT;
-
       console.log('range', start, end, '->', newStart, newEnd);
       setRange([newStart, newEnd]);
     }
@@ -109,14 +94,29 @@ const VirtualList = <T extends unknown>({
     if (frameRect && frameHeight() === 0) setFrameHeight(frameRect.height);
   });
 
+  const resizeObserver = new ResizeObserver((entries) => {
+    for(const entry of entries) {
+      const index = Number(entry.target.getAttribute('data-index'));
+
+      if (Number.isFinite(index)) {
+        const rect = entry.target.getBoundingClientRect();
+
+        itemHeights.set(index, rect.height ?? defaultItemHeight);
+      }
+    }
+  });
+
   const [dev, setDev] = createSignal('');
   createEffect(() => {
     const [start, end] = range();
 
     const children = Array.from(parentRef!.children);
+    resizeObserver.disconnect();
     for (let i = start; i < end; i++) {
-      // resizeObserver.observe(children[i - start]);
-      // children[i - start].setAttribute('data-index', i.toString());
+      if (!children[i - start + 1]) continue;
+      resizeObserver.observe(children[i - start + 1]);
+      children[i - start + 1].setAttribute('data-index', i.toString());
+
       if (itemHeights.has(i)) continue;
       const rect = children[i - start + 1].getBoundingClientRect();
       setDev(JSON.stringify(parentRef?.scrollTop));
@@ -129,7 +129,7 @@ const VirtualList = <T extends unknown>({
     for(let i = 0; i < start; i++) {
       top += itemHeights.get(i) ?? defaultItemHeight;
     }
-    for(let i = end; i < items.length; i++) {
+    for(let i = end; i < props.items.length; i++) {
       bottom += itemHeights.get(i) ?? defaultItemHeight;
     }
 
@@ -154,14 +154,14 @@ const VirtualList = <T extends unknown>({
       </div>
       <div
         ref={parentRef}
-        style={innerStyle}
-        className={cx(innerScrollerStyle, innerClassName)}
+        style={props.innerStyle}
+        className={cx(innerScrollerStyle, props.innerClassName)}
       >
-        <div className={ignoreClass} style={`height: ${(topMargin ?? 0)+ topPadding() || 0}px;`} />
-        <For each={items.slice(...range())}>
-          {(item, index) => children(item, () => index() + range()[0])}
+        <div className={ignoreClass} style={`height: ${(props.topMargin ?? 0)+ topPadding() || 0}px;`} />
+        <For each={props.items.slice(...range())}>
+          {(item, index) => props.children(item, () => index() + range()[0])}
         </For>
-        <div className={ignoreClass} style={`height: ${(bottomMargin ?? 0) + bottomPadding() || 0}px;`} />
+        <div className={ignoreClass} style={`height: ${(props.bottomMargin ?? 0) + bottomPadding() || 0}px;`} />
       </div>
     </div>
   );

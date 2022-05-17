@@ -12,7 +12,7 @@ const containerStyle = css`
   display: grid;
   grid-template-columns: auto auto 1fr;
   grid-template-rows: auto 1fr auto;
-  gap: 4px;
+  gap: ${variable('Size.space.small')};
 
   & > .profile {
     grid-row: 1 / span 2;
@@ -32,6 +32,9 @@ const containerStyle = css`
   }
 
   & > .info {
+    padding-right: ${variable('Size.icon.large')};
+
+    white-space: nowrap;
     font-size: 12px;
     color: ${variable('Color.Grey.500')};
 
@@ -63,14 +66,18 @@ const mineStyle = css`
   }
 
   & > .info {
+    text-align: end;
+    padding-right: 0;
+    padding-left: ${variable('Size.icon.large')};
+
     grid-row: 2 / span 1;
     grid-column: 1 / span 1;
   }
 `;
 
 const profileDummyStyle = css`
-  width: 36px;
-  height: 36px;
+  width: ${variable('Size.icon.large')};
+  height: ${variable('Size.icon.large')};
 `;
 
 const profileDummy = () => <div className={cx(profileDummyStyle, 'profile')} />
@@ -86,20 +93,28 @@ const ChatMessage: Component<ChatMessageProps> = ({
   mine,
   type = 'first-last',
 }) => {
-  const { sender, content } = message;
+  const { sender } = message;
   
   const time = new Date(message.timestamp);
   const timeString = time.toLocaleString(undefined, { hour: '2-digit', minute: '2-digit' });
 
   return (
     <div className={cx(containerStyle, mine && mineStyle)}>
-      <Show when={type === 'first-last' || type === 'last'} fallback={profileDummy}>
+      <Show
+        when={!mine && (type === 'first-last' || type === 'last')}
+        fallback={mine ? null : profileDummy}
+      >
         <UserProfile className={'profile'} user={sender} />
       </Show>
-      <Show when={type === 'first-last' || type === 'first'}>
+      <Show when={!mine && (type === 'first-last' || type === 'first')}>
         <div className={'sender-name'}>{sender.name}</div>
       </Show>
-      <ChatBubble className={'bubble'} message={message} />
+      <ChatBubble
+        type={mine ? 'mine' : 'other'}
+        isTail={type === 'last' || type === 'first-last'}
+        className={'bubble'}
+        message={message}
+      />
       <div className={'info'}>{timeString}</div>
     </div>
   );

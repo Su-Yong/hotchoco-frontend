@@ -1,5 +1,6 @@
-import { Animation } from '../Animation';
+import type { Animation as AnimationType } from '../Animation';
 import { ColorSheet } from '../ColorSheet';
+import { Size } from '../Size';
 import { Theme } from '../theme';
 
 export const DarkColorSheet: ColorSheet = {
@@ -53,9 +54,17 @@ export const DarkColorSheet: ColorSheet = {
     200: '#1e40af',
     100: '#1e3a8a',
   },
+
+  Transparency: {
+    transparent: 0,
+    clear: 0.35,
+    translucent: 0.65,
+    vague: 0.85,
+    opaque: 1,
+  },
 };
 
-const Animation: Animation = {
+const Animation: AnimationType = {
   duration: {
     shortest: '150ms',
     shorter: '250ms',
@@ -77,7 +86,29 @@ const Animation: Animation = {
   },
 };
 
+const SizeSheet: Size = {
+  text: {
+    head: '1.25rem',
+    title: '1.125rem',
+    subtitle: '1rem',
+    body: '0.875rem',
+    caption: '0.75rem',
+    info: '0.625rem',
+  },
+  icon: {
+    small: '24px',
+    medium: '32px',
+    large: '48px',
+  },
+  space: {
+    small: '4px',
+    medium: '8px',
+    large: '16px',
+  }
+};
+
 export const DarkTheme: Theme ={
   Color: DarkColorSheet,
   Animation,
+  Size: SizeSheet,
 };

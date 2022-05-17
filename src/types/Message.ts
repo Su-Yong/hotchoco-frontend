@@ -1,11 +1,21 @@
 import { User } from './User';
 
-export type Content = string;
-export type MessageType = 'text';
-export interface Message {
+export interface MessageBase<Type> {
   id: string;
-  content: Content;
-  timestamp: number;
+  type: Type;
   sender: User;
-  type: MessageType;
+  timestamp: number;
 }
+
+export interface TextMessage extends MessageBase<'text'> {
+  content: string;
+}
+
+export interface ImageMessage extends MessageBase<'image'> {
+  content: string[];
+}
+
+export type Message = (
+  TextMessage
+  | ImageMessage
+);

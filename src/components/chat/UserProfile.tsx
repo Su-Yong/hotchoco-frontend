@@ -1,3 +1,4 @@
+import { getTheme } from '@/theme';
 import { User } from '@/types';
 import { sx } from '@/utils';
 import { css, cx } from '@linaria/core';
@@ -17,15 +18,11 @@ export interface UserProfileProps extends JSX.HTMLAttributes<HTMLImageElement> {
 }
 
 const UserProfile: Component<UserProfileProps> = ({
-  size = 'medium',
+  size = 'large',
   user,
   ...props
 }) => {
-  const profileSize = createMemo(() => {
-    if (size === 'small') return 24;
-    if (size === 'medium') return 36;
-    if (size === 'large') return 48;
-  });
+  const profileSize = createMemo(() => getTheme().Size.icon[size]);
 
   if (user.profile) {
     return (
@@ -33,7 +30,7 @@ const UserProfile: Component<UserProfileProps> = ({
       {...props}
         className={cx(profileStyle, props.className)}
         style={sx({
-          '--profile-size': `${profileSize()}px`,
+          '--profile-size': profileSize(),
         }, props.style)}
         src={user.profile}
       />

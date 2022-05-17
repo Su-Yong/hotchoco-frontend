@@ -1,3 +1,4 @@
+import { variable } from '@/theme';
 import { css, cx } from '@linaria/core';
 import { Component } from 'solid-js';
 import { JSX } from 'solid-js/jsx-runtime';
@@ -11,7 +12,7 @@ const headerStyle = css`
   justify-content: flex-start;
   align-items: center;
 
-  font-size: 18px;
+  font-size: ${variable('Size.text.head')};
   font-weight: bolder;
 
   padding: 12px 16px;
