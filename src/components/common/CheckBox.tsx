@@ -1,4 +1,4 @@
-import { Component } from 'solid-js';
+import { Component, mergeProps, splitProps } from 'solid-js';
 import { JSX } from 'solid-js/jsx-runtime';
 
 import { css } from '@linaria/core';
@@ -103,22 +103,24 @@ export interface CheckBoxProps extends JSX.InputHTMLAttributes<HTMLInputElement>
   size?: number;
 }
 
-const CheckBox: Component<CheckBoxProps> = ({
-  id: domId,
-  disabled,
-  size = 16,
-  children,
-  ...props
-}) => {
-  const id = domId ?? nanoid();
+const CheckBox: Component<CheckBoxProps> = (props) => {
+  const [local, children, leftProps] = splitProps(mergeProps(props, {
+    size: 16,
+    id: nanoid(),
+  }), [
+    'className',
+    'size',
+    'id',
+    'disabled'
+  ], ['children']);
 
-  const sizePixel = `${size}px`;
-  const mainColor = disabled ? variable('Color.Grey.300') : variable('Color.Blue.500');
-  const secondaryColor = disabled ? variable('Color.Grey.300') : variable('Color.Grey.500');
+  const sizePixel = `${local.size}px`;
+  const mainColor = local.disabled ? variable('Color.Grey.300') : variable('Color.Blue.500');
+  const secondaryColor = local.disabled ? variable('Color.Grey.300') : variable('Color.Grey.500');
 
   return (
       <label
-        for={id}
+        for={local.id}
         style={{
           '--check-size': sizePixel,
           '--main-color': mainColor,
@@ -128,10 +130,10 @@ const CheckBox: Component<CheckBoxProps> = ({
       >
         <input
           type={'checkbox'}
-          id={id}
+          id={local.id}
           className={inputStyle}
-          disabled={disabled}
-          {...props}
+          disabled={local.disabled}
+          {...leftProps}
         />
         <svg viewBox={`0 0 16 16`} className={checkWrapperStyle}>
           <circle cx={8} cy={8} r={8} className={hoverStyle} />
@@ -139,7 +141,7 @@ const CheckBox: Component<CheckBoxProps> = ({
           <path d={'M2 0 L14 0 a2 2 0 0 1 2 2 L16 14 a2 2 0 0 1 -2 2 L2 16 a2 2 0 0 1 -2 -2 L0 2 a2 2 0 0 1 2 -2Z'} className={checkInnerStyle} />
           <path d={'M3 8 L6.5 12 L13 5'} className={checkStyle}></path>
         </svg>
-        {children}
+        {children.children}
       </label>
   );
 };

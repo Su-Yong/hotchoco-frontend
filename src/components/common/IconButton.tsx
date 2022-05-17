@@ -1,4 +1,4 @@
-import { Component } from 'solid-js';
+import { Component, splitProps } from 'solid-js';
 import { JSX } from 'solid-js/jsx-runtime';
 
 import { IconProps, IconTypes } from 'solid-icons';
@@ -59,32 +59,33 @@ export interface IconButtonProps extends IconProps {
   icon: IconTypes;
 }
 
-const IconButton: Component<IconButtonProps> = ({
-  icon: Icon,
-  size,
-  color,
-  title,
-  style,
-  viewBox,
-  className,
-  outerClassName,
-  outerStyle,
-  ...props
-}) => {
+const IconButton: Component<IconButtonProps> = (props) => {
+  const [local, leftProps] = splitProps(props, [  
+    'icon',
+    'size',
+    'color',
+    'title',
+    'style',
+    'viewBox',
+    'className',
+    'outerClassName',
+    'outerStyle',
+  ]);
+
   return (
     <div
-      style={outerStyle}
-      className={cx(iconButtonWrapperStyle, outerClassName)}
+      style={local.outerStyle}
+      className={cx(iconButtonWrapperStyle, local.outerClassName)}
     >
       <div className={overlayStyle} />
-      <Icon
-        size={size}
-        color={color}
-        title={title}
-        style={style}
-        viewBox={viewBox}
-        className={cx(iconStyle, className)}
-        {...props}
+      <local.icon
+        size={local.size}
+        color={local.color}
+        title={local.title}
+        style={local.style}
+        viewBox={local.viewBox}
+        className={cx(iconStyle, local.className)}
+        {...leftProps}
       />
     </div>
   );

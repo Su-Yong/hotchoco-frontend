@@ -1,6 +1,6 @@
 import { variable } from '@/theme';
 import { css } from '@linaria/core';
-import { Component, createEffect, createSignal } from 'solid-js';
+import { Component, createEffect, createSignal, mergeProps, on, splitProps } from 'solid-js';
 import { JSX } from 'solid-js/jsx-runtime';
 
 const wrapperStyle = css`
@@ -107,30 +107,35 @@ const switchRailStyle = css`
 
 export interface SwitchProps extends JSX.InputHTMLAttributes<HTMLInputElement> {
   size?: number;
+  onChecked?: (checked: boolean) => void;
 }
 
-const Switch: Component<SwitchProps> = ({
-  size = 24,
-  checked: initChecked,
-  disabled,
-  children,
-}) => {
+const Switch: Component<SwitchProps> = (props) => {
+  const [local, children, leftProps] = splitProps(mergeProps(props, {
+    size: 24,
+  }), [
+    'size',
+    'checked',
+    'disabled',
+    'onChecked',
+  ], ['children']);
+
   let switchThumbRef: HTMLDivElement | undefined;
   let inputRef: HTMLInputElement | undefined;
 
-  const [checked, setChecked] = createSignal(initChecked);
-  const [offset, setOffset] = createSignal(initChecked ? 1 : 0);
+  const [checked, setChecked] = createSignal(local.checked);
+  const [offset, setOffset] = createSignal(local.checked ? 1 : 0);
   const [isMove, setIsMove] = createSignal(false);
 
-  const sizePixel = `${size}px`;
-  const mainColor = disabled ? variable('Color.Grey.300') : variable('Color.Blue.500');
-  const secondaryColor = disabled ? variable('Color.Grey.300') : variable('Color.Grey.500');
+  const sizePixel = `${local.size}px`;
+  const mainColor = local.disabled ? variable('Color.Grey.300') : variable('Color.Blue.500');
+  const secondaryColor = local.disabled ? variable('Color.Grey.300') : variable('Color.Grey.500');
 
   let lastX: number = 0;
   let x: number | null = null;
   let moved: boolean = false;
   const onEnter = (event: PointerEvent) => {
-    x = checked() ? size : 0;
+    x = checked() ? local.size : 0;
     setIsMove(true);
     lastX = event.screenX;
   };
@@ -140,7 +145,7 @@ const Switch: Component<SwitchProps> = ({
       lastX = event.screenX;
       moved = true;
 
-      const newOffset = Math.min(Math.max(x, 0), size) / size;
+      const newOffset = Math.min(Math.max(x, 0), local.size) / local.size;
       setOffset(newOffset);
     }
   };
@@ -150,7 +155,7 @@ const Switch: Component<SwitchProps> = ({
       lastX = event.screenX;
 
       if (moved) {
-        const newOffset = Math.min(Math.max(x, 0), size) / size;
+        const newOffset = Math.min(Math.max(x, 0), local.size) / local.size;
   
         setChecked(newOffset > 0.5);
         setOffset(newOffset > 0.5 ? 1 : 0);
@@ -174,7 +179,7 @@ const Switch: Component<SwitchProps> = ({
   createEffect((remover: () => void) => {
     if (remover) remover();
 
-    if (!disabled) {
+    if (!local.disabled) {
       switchThumbRef?.addEventListener('pointerdown', onEnter);
       document?.addEventListener('pointermove', onMove);
       document?.addEventListener('pointerup', onEnd);
@@ -189,6 +194,10 @@ const Switch: Component<SwitchProps> = ({
     };
   }, () => {});
 
+  createEffect(on(checked, (checkedValue) => {
+    if (typeof checkedValue === 'boolean') local.onChecked?.(checkedValue);
+  }));
+
   return (
     <div
       style={{
@@ -197,19 +206,20 @@ const Switch: Component<SwitchProps> = ({
         '--secondary-color': secondaryColor,
         '--offset': offset(),
       }}
-      data-disabled={disabled ?? false}
+      data-disabled={local.disabled ?? false}
       className={wrapperStyle}
     >
       <label>
         <input
+          {...leftProps}
           ref={inputRef}
           type={'checkbox'}
           className={inputStyle}
-          disabled={disabled}
+          disabled={local.disabled}
           checked={checked()}
           onChange={isMove() ? undefined : onInput}
         />
-        {children}
+        {children.children}
       </label>
       <div ref={switchThumbRef} className={switchStyle}>
         <div className={switchRailStyle} />

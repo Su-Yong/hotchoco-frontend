@@ -1,7 +1,7 @@
 import { Theme, variable } from '@/theme';
 import { Leaves } from '@/utils';
 import { css, cx } from '@linaria/core';
-import { Component } from 'solid-js';
+import { Component, mergeProps, splitProps } from 'solid-js';
 import { JSX } from 'solid-js/jsx-runtime';
 
 const iconButtonWrapperStyle = css`
@@ -54,30 +54,34 @@ export interface HoverableProps extends JSX.HTMLAttributes<HTMLDivElement> {
   overlayOpacity?: number;
 }
 
-const Hoverable: Component<HoverableProps> = ({
-  borderless = true,
-  overlayColor = 'Color.Grey.500',
-  overlayScale = borderless ? 1 : Math.sqrt(2),
-  overlayOpacity = 0.3,
-  className,
-  children,
-  ...props
-}) => {
-  
+const defaultProps = {
+  borderless: true,
+  overlayColor: 'Color.Grey.500',
+  overlayOpacity: 0.3, 
+} as const;
+
+const Hoverable: Component<HoverableProps> = (props) => {
+  const [local, children, leftProps] = splitProps(mergeProps(props, defaultProps), [
+    'className',
+    'borderless',
+    'overlayColor',
+    'overlayScale',
+    'overlayOpacity',
+  ], ['children']);
 
   return (
     <div
-      {...props}
-      className={cx(iconButtonWrapperStyle, className)}
+      {...leftProps}
+      className={cx(iconButtonWrapperStyle, local.className)}
       style={{
-        '--border-radius': borderless ? '0' : '50%',
-        '--overlay-scale': overlayScale,
-        '--overlay-opacity': overlayOpacity,
-        '--overlay-color': variable(overlayColor),
+        '--border-radius': local.borderless ? '0' : '50%',
+        '--overlay-scale': local.overlayScale ?? (local.borderless ? Math.sqrt(2) : 1),
+        '--overlay-opacity': local.overlayOpacity,
+        '--overlay-color': variable(local.overlayColor),
       }}
     >
       <div className={overlayStyle} />
-      {children}
+      {children.children}
     </div>
   );
 }

@@ -1,7 +1,7 @@
 import { variable } from '@/theme';
 import { css, cx } from '@linaria/core';
 import { nanoid } from 'nanoid';
-import { Accessor, Component, createEffect, createSignal, For, on, onMount } from 'solid-js';
+import { Accessor, Component, createEffect, createSignal, For, on, onMount, splitProps } from 'solid-js';
 import { JSX } from 'solid-js/jsx-runtime';
 import { calculateVisibleRange } from './calculateVisibleRange';
 
@@ -47,6 +47,27 @@ export interface VirtualListProps<T> extends Pick<JSX.HTMLAttributes<HTMLDivElem
 }
 
 const VirtualList = <T extends unknown>(props: VirtualListProps<T>): JSX.Element => {
+  const [local, children, leftProps] = splitProps(props, [
+    'items',
+    'overscan',
+    'itemHeight',
+    'topMargin',
+    'bottomMargin',
+    'innerStyle',
+    'innerClassName',
+  ], ['children']);
+  // items,
+  // children,
+
+  // overscan = 3,
+  // itemHeight: initItemHeight,
+  // topMargin,
+  // bottomMargin,
+
+  // innerStyle,
+  // innerClassName,
+  // ...props
+
   const ignoreClass = nanoid();
 
   const [frameHeight, setFrameHeight] = createSignal(0);
@@ -54,15 +75,15 @@ const VirtualList = <T extends unknown>(props: VirtualListProps<T>): JSX.Element
   const [bottomPadding, setBottomPadding] = createSignal(0);
 
   let defaultItemHeight = (
-    typeof props.itemHeight === 'function'
+    typeof local.itemHeight === 'function'
       ? DEFAULT_HEIGHT
-      : (props.itemHeight ?? DEFAULT_HEIGHT)
+      : (local.itemHeight ?? DEFAULT_HEIGHT)
   );
   let itemHeights = new Map<number, number>();
   const [range, setRange] = createSignal<[number, number]>([0, 30]);
 
   const getHeight = (index: number) => {
-    const defaultValue = typeof props.itemHeight === 'function' ? props.itemHeight(index) : defaultItemHeight;
+    const defaultValue = typeof local.itemHeight === 'function' ? local.itemHeight(index) : defaultItemHeight;
 
     return Number(itemHeights.get(index) ?? defaultValue);
   };
@@ -79,7 +100,7 @@ const VirtualList = <T extends unknown>(props: VirtualListProps<T>): JSX.Element
     let [newStart, newEnd] = calculateVisibleRange(
       [start, end],
       { top, scroll, height },
-      { getHeight, overscan: props.overscan ?? 5, length: props.items.length },
+      { getHeight, overscan: local.overscan ?? 5, length: local.items.length },
     );
 
     if (start !== newStart || end !== newEnd) {
@@ -129,7 +150,7 @@ const VirtualList = <T extends unknown>(props: VirtualListProps<T>): JSX.Element
     for(let i = 0; i < start; i++) {
       top += itemHeights.get(i) ?? defaultItemHeight;
     }
-    for(let i = end; i < props.items.length; i++) {
+    for(let i = end; i < local.items.length; i++) {
       bottom += itemHeights.get(i) ?? defaultItemHeight;
     }
 
@@ -139,10 +160,10 @@ const VirtualList = <T extends unknown>(props: VirtualListProps<T>): JSX.Element
 
   return (
     <div
+      {...leftProps}
       ref={frameRef}
-      className={cx(wrapperStyle, props.className)}
+      className={cx(wrapperStyle, leftProps.className)}
       onScroll={onScroll}
-      {...props}
     >
       <div className={devStyle}>
         {range().join('-')}
@@ -154,14 +175,14 @@ const VirtualList = <T extends unknown>(props: VirtualListProps<T>): JSX.Element
       </div>
       <div
         ref={parentRef}
-        style={props.innerStyle}
-        className={cx(innerScrollerStyle, props.innerClassName)}
+        style={local.innerStyle}
+        className={cx(innerScrollerStyle, local.innerClassName)}
       >
-        <div className={ignoreClass} style={`height: ${(props.topMargin ?? 0)+ topPadding() || 0}px;`} />
-        <For each={props.items.slice(...range())}>
-          {(item, index) => props.children(item, () => index() + range()[0])}
+        <div className={ignoreClass} style={`height: ${(local.topMargin ?? 0)+ topPadding() || 0}px;`} />
+        <For each={local.items.slice(...range())}>
+          {(item, index) => children.children(item, () => index() + range()[0])}
         </For>
-        <div className={ignoreClass} style={`height: ${(props.bottomMargin ?? 0) + bottomPadding() || 0}px;`} />
+        <div className={ignoreClass} style={`height: ${(local.bottomMargin ?? 0) + bottomPadding() || 0}px;`} />
       </div>
     </div>
   );

@@ -1,5 +1,5 @@
 import { css, cx } from '@linaria/core';
-import { Component, JSX } from 'solid-js';
+import { Component, JSX, splitProps } from 'solid-js';
 import { variable } from '../../theme';
 
 const buttonStyle = css`
@@ -41,17 +41,15 @@ export interface ButtonProps extends JSX.ButtonHTMLAttributes<HTMLButtonElement>
 
 }
 
-const Button: Component<ButtonProps> = ({
-  className,
-  children,
-  ...props
-}) => {
+const Button: Component<ButtonProps> = (props) => {
+  const [children, leftProps] = splitProps(props, ['children']);
+
   return (
     <button
-      {...props}
-      className={cx(buttonStyle, className)}
+      {...leftProps}
+      className={cx(buttonStyle, props.className)}
     >
-      {children}
+      {children.children}
     </button>
   );
 };

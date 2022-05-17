@@ -12,6 +12,7 @@ const LoginPage = lazy(() => import('./pages/LoginPage'));
 const ChatPage = lazy(() => import('./pages/ChatPage'));
 const PreferencePage = lazy(() => import('./pages/PreferencePage'));
 const ChatContainer = lazy(() => import('./containers/ChatContainer'));
+const ComponentPage = lazy(() => import('./pages/ComponentPage'));
 
 const bodyStyle = css`
   background: ${variable('Color.WHITE')};
@@ -38,6 +39,7 @@ const App: Component = () => {
         <Route path={'/login'} element={<LoginPage />} />
         <Route path={'/chat'} element={<ChatPage />} />
         <Route path={'/test'} element={<ChatContainer />} />
+        <Route path={'/component'} element={<ComponentPage />} />
         <Route path={'/preference'} element={<PreferencePage />} />
       </Routes>
     </div>

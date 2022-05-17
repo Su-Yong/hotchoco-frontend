@@ -1,6 +1,6 @@
 import { variable } from '@/theme';
 import { css, cx } from '@linaria/core';
-import { Component, createSignal } from 'solid-js';
+import { Component, createEffect, createSignal, splitProps } from 'solid-js';
 import { JSX } from 'solid-js/jsx-runtime';
 import { model, useDirective } from '@/utils/directives';
 import { sx } from '@/utils';
@@ -19,7 +19,7 @@ const inputStyle = css`
   padding: 8px;
   padding-top: 12px;
   padding-bottom: 12px;
-  color: ${variable('Color.BLACK')};
+  color: var(--text-color);
   background: var(--background-color);
 
   transition-duration: ${variable('Animation.duration.short')};
@@ -45,30 +45,30 @@ export interface TextInputProps extends JSX.InputHTMLAttributes<HTMLInputElement
   
 }
 
-const TextInput: Component<TextInputProps> = ({
-  disabled,
-  children,
-  ...props
-}) => {
+const TextInput: Component<TextInputProps> = (props) => {
+  const [local, leftProps] = splitProps(props, ['disabled', 'children']);
+
   const [text, setText ] = createSignal('');
 
-  const mainColor = disabled ? variable('Color.Grey.200') : variable('Color.Blue.500');
-  const secondaryColor = disabled ? variable('Color.Grey.300') : variable('Color.Grey.500');
-  const backgroundColor = disabled ? variable('Color.Grey.100') : variable('Color.Grey.200');
-  const backgroundHoverColor = disabled ? variable('Color.Grey.100') : variable('Color.Grey.300');
+  const textColor = () => local.disabled ? variable('Color.Grey.500') : variable('Color.BLACK');
+  const mainColor = () => local.disabled ? variable('Color.Grey.200') : variable('Color.Blue.500');
+  const secondaryColor = () => local.disabled ? variable('Color.Grey.300') : variable('Color.Grey.500');
+  const backgroundColor = () => local.disabled ? variable('Color.Grey.100') : variable('Color.Grey.200');
+  const backgroundHoverColor = () => local.disabled ? variable('Color.Grey.100') : variable('Color.Grey.300');
 
   return (
     <input
-      {...props}
-      disabled={disabled}
+      {...leftProps}
+      disabled={local.disabled}
       use:model={[text, setText]}
-      className={cx(inputStyle, props.className)}
+      className={cx(inputStyle, leftProps.className)}
       style={sx({
-        '--main-color': mainColor,
-        '--secondary-color': secondaryColor,
-        '--background-color': backgroundColor,
-        '--background-hover-color': backgroundHoverColor,
-      }, props.style)}
+        '--text-color': textColor(),
+        '--main-color': mainColor(),
+        '--secondary-color': secondaryColor(),
+        '--background-color': backgroundColor(),
+        '--background-hover-color': backgroundHoverColor(),
+      }, leftProps.style)}
     />
   );
 }
