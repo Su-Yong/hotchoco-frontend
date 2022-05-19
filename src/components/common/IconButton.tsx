@@ -60,7 +60,7 @@ export interface IconButtonProps extends IconProps {
 }
 
 const IconButton: Component<IconButtonProps> = (props) => {
-  const [local, leftProps] = splitProps(props, [  
+  const [local, listeners, leftProps] = splitProps(props, [  
     'icon',
     'size',
     'color',
@@ -70,12 +70,30 @@ const IconButton: Component<IconButtonProps> = (props) => {
     'className',
     'outerClassName',
     'outerStyle',
+  ], [
+    'onclick',
+    'onClick',
+    'ondblclick',
+    'onDblClick',
+    'onMouseEnter',
+    'onMouseLeave',
+    'onMouseDown',
+    'onMouseUp',
+    'onPointerDown',
+    'onPointerUp',
+    'onPointerCancel',
+    'onPointerEnter',
+    'onPointerLeave',
+    'onPointerMove',
+    'onPointerOver',
+    'onPointerOut',
   ]);
 
   return (
     <div
       style={local.outerStyle}
       className={cx(iconButtonWrapperStyle, local.outerClassName)}
+      {...(listeners as JSX.HTMLAttributes<HTMLDivElement>)}
     >
       <div className={overlayStyle} />
       <local.icon

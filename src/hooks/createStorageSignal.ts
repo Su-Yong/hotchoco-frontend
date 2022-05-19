@@ -1,8 +1,9 @@
 import { Accessor, createEffect, createSignal, Setter } from 'solid-js';
 
-type StorageSignalOption = {
+type StorageSignalOption<T> = {
   storage?: Storage;
   serialize?: boolean;
+  to?: (value: unknown) => Exclude<T, Function>;
 };
 
 const createStorageSignal = <T>(
@@ -11,7 +12,8 @@ const createStorageSignal = <T>(
   {
     storage = localStorage,
     serialize = true,
-  }: StorageSignalOption = {},
+    to,
+  }: StorageSignalOption<T> = {},
 ): [Accessor<T>, Setter<T>] => {
   const [value, setValue] = createSignal(initValue);
 
@@ -24,10 +26,11 @@ const createStorageSignal = <T>(
 
   const initData = storage.getItem(key);
   if (initData) {
-    let data = initData as unknown as Exclude<T, Function>;
+    let data = initData as unknown;
     if (serialize) data = JSON.parse(initData);
+    if (to) data = to(data);
 
-    setValue(data);
+    setValue(data as Exclude<T, Function>);
   }
 
   return [value, setValue];

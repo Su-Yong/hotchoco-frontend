@@ -19,21 +19,14 @@ const innerScrollerStyle = css`
   height: fit-content;
 `;
 
-const devStyle = css`
-  position: fixed;
-  z-index: 100000;
-  top: 8px;
-  left: 8px;
-
-  background: ${variable('Color.WHITE')};
-  color: ${variable('Color.BLACK')};
-`;
-
 type AllowProperty = (
   'style'
   | 'class' | 'className' | 'classList'
 );
+
+export interface VirtualListRef {}
 export interface VirtualListProps<T> extends Pick<JSX.HTMLAttributes<HTMLDivElement>, AllowProperty> {
+  ref?: VirtualListRef;
   items: T[];
   children: (item: T, index: Accessor<number>) => JSX.Element;
 
@@ -56,17 +49,6 @@ const VirtualList = <T extends unknown>(props: VirtualListProps<T>): JSX.Element
     'innerStyle',
     'innerClassName',
   ], ['children']);
-  // items,
-  // children,
-
-  // overscan = 3,
-  // itemHeight: initItemHeight,
-  // topMargin,
-  // bottomMargin,
-
-  // innerStyle,
-  // innerClassName,
-  // ...props
 
   const ignoreClass = nanoid();
 
@@ -91,10 +73,7 @@ const VirtualList = <T extends unknown>(props: VirtualListProps<T>): JSX.Element
   let frameRef: HTMLDivElement | undefined;
   let parentRef: HTMLDivElement | undefined;
   
-  const onScroll: JSX.EventHandlerUnion<HTMLDivElement, UIEvent> = (event) => {
-    const scroll = event.target.scrollTop;
-    const height = event.target.clientHeight;
-
+  const calculateRange = (scroll: number, height: number) => {
     const top = topPadding();
     const [start, end] = range();
     let [newStart, newEnd] = calculateVisibleRange(
@@ -107,6 +86,12 @@ const VirtualList = <T extends unknown>(props: VirtualListProps<T>): JSX.Element
       console.log('range', start, end, '->', newStart, newEnd);
       setRange([newStart, newEnd]);
     }
+  };
+  const onScroll: JSX.EventHandlerUnion<HTMLDivElement, UIEvent> = (event) => {
+    const scroll = event.target.scrollTop;
+    const height = event.target.clientHeight;
+
+    calculateRange(scroll, height);
   };
 
   onMount(() => {
@@ -127,7 +112,15 @@ const VirtualList = <T extends unknown>(props: VirtualListProps<T>): JSX.Element
     }
   });
 
-  const [dev, setDev] = createSignal('');
+  createEffect(on(() => local.items, () => {
+    if (!parentRef) return;
+
+    const scroll = parentRef.scrollTop;
+    const height = parentRef.clientHeight;
+
+    calculateRange(scroll, height);
+  }));
+
   createEffect(() => {
     const [start, end] = range();
 
@@ -135,12 +128,13 @@ const VirtualList = <T extends unknown>(props: VirtualListProps<T>): JSX.Element
     resizeObserver.disconnect();
     for (let i = start; i < end; i++) {
       if (!children[i - start + 1]) continue;
-      resizeObserver.observe(children[i - start + 1]);
+
       children[i - start + 1].setAttribute('data-index', i.toString());
+      resizeObserver.observe(children[i - start + 1]);
 
       if (itemHeights.has(i)) continue;
       const rect = children[i - start + 1].getBoundingClientRect();
-      setDev(JSON.stringify(parentRef?.scrollTop));
+      
       itemHeights.set(i, rect.height ?? defaultItemHeight);
     }
 
@@ -165,14 +159,6 @@ const VirtualList = <T extends unknown>(props: VirtualListProps<T>): JSX.Element
       className={cx(wrapperStyle, leftProps.className)}
       onScroll={onScroll}
     >
-      <div className={devStyle}>
-        {range().join('-')}
-        {'\n'}
-        {topPadding()}
-        {':'}
-        {bottomPadding()}
-        {dev()}
-      </div>
       <div
         ref={parentRef}
         style={local.innerStyle}

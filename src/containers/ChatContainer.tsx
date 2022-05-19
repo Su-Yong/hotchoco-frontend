@@ -1,20 +1,22 @@
-import ChatBubble from '@/components/chat/bubble/ChatBubble';
 import IconButton from '@/components/common/IconButton';
 import Header from '@/components/Header';
 import VirtualList from '@/components/virtual/VirtualList';
 import { clientUser, messageList } from '@/utils/dummy';
 import { css } from '@linaria/core';
-import { Component, createEffect, createSignal } from 'solid-js';
+import { Component, createSignal, onMount } from 'solid-js';
 import { VscArrowLeft } from 'solid-icons/vsc';
 import { variable } from '@/theme';
 import ChatMessage, { ChatMessageProps } from '@/components/chat/bubble/ChatMessage';
 import ChatInput from '@/components/chat/ChatInput';
 
 const containerStyle = css`
+  position: relative;
+
   width: 100%;
   height: 100%;
 
   overflow: auto;
+  background: ${variable('Color.WHITE')};
 
   display: flex;
   flex-flow: column;
@@ -24,6 +26,22 @@ const containerStyle = css`
 
 const messageListStyle = css`
   padding: 0px 8px;
+
+  &::-webkit-scrollbar {
+    width: 16px;
+  }
+  &::-webkit-scrollbar-track {
+    margin-top: var(--scrollbar-track-margin-top, 0);
+    margin-bottom: var(--scrollbar-track-margin-bottom, 0);
+
+    background: transparent;
+  }
+  &::-webkit-scrollbar-thumb {
+    background: ${variable('Color.Grey.300')};
+    background-clip: padding-box;
+    border-radius: 50px;
+    border: solid 4px transparent;
+  }
 `;
 
 const headerStyle = css`
@@ -50,15 +68,15 @@ const headerStyle = css`
   }
 `;
 
-
 export interface ChatContainerProps {
-
+  onClose?: () => void;
 }
 
-const ChatContainer: Component<ChatContainerProps> = ({
-  
-}) => {
+const ChatContainer: Component<ChatContainerProps> = (props) => {
+  let inputRef: HTMLInputElement | undefined;
+
   const [count, setCount] = createSignal(0);
+  const [bottomMargin, setBottomMargin] = createSignal(56);
 
   const addChat = (time = 1000) => {
     setCount((it) => it + 1);
@@ -72,15 +90,29 @@ const ChatContainer: Component<ChatContainerProps> = ({
     addChat();
   }, Math.random() * 3000 + 1000);
 
-  createEffect(() => {
-    console.log('chats', messageList.slice(0, count()));
+  onMount(() => {
+    if (!inputRef) return;
+
+    const resizeObserver = new ResizeObserver(() => {
+      const { height } = inputRef!.getBoundingClientRect();
+
+      setBottomMargin(height);
+    });
+
+    resizeObserver.observe(inputRef);
   });
 
   return (
-    <div className={containerStyle}>
+    <div
+      style={{
+        '--scrollbar-track-margin-top': '56px',
+        '--scrollbar-track-margin-bottom': `${bottomMargin()}px`,
+      }}
+      className={containerStyle}
+    >
       <Header
         className={headerStyle}
-        leftIcon={<IconButton icon={VscArrowLeft} />}
+        leftIcon={<IconButton icon={VscArrowLeft} onClick={props.onClose} />}
       >
         챗방
       </Header>
@@ -89,7 +121,7 @@ const ChatContainer: Component<ChatContainerProps> = ({
         items={messageList.slice(0, count())}
         style={'flex: 1'}
         topMargin={56}
-        bottomMargin={56}
+        bottomMargin={bottomMargin()}
         overscan={5}
       >
         {(item, index) => {
@@ -115,7 +147,7 @@ const ChatContainer: Component<ChatContainerProps> = ({
           );
         }}
       </VirtualList>
-      <ChatInput />
+      <ChatInput ref={inputRef} />
     </div>
   );
 }

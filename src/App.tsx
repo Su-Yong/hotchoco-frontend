@@ -15,6 +15,8 @@ const ChatContainer = lazy(() => import('./containers/ChatContainer'));
 const ComponentPage = lazy(() => import('./pages/ComponentPage'));
 
 const bodyStyle = css`
+  overflow: hidden;
+
   background: ${variable('Color.WHITE')};
   color: ${variable('Color.BLACK')};
   

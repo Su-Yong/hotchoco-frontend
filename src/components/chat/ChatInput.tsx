@@ -74,13 +74,11 @@ const inputStyle = css`
   font-size: ${variable('Size.text.title')};
 `;
 
-export interface ChatInputProps {
+export interface ChatInputProps extends JSX.HTMLAttributes<HTMLDivElement> {
   
 }
 
-const ChatInput: Component<ChatInputProps> = ({
-  
-}) => {
+const ChatInput: Component<ChatInputProps> = (props) => {
   let textareaRef: HTMLTextAreaElement | undefined;
   const [height, setHeight] = createSignal<string | number>('auto');
 
@@ -92,7 +90,7 @@ const ChatInput: Component<ChatInputProps> = ({
   }
 
   return (
-    <div className={inputContainerStyle}>
+    <div {...props} className={inputContainerStyle}>
       <IconButton
         size={getTheme().Size.icon.small}
         icon={VscChevronUp}

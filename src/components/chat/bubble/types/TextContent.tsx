@@ -1,8 +1,6 @@
-import IconButton from '@/components/common/IconButton';
-import { css, cx } from '@linaria/core';
+import { css } from '@linaria/core';
 import { Component, createEffect, createSignal, Show } from 'solid-js';
 import { VscChevronDown, VscChevronUp } from 'solid-icons/vsc';
-import { variable } from '@/theme';
 import TextButton from '@/components/common/TextButton';
 
 const LENGTH_LIMIT = 1000;

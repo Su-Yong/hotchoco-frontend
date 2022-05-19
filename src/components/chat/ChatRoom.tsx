@@ -1,8 +1,7 @@
 import { variable } from '@/theme';
 import { ChatRoom as ChatRoomType, Message } from '@/types';
 import { css } from '@linaria/core';
-import { randNumber, seed } from '@ngneat/falso';
-import { Component, createMemo } from 'solid-js';
+import { Component, Show } from 'solid-js';
 import ChatBadge from './ChatBadge';
 
 const containerStyle = css`
@@ -38,7 +37,10 @@ const containerStyle = css`
   &:hover {
     background: ${variable('Color.Grey.200')};
   }
-  &:active::before, &:focus::before {
+  &:active, &:focus, &[data-selected="true"] {
+    background: ${variable('Color.Grey.300')};
+  }
+  &:active::before, &:focus::before, &[data-selected='true']::before {
     transform: translateX(4px);
   }
 
@@ -85,40 +87,47 @@ const containerStyle = css`
 `;
 
 export interface ChatRoomProps {
+  selected?: boolean;
   room: ChatRoomType;
   lastMessage?: Message;
   unread?: number;
   writing?: boolean;
+
+  onClick?: (room: ChatRoomType) => void;
 }
 
-const ChatRoom: Component<ChatRoomProps> = ({
-  room,
-  lastMessage,
-  unread,
-  writing,
-}) => {
-  const timestamp = createMemo(() => {
-    if (lastMessage) {
-      const time = new Date(lastMessage.timestamp);
+const ChatRoom: Component<ChatRoomProps> = (props) => {
+  const timestamp = () => {
+    const timeValue = props.lastMessage?.timestamp;
+    if (timeValue) {
+      const time = new Date(timeValue);
       return time.toLocaleString(undefined, { hour: '2-digit', minute: '2-digit' });
     }
 
     return undefined;
-  });
+  };
 
   return (
-    <div className={containerStyle}>
-      {room.thumbnail && <img src={room.thumbnail} />}
-      <div className={'title'}>{room.title}</div>
-      <div className={'message'}>{lastMessage?.content}</div>
-      {timestamp && <div className={'timestamp'}>{timestamp}</div>}
-      {(unread || writing) && (
+    <div
+      className={containerStyle}
+      data-selected={props.selected}
+      onClick={() => props.onClick?.(props.room)}
+    >
+      <Show when={props.room.thumbnail}>
+        <img src={props.room.thumbnail} />
+      </Show>
+      <div className={'title'}>{props.room.title}</div>
+      <div className={'message'}>{props.lastMessage?.content}</div>
+      <Show when={timestamp()}>
+        <div className={'timestamp'}>{timestamp()}</div>
+      </Show>
+      <Show when={props.unread || props.writing}>
         <div className={'badge'}>
-          <ChatBadge indeterminent={writing}>
-            {unread ?? 0}
+          <ChatBadge indeterminent={props.writing}>
+            {props.unread ?? 0}
           </ChatBadge>
         </div>
-      )}
+      </Show>
     </div>
   );
 }
