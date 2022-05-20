@@ -2,6 +2,7 @@ import { NumberPreferenceType } from '@/constants/preference';
 import { Component, createSignal } from 'solid-js';
 import TextInput from '../common/TextInput';
 import { model, useDirective } from '@/utils/directives';
+import createStorageSignal from '@/hooks/createStorageSignal';
 useDirective(model);
 
 export interface NumberPreferenceProps extends Omit<NumberPreferenceType, 'type'> {
@@ -9,13 +10,21 @@ export interface NumberPreferenceProps extends Omit<NumberPreferenceType, 'type'
 }
 
 const NumberPreference: Component<NumberPreferenceProps> = (props) => {
-  const [text, setText] = createSignal(props.defaultValue);
+  const [text, setText] = props.signal ?? createStorageSignal(
+    props.id,
+    props.defaultValue,
+    {
+      serialize: false,
+      to: (it) => Number(it),
+    },
+  );
 
   return (
     <TextInput
       id={props.id}
       type={'number'}
-      use:model={[text, setText]}
+      value={text()}
+      onChange={(event) => setText(Number(event.currentTarget.value))}
     />
   );
 }

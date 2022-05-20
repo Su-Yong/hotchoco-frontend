@@ -1,6 +1,6 @@
 import { variable } from '@/theme';
 import { sx } from '@/utils';
-import { css } from '@linaria/core';
+import { css, cx } from '@linaria/core';
 import { VscChevronDown } from 'solid-icons/vsc';
 import { Component, createDeferred, createEffect, createSignal, createUniqueId, mergeProps, splitProps } from 'solid-js';
 import { JSX } from 'solid-js/jsx-runtime';
@@ -20,7 +20,7 @@ const selectStyle = css`
 
   display: flex;
   flex-flow: row;
-  justify-content: flex-start;
+  justify-content: space-between;
   align-items: center;
   gap: ${variable('Size.space.medium')};
 
@@ -135,11 +135,12 @@ const Select: Component<SelectProps> = (props) => {
   return (
     <>
       <div
+        {...leftProps}
         data-open={open()}
         data-required={local.required}
         data-value={local.value !== undefined}
         ref={setAnchor}
-        className={selectStyle}
+        className={cx(selectStyle, leftProps.className)}
         onClick={onMenuOpen}
         style={sx({
           '--text-color': textColor(),

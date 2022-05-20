@@ -15,7 +15,11 @@ const containerStyle = css`
   flex-flow: row;
   justify-content: flex-start;
   align-items: center;
-  gap: ${variable('Size.space.small')};
+  gap: ${variable('Size.space.medium')};
+
+  font-family: 'SUIT Variable';
+  font-weight: 500;
+  font-size: ${variable('Size.text.subtitle')};
 `;
 
 const iconWrapperStyle = css`
@@ -34,6 +38,7 @@ const components: Record<PreferenceType['type'], (preference: any) => JSX.Elemen
       id={preference.id}
       name={preference.name}
       icon={preference.icon}
+      signal={preference.signal}
       defaultValue={preference.defaultValue}
     />
   ),
@@ -42,6 +47,7 @@ const components: Record<PreferenceType['type'], (preference: any) => JSX.Elemen
       id={preference.id}
       name={preference.name}
       icon={preference.icon}
+      signal={preference.signal}
       defaultValue={preference.defaultValue}
     />
   ),
@@ -50,6 +56,7 @@ const components: Record<PreferenceType['type'], (preference: any) => JSX.Elemen
       id={preference.id}
       name={preference.name}
       icon={preference.icon}
+      signal={preference.signal}
       defaultValue={preference.defaultValue}
     />
   ),
@@ -60,6 +67,7 @@ const components: Record<PreferenceType['type'], (preference: any) => JSX.Elemen
       icon={preference.icon}
       values={preference.values}
       required={preference.required}
+      signal={preference.signal}
       defaultValue={preference.defaultValue}
     />
   ),
@@ -69,6 +77,7 @@ const components: Record<PreferenceType['type'], (preference: any) => JSX.Elemen
       id={preference.id}
       name={preference.name}
       icon={preference.icon}
+      signal={preference.signal}
       defaultValue={preference.defaultValue}
     />
   ),
@@ -87,7 +96,7 @@ const Preference: Component<PreferenceProps> = (props) => {
         />
       </div>
       {props.preference.name}
-      <div style={'flex'} />
+      <div style={'flex: 1;'} />
       <Dynamic component={() => components[props.preference.type](props.preference)} />
     </div>
   )

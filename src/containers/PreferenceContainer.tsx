@@ -1,4 +1,3 @@
-import Header from '@/components/Header';
 import Preference from '@/components/preference/Preference';
 import { PreferenceGroupType } from '@/constants/preference';
 import { variable } from '@/theme';
@@ -6,12 +5,27 @@ import { css } from '@linaria/core';
 import { Component, For } from 'solid-js';
 
 const containerStyle = css`
+  width: 100%;
+  height: fit-content;
+
   display: flex;
   flex-flow: column;
   justify-content: flex-start;
   align-items: stretch;
+  gap: ${variable('Size.space.small')};
 
+  z-index: 0;
+  padding: ${variable('Size.space.large')};
+  border-radius: ${variable('Size.space.large')};
   background: ${variable('Color.Grey.100')};
+`;
+
+const titleStyle = css`
+  font-size: ${variable('Size.text.title')};
+  font-weight: bold;
+  font-family: 'SUIT Variable';
+  
+  margin-bottom: ${variable('Size.space.medium')};
 `;
 
 export interface PreferenceContainerProps {
@@ -23,7 +37,7 @@ const PreferenceContainer: Component<PreferenceContainerProps> = (props) => {
 
   return (
     <div className={containerStyle}>
-      <Header>{props.group.name}</Header>
+      <div className={titleStyle}>{props.group.name}</div>
       <For each={props.group.preferences}>
         {(preference) => <Preference preference={preference} />}
       </For>

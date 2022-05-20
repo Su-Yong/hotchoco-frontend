@@ -4,9 +4,9 @@ import { Routes, Route } from 'solid-app-router';
 import type { Component } from 'solid-js';
 import { createThemeStyle, setTheme, variable } from './theme';
 import { css } from '@linaria/core';
-import createStorageSignal from './hooks/createStorageSignal';
 import { LightTheme } from './theme/defined/LightTheme';
 import { DarkTheme } from './theme/defined/DarkTheme';
+import { themeMode } from './store/display';
 
 const LoginPage = lazy(() => import('./pages/LoginPage'));
 const ChatPage = lazy(() => import('./pages/ChatPage'));
@@ -24,8 +24,6 @@ const bodyStyle = css`
   transition-duration: ${variable('Animation.duration.short')};
   transition-timing-funciton: ${variable('Animation.easing.deceleration')};
 `;
-
-export const [themeMode, setThemeMode] = createStorageSignal('theme', 'light', { serialize: false });
 
 const App: Component = () => {
   const themeStyle = createThemeStyle();

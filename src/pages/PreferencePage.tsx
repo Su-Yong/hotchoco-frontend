@@ -1,13 +1,63 @@
+import IconButton from '@/components/common/IconButton';
+import Header from '@/components/Header';
 import { preferenceGroupList } from '@/constants/preference';
 import PreferenceContainer from '@/containers/PreferenceContainer';
+import { variable } from '@/theme';
+import { css } from '@linaria/core';
+import { VscArrowLeft } from 'solid-icons/vsc';
 import { Component, For } from 'solid-js';
+
+const containerStyle = css`
+  position: relative;
+
+  display: flex;
+  flex-flow: column;
+  justify-content: flex-start;
+  align-items: stretch;
+  gap: ${variable('Size.space.medium')};
+
+  padding: 0 ${variable('Size.space.medium')};
+`;
+
+const headerStyle = css`
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+
+  z-index: 10000;
+  backdrop-filter: blur(16px);
+
+  &::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+    z-index: -1;
+
+    height: 56px;
+
+    opacity: ${variable('Color.Transparency.vague')};
+    background: ${variable('Color.Grey.200')};
+  }
+`;
 
 const PreferencePage: Component = () => {
 
   return (
-    <For each={preferenceGroupList}>
-      {(group) => <PreferenceContainer group={group} />}
-    </For>
+    <div className={containerStyle}>
+      <Header
+        className={headerStyle}
+        leftIcon={<IconButton icon={VscArrowLeft} />}
+      >
+        설정
+      </Header>
+      <div style={'height: 56px;'} />
+      <For each={preferenceGroupList}>
+        {(group) => <PreferenceContainer group={group} />}
+      </For>
+    </div>
   );
 };
 

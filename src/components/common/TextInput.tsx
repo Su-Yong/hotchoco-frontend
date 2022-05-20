@@ -1,10 +1,8 @@
 import { variable } from '@/theme';
 import { css, cx } from '@linaria/core';
-import { Component, createEffect, createSignal, splitProps } from 'solid-js';
+import { Component, splitProps } from 'solid-js';
 import { JSX } from 'solid-js/jsx-runtime';
-import { model, useDirective } from '@/utils/directives';
 import { sx } from '@/utils';
-useDirective(model);
 
 const inputStyle = css`
   --box-shadow-color: var(--secondary-color);
@@ -48,8 +46,6 @@ export interface TextInputProps extends JSX.InputHTMLAttributes<HTMLInputElement
 const TextInput: Component<TextInputProps> = (props) => {
   const [local, leftProps] = splitProps(props, ['disabled', 'children']);
 
-  const [text, setText ] = createSignal('');
-
   const textColor = () => local.disabled ? variable('Color.Grey.500') : variable('Color.BLACK');
   const mainColor = () => local.disabled ? variable('Color.Grey.200') : variable('Color.Blue.500');
   const secondaryColor = () => local.disabled ? variable('Color.Grey.300') : variable('Color.Grey.500');
@@ -60,7 +56,6 @@ const TextInput: Component<TextInputProps> = (props) => {
     <input
       {...leftProps}
       disabled={local.disabled}
-      use:model={[text, setText]}
       className={cx(inputStyle, leftProps.className)}
       style={sx({
         '--text-color': textColor(),

@@ -23,7 +23,7 @@ const enterEnd = css`
   transform: scale(1);
   transform-origin: var(--origin-x) var(--origin-y);
 
-  transition-duration: ${variable('Animation.duration.short')};
+  transition-duration: ${variable('Animation.duration.shortest')};
   transition-timing-function: ${variable('Animation.easing.deceleration')};
 `;
 
@@ -37,7 +37,7 @@ const exitEnd = css`
   transform: scale(0);
   transform-origin: var(--origin-x) var(--origin-y);
 
-  transition-duration: ${variable('Animation.duration.short')};
+  transition-duration: ${variable('Animation.duration.shortest')};
   transition-timing-function: ${variable('Animation.easing.deceleration')};
 `;
 
@@ -131,15 +131,24 @@ const Menu: Component<MenuProps> = (props) => {
 
     if (width && height) setLocalSize([width, height]);
   };
-  const resizeObserver = new ResizeObserver((entries) => {
-    for (const entry of entries) {
-      if (entry.target === menuRef) {
-        onLoad(entry.target);
+
+  const mutationObserverConfig = {
+    attributes: true,
+    childList: false,
+    characterData: true,
+  };
+  const menuMutationObserver = new MutationObserver((mutations) => {
+    for (const mutation of mutations) {
+      if (mutation.target.isSameNode(menuRef ?? null)) {
+        onLoad(menuRef!);
 
         calculateCoordinate();
       }
-
-      if (entry.target === local.anchor) {
+    }
+  });
+  const anchorMutationObserver = new MutationObserver((mutations) => {
+    for (const mutation of mutations) {
+      if (mutation.target.isSameNode(local.anchor ?? null)) {
         calculateCoordinate();
       }
     }
@@ -148,7 +157,7 @@ const Menu: Component<MenuProps> = (props) => {
   onMount(() => {
     if (menuRef) {
       onLoad(menuRef);
-      resizeObserver.observe(menuRef);
+      menuMutationObserver.observe(menuRef, mutationObserverConfig);
     }
   });
 
@@ -156,15 +165,17 @@ const Menu: Component<MenuProps> = (props) => {
 
   createEffect<Element | undefined>((prevAnchor) => {
     if (local.anchor) {
-      if (prevAnchor) resizeObserver.unobserve(prevAnchor);
-      resizeObserver.observe(local.anchor);
+      if (prevAnchor) anchorMutationObserver.disconnect();
+
+      anchorMutationObserver.observe(local.anchor, mutationObserverConfig);
     }
 
     return local.anchor;
   }, undefined);
 
   onCleanup(() => {
-    resizeObserver.disconnect();
+    anchorMutationObserver.disconnect();
+    menuMutationObserver.disconnect();
   });
 
   return (

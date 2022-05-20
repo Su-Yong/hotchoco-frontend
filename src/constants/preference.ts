@@ -1,46 +1,47 @@
 import { MenuItem } from '@/components/common/MenuList';
+import { setThemeMode, themeMode } from '@/store/display';
+import { roomContainerWidth, setRoomContainerWidth } from '@/store/room';
 import { IconTypes } from 'solid-icons';
 import { FaMoon, FaSun } from 'solid-icons/fa';
 import {
+  VscLayout,
   VscServerEnvironment,
   VscSignOut,
   VscSymbolColor,
   VscSync,
   VscTextSize,
 } from 'solid-icons/vsc';
+import { Accessor, Setter } from 'solid-js';
 
-export interface PreferenceBaseType<Type extends string> {
+export interface PreferenceBaseType<Type extends string, Value extends unknown> {
   id: string;
   name: string;
+  description?: string;
   type: Type;
   icon: IconTypes;
+  defaultValue: Value;
+  signal?: [Accessor<Value>, Setter<Value>];
 }
 
-export interface CheckPreferenceType extends PreferenceBaseType<'check'> {
-  defaultValue: boolean;
+export interface CheckPreferenceType extends PreferenceBaseType<'check', boolean> {
 }
 
-export interface SwitchPreferenceType extends PreferenceBaseType<'switch'> {
-  defaultValue: boolean;
+export interface SwitchPreferenceType extends PreferenceBaseType<'switch', boolean> {
 }
 
-export interface TextPreferenceType extends PreferenceBaseType<'text'> {
-  defaultValue: string;
+export interface TextPreferenceType extends PreferenceBaseType<'text', string> {
 }
 
-export interface NumberPreferenceType extends PreferenceBaseType<'number'> {
-  defaultValue: number;
+export interface NumberPreferenceType extends PreferenceBaseType<'number', number> {
   min?: number;
   max?: number;
 }
 
-export interface RadioPreferenceType extends PreferenceBaseType<'radio'> {
-  defaultValue: string;
+export interface RadioPreferenceType extends PreferenceBaseType<'radio', string> {
   values: MenuItem[];
 }
 
-export interface SelectPreferenceType extends PreferenceBaseType<'select'> {
-  defaultValue: string;
+export interface SelectPreferenceType extends PreferenceBaseType<'select', string> {
   required?: boolean;
   values: MenuItem[];
 }
@@ -62,7 +63,7 @@ export interface PreferenceGroupType {
 
 export const appearancePreferenceGroup: PreferenceGroupType = {
   id: 'appearance',
-  name: 'Appearance',
+  name: '화면',
   preferences: [
     {
       id: 'theme',
@@ -71,6 +72,7 @@ export const appearancePreferenceGroup: PreferenceGroupType = {
       type: 'select',
       defaultValue: 'light',
       required: true,
+      signal: [themeMode, setThemeMode],
       values: [
         { id: 'light', name: '라이트 모드', icon: FaSun },
         { id: 'dark', name: '다크 모드', icon: FaMoon },
@@ -85,6 +87,16 @@ export const appearancePreferenceGroup: PreferenceGroupType = {
       min: 8,
       max: 24,
     },
+    {
+      id: 'roomContainerWidth',
+      icon: VscLayout,
+      name: '채팅방 가로 크기',
+      type: 'number',
+      defaultValue: 320,
+      min: 320,
+      max: 1280,
+      signal: [roomContainerWidth, setRoomContainerWidth],
+    }
   ],
 };
 
