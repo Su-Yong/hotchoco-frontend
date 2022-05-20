@@ -82,9 +82,7 @@ export interface LoginPageProps {
   
 }
 
-const LoginPage: Component<LoginPageProps> = ({
-  
-}) => {
+const LoginPage: Component<LoginPageProps> = (props) => {
   const onChangeTheme = () => {
     setThemeMode((it) => it === 'light' ? 'dark' : 'light');
   };

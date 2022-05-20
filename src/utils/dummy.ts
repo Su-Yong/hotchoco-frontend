@@ -10,7 +10,7 @@ export const userList: User[] = Array.from({ length: 3 })
 
 export const clientUser: User = userList[~~(Math.random() * userList.length)];
 
-export const messageList: Message[] = Array.from({ length: 10000 })
+export const messageList: Message[] = Array.from({ length: 100 })
   .map((_, i) => {
     const base: Omit<MessageBase<string>, 'type'> = {
       id: randUuid(),
@@ -41,7 +41,7 @@ export const messageList: Message[] = Array.from({ length: 10000 })
     };
   });
 
-export const roomList: ChatRoom[] = Array.from({ length: 10000 })
+export const roomList: ChatRoom[] = Array.from({ length: 10 })
   .map((_, i) => ({
     id: randUuid(),
     title: `${i + 1}번째 방`,

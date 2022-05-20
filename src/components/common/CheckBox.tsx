@@ -104,10 +104,10 @@ export interface CheckBoxProps extends JSX.InputHTMLAttributes<HTMLInputElement>
 }
 
 const CheckBox: Component<CheckBoxProps> = (props) => {
-  const [local, children, leftProps] = splitProps(mergeProps(props, {
+  const [local, children, leftProps] = splitProps(mergeProps({
     size: 16,
     id: nanoid(),
-  }), [
+  }, props), [
     'className',
     'size',
     'id',

@@ -1,6 +1,6 @@
 import { variable } from '@/theme';
 import { css, cx } from '@linaria/core';
-import { Component } from 'solid-js';
+import { Component, splitProps } from 'solid-js';
 import { JSX } from 'solid-js/jsx-runtime';
 
 const headerStyle = css`
@@ -31,28 +31,23 @@ export interface HeaderProps extends JSX.HTMLAttributes<HTMLDivElement> {
   rightIcon?: JSX.Element;
 }
 
-const Header: Component<HeaderProps> = ({
-  leftIcon,
-  rightIcon,
-  children,
-  ...props
-}) => {
-  
+const Header: Component<HeaderProps> = (props) => {
+  const [icons, children, leftProps] = splitProps(props, ['leftIcon', 'rightIcon'], ['children']);
 
   return (
     <h1
-      {...props}
+      {...leftProps}
       className={cx(
         headerStyle,
-        leftIcon && leftIconHeaderStyle,  
-        rightIcon && rightIconHeaderStyle,  
+        icons.leftIcon && leftIconHeaderStyle,  
+        icons.rightIcon && rightIconHeaderStyle,  
         props.className,
       )}
     >
-      {leftIcon}
-      {children}
+      {icons.leftIcon}
+      {children.children}
       <div style={'flex: 1;'} />
-      {rightIcon}
+      {icons.rightIcon}
     </h1>
   );
 }

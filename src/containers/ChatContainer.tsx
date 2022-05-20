@@ -140,9 +140,9 @@ const ChatContainer: Component<ChatContainerProps> = (props) => {
 
           return (
             <ChatMessage
-              message={item}
-              mine={clientUser.id === item.sender.id}
-              type={type}
+              message={/*@once*/ item}
+              mine={/*@once*/ clientUser.id === item.sender.id}
+              type={/*@once*/ type}
             />
           );
         }}

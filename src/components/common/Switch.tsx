@@ -111,9 +111,9 @@ export interface SwitchProps extends JSX.InputHTMLAttributes<HTMLInputElement> {
 }
 
 const Switch: Component<SwitchProps> = (props) => {
-  const [local, children, leftProps] = splitProps(mergeProps(props, {
+  const [local, children, leftProps] = splitProps(mergeProps({
     size: 24,
-  }), [
+  }, props), [
     'size',
     'checked',
     'disabled',

@@ -8,21 +8,14 @@ export interface TextPreferenceProps extends Omit<TextPreferenceType, 'type'> {
   
 }
 
-const TextPreference: Component<TextPreferenceProps> = ({
-  id,
-  name,
-  defaultValue,
-}) => {
-  const [text, setText] = createSignal(defaultValue);
+const TextPreference: Component<TextPreferenceProps> = (props) => {
+  const [text, setText] = createSignal(props.defaultValue);
 
   return (
-    <div>
-      {name}
-      <TextInput
-        id={id}
-        use:model={[text, setText]}
-      />
-    </div>
+    <TextInput
+      id={props.id}
+      use:model={[text, setText]}
+    />
   );
 }
 

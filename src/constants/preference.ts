@@ -1,41 +1,48 @@
+import { MenuItem } from '@/components/common/MenuList';
+import { IconTypes } from 'solid-icons';
+import { FaMoon, FaSun } from 'solid-icons/fa';
+import {
+  VscServerEnvironment,
+  VscSignOut,
+  VscSymbolColor,
+  VscSync,
+  VscTextSize,
+} from 'solid-icons/vsc';
+
 export interface PreferenceBaseType<Type extends string> {
   id: string;
   name: string;
   type: Type;
+  icon: IconTypes;
 }
 
 export interface CheckPreferenceType extends PreferenceBaseType<'check'> {
   defaultValue: boolean;
-  value?: boolean;
 }
 
 export interface SwitchPreferenceType extends PreferenceBaseType<'switch'> {
   defaultValue: boolean;
-  value?: boolean;
 }
 
 export interface TextPreferenceType extends PreferenceBaseType<'text'> {
   defaultValue: string;
-  value?: string;
 }
 
 export interface NumberPreferenceType extends PreferenceBaseType<'number'> {
   defaultValue: number;
-  value?: number;
   min?: number;
   max?: number;
 }
 
 export interface RadioPreferenceType extends PreferenceBaseType<'radio'> {
   defaultValue: string;
-  value?: string;
-  values: { id: string; name: string; }[]
+  values: MenuItem[];
 }
 
 export interface SelectPreferenceType extends PreferenceBaseType<'select'> {
   defaultValue: string;
-  value?: string;
-  values: { id: string; name: string; }[]
+  required?: boolean;
+  values: MenuItem[];
 }
 
 export type PreferenceType = (
@@ -59,33 +66,24 @@ export const appearancePreferenceGroup: PreferenceGroupType = {
   preferences: [
     {
       id: 'theme',
+      icon: VscSymbolColor,
       name: '테마',
       type: 'select',
       defaultValue: 'light',
+      required: true,
       values: [
-        { id: 'light', name: 'Light' },
-        { id: 'dark', name: 'Dark' },
+        { id: 'light', name: '라이트 모드', icon: FaSun },
+        { id: 'dark', name: '다크 모드', icon: FaMoon },
       ],
     },
     {
       id: 'fontSize',
+      icon: VscTextSize,
       name: '폰트 크기',
       type: 'number',
       defaultValue: 14,
-      value: 14,
       min: 8,
       max: 24,
-    },
-    {
-      id: 'fontFamily',
-      name: '폰트 종류',
-      type: 'select',
-      defaultValue: 'sans-serif',
-      values: [
-        { id: 'sans-serif', name: 'Sans-Serif' },
-        { id: 'serif', name: 'Serif' },
-        { id: 'monospace', name: 'Monospace' },
-      ],
     },
   ],
 };
@@ -96,6 +94,7 @@ export const serverPreferenceGroup: PreferenceGroupType = {
   preferences: [
     {
       id: 'serverUrl',
+      icon: VscServerEnvironment,
       name: '서버 주소',
       type: 'text',
       defaultValue: 'http://localhost:3000',
@@ -109,12 +108,14 @@ export const accountPreferenceGroup: PreferenceGroupType = {
   preferences: [
     {
       id: 'autoLogin',
+      icon: VscSync,
       name: '자동 로그인',
       type: 'switch',
       defaultValue: false,
     },
     {
       id: 'logoutTimeout',
+      icon: VscSignOut,
       name: '자동 로그아웃 시간 (단위: 분)',
       type: 'number',
       defaultValue: 5,

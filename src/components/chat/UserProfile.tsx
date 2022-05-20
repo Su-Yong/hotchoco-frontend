@@ -3,7 +3,7 @@ import { User } from '@/types';
 import { sx } from '@/utils';
 import { css, cx } from '@linaria/core';
 import { FaUser } from 'solid-icons/fa';
-import { Component, createMemo } from 'solid-js';
+import { Component, createMemo, mergeProps, splitProps } from 'solid-js';
 import { JSX } from 'solid-js/jsx-runtime';
 
 const profileStyle = css`
@@ -17,33 +17,31 @@ export interface UserProfileProps extends JSX.HTMLAttributes<HTMLImageElement> {
   user: User;
 }
 
-const UserProfile: Component<UserProfileProps> = ({
-  size = 'large',
-  user,
-  ...props
-}) => {
-  const profileSize = createMemo(() => getTheme().Size.icon[size]);
+const UserProfile: Component<UserProfileProps> = (props) => {
+  const [local, leftProps] = splitProps(mergeProps({ size: 'large' }, props), ['size', 'user']);
 
-  if (user.profile) {
+  const profileSize = createMemo(() => getTheme().Size.icon[local.size]);
+
+  if (local.user.profile) {
     return (
       <img
-      {...props}
-        className={cx(profileStyle, props.className)}
+      {...leftProps}
+        className={cx(profileStyle, leftProps.className)}
         style={sx({
           '--profile-size': profileSize(),
-        }, props.style)}
-        src={user.profile}
+        }, leftProps.style)}
+        src={local.user.profile}
       />
     );
   }
 
   return (
     <div
-    {...props as JSX.HTMLAttributes<HTMLDivElement>}
+    {...leftProps as JSX.HTMLAttributes<HTMLDivElement>}
       style={sx({
-        '--profile-size': `${profileSize()}px`,
-      }, props.style)}
-      className={cx(profileStyle, props.className)}
+        '--profile-size': profileSize(),
+      }, leftProps.style)}
+      className={cx(profileStyle, leftProps.className)}
     >
       <FaUser size={profileSize()} />
     </div>

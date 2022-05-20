@@ -6,23 +6,15 @@ export interface CheckPreferenceProps extends Omit<CheckPreferenceType, 'type'> 
   
 }
 
-const CheckPreference: Component<CheckPreferenceProps> = ({
-  id,
-  name,
-  value,
-  defaultValue,
-}) => {
-  const [checked, setChecked] = createSignal(value ?? defaultValue);
+const CheckPreference: Component<CheckPreferenceProps> = (props) => {
+  const [checked, setChecked] = createSignal(props.defaultValue);
 
   return (
-    <div>
-      {name}
-      <CheckBox
-        id={id}
-        checked={checked()}
-        onChange={(event) => setChecked(event.currentTarget.checked)}
-      />
-    </div>
+    <CheckBox
+      id={props.id}
+      checked={checked()}
+      onChange={(event) => setChecked(event.currentTarget.checked)}
+    />
   );
 }
 

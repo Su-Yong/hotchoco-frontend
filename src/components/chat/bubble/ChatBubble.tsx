@@ -1,7 +1,7 @@
 import { variable } from '@/theme';
 import { ImageMessage, Message, TextMessage } from '@/types';
 import { css, cx } from '@linaria/core';
-import { Component, Match, Switch } from 'solid-js';
+import { Component, Match, mergeProps, splitProps, Switch } from 'solid-js';
 import { JSX } from 'solid-js/jsx-runtime';
 import ImageContent from './types/ImageContent';
 import TextContent from './types/TextContent';
@@ -72,31 +72,27 @@ export interface ChatBubbleProps extends JSX.HTMLAttributes<HTMLDivElement> {
   isTail?: boolean;
 }
 
-const ChatBubble: Component<ChatBubbleProps> = ({
-  message,
-  type = 'other',
-  isTail = false,
-  ...props
-}) => {
-  
+const ChatBubble: Component<ChatBubbleProps> = (props) => {
+  const [local, leftProps] = splitProps(mergeProps({ type: 'other', isTail: false }, props), ['message', 'type', 'isTail']);
 
   return (
     <div
-      {...props}
+      {...leftProps}
       className={cx(
-        bubbleStyle, type === 'mine' && mineStyle,
-        isTail && 'tail',
+        bubbleStyle,
+        local.type === 'mine' && mineStyle,
+        local.isTail && 'tail',
         props.className,
       )}
     >
       <Switch
-        fallback={message.content}
+        fallback={local.message.content}
       >
-        <Match when={message.type === 'text'}>
-          <TextContent content={(message as TextMessage).content} />
+        <Match when={local.message.type === 'text'}>
+          <TextContent content={(local.message as TextMessage).content} />
         </Match>
-        <Match when={message.type === 'image'}>
-          <ImageContent sources={(message as ImageMessage).content} />
+        <Match when={local.message.type === 'image'}>
+          <ImageContent sources={(local.message as ImageMessage).content} />
         </Match>
       </Switch>
     </div>

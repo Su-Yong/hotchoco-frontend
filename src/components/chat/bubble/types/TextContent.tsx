@@ -25,22 +25,20 @@ export interface TextContentProps {
   content: string;
 }
 
-const TextContent: Component<TextContentProps> = ({
-  content,
-}) => {
-  if (content.length > LENGTH_LIMIT) {
-    const smallContent = content.substring(0, LENGTH_LIMIT) + '...';
+const TextContent: Component<TextContentProps> = (props) => {
+  if (props.content.length > LENGTH_LIMIT) {
+    const smallContent = () => props.content.substring(0, LENGTH_LIMIT) + '...';
 
     const [collapse, setCollapse] = createSignal(true);
-    const [visibleContent, setVisibleContent] = createSignal(smallContent);
+    const [visibleContent, setVisibleContent] = createSignal(smallContent());
 
     const onToggleCollapse = () => {
       setCollapse((it) => !it);
     };
 
     createEffect(() => {
-      if (collapse()) setVisibleContent(smallContent);
-      else setVisibleContent(content);
+      if (collapse()) setVisibleContent(smallContent());
+      else setVisibleContent(props.content);
     });
 
     return (
@@ -67,7 +65,7 @@ const TextContent: Component<TextContentProps> = ({
 
   return (
     <div className={containerStyle}>
-      {content}
+      {props.content}
     </div>
   );
 }

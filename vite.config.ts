@@ -40,6 +40,7 @@ export default ({ mode }) => {
     clearScreen: false,
     plugins: [
       linaria({
+        include: './src/**/*.{ts,tsx}',
         babelOptions: {
           presets: [
             '@babel/preset-typescript',

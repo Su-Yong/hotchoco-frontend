@@ -83,19 +83,17 @@ export interface ImageContentProps {
   sources: string[];
 }
 
-const ImageContent: Component<ImageContentProps> = ({
-  sources,
-}) => {
-  const smallSource = sources.slice(0, Math.min(9, sources.length));
-  const leftSources = sources.slice(9);
+const ImageContent: Component<ImageContentProps> = (props) => {
+  const smallSource = () => props.sources.slice(0, Math.min(9, props.sources.length));
+  const leftSources = () => props.sources.slice(9);
 
-  const [nowSources, setNowSources] = createSignal(leftSources.length > 0 ? smallSource.slice(0, 8) : smallSource);
+  const [nowSources, setNowSources] = createSignal(leftSources().length > 0 ? smallSource().slice(0, 8) : smallSource());
 
   const onToggle = () => {
-    if (nowSources().length === sources.length) {
-      setNowSources(leftSources.length > 0 ? smallSource.slice(0, 8) : smallSource);
+    if (nowSources().length === props.sources.length) {
+      setNowSources(leftSources().length > 0 ? smallSource().slice(0, 8) : smallSource());
     } else {
-      setNowSources(sources);
+      setNowSources(props.sources);
     }
   };
 
@@ -112,7 +110,7 @@ const ImageContent: Component<ImageContentProps> = ({
           </Hoverable>
         )}
       </For>
-      <Show when={leftSources.length > 0}>
+      <Show when={leftSources().length > 0}>
         <Hoverable
           borderless={false}
           overlayColor={'Color.BLACK'}
@@ -120,12 +118,12 @@ const ImageContent: Component<ImageContentProps> = ({
           onClick={onToggle}
         >
           <Show
-            when={nowSources().length === sources.length}
+            when={nowSources().length === props.sources.length}
             fallback={(
               <>
-                <img src={leftSources[0]} />
+                <img src={leftSources()[0]} />
                 <VscAdd />
-                <span>{leftSources.length + 1}</span>
+                <span>{leftSources().length + 1}</span>
               </>
             )}
           >

@@ -1,6 +1,6 @@
 import { variable } from '@/theme';
 import { css } from '@linaria/core';
-import { Component } from 'solid-js';
+import { Component, Show, splitProps } from 'solid-js';
 
 const containerStyle = css`
   width: fit-content;
@@ -61,22 +61,18 @@ export interface ChatBadgeProps {
   children: number;
 }
 
-const ChatBadge: Component<ChatBadgeProps> = ({
-  children,
-  indeterminent,
-}) => {
-  
+const ChatBadge: Component<ChatBadgeProps> = (props) => {
+  const [local, children] = splitProps(props, ['indeterminent'], ['children']);
 
   return (
     <div className={containerStyle}>
-      {!indeterminent && children}
-      {indeterminent && (
+      <Show when={local.indeterminent} fallback={children.children}>
         <svg viewBox={'0 0 48 24'} className={indeterminateStyle}>
           <circle cx="12" cy="12" r="4" />
           <circle cx="24" cy="12" r="4" />
           <circle cx="36" cy="12" r="4" />
         </svg>
-      )}
+      </Show>
     </div>
   );
 }

@@ -8,22 +8,15 @@ export interface NumberPreferenceProps extends Omit<NumberPreferenceType, 'type'
   
 }
 
-const NumberPreference: Component<NumberPreferenceProps> = ({
-  id,
-  name,
-  defaultValue,
-}) => {
-  const [text, setText] = createSignal(defaultValue);
+const NumberPreference: Component<NumberPreferenceProps> = (props) => {
+  const [text, setText] = createSignal(props.defaultValue);
 
   return (
-    <div>
-      {name}
-      <TextInput
-        id={id}
-        type={'number'}
-        use:model={[text, setText]}
-      />
-    </div>
+    <TextInput
+      id={props.id}
+      type={'number'}
+      use:model={[text, setText]}
+    />
   );
 }
 

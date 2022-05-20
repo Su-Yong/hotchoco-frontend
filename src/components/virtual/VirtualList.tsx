@@ -1,13 +1,11 @@
-import { variable } from '@/theme';
 import { css, cx } from '@linaria/core';
 import { nanoid } from 'nanoid';
-import { Accessor, Component, createEffect, createSignal, For, on, onMount, splitProps } from 'solid-js';
+import { Accessor, createEffect, createSignal, For, on, onMount, splitProps } from 'solid-js';
 import { JSX } from 'solid-js/jsx-runtime';
 import { calculateVisibleRange } from './calculateVisibleRange';
 
 const DEFAULT_HEIGHT = 50;
-const MAX_COUNT = 200;
-const MIN_COUNT = 10;
+const THROTTLE = 100;
 
 const wrapperStyle = css`
   width: 100%;
@@ -83,15 +81,29 @@ const VirtualList = <T extends unknown>(props: VirtualListProps<T>): JSX.Element
     );
 
     if (start !== newStart || end !== newEnd) {
-      console.log('range', start, end, '->', newStart, newEnd);
       setRange([newStart, newEnd]);
     }
   };
+
+  let throttle = 0;
+  let timeout: number | null = null;
   const onScroll: JSX.EventHandlerUnion<HTMLDivElement, UIEvent> = (event) => {
+    if (event.timeStamp - throttle < THROTTLE) {
+      const scroll = event.target.scrollTop;
+      const height = event.target.clientHeight;
+  
+      timeout = setTimeout(() => {
+        calculateRange(scroll, height);
+      }, THROTTLE);
+      return;
+    }
+    if (typeof timeout === 'number') clearTimeout(timeout);
+
     const scroll = event.target.scrollTop;
     const height = event.target.clientHeight;
 
     calculateRange(scroll, height);
+    throttle = event.timeStamp;
   };
 
   onMount(() => {

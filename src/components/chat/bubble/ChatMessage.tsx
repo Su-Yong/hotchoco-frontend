@@ -1,7 +1,7 @@
 import { variable } from '@/theme';
 import { Message, User } from '@/types';
 import { css, cx } from '@linaria/core';
-import { Component, Show } from 'solid-js';
+import { Component, mergeProps, Show } from 'solid-js';
 import UserProfile from '../UserProfile';
 import ChatBubble from './ChatBubble';
 
@@ -88,34 +88,30 @@ export interface ChatMessageProps {
   type?: 'follow' | 'first' | 'last' | 'first-last';
 }
 
-const ChatMessage: Component<ChatMessageProps> = ({
-  message,
-  mine,
-  type = 'first-last',
-}) => {
-  const { sender } = message;
-  
-  const time = new Date(message.timestamp);
-  const timeString = time.toLocaleString(undefined, { hour: '2-digit', minute: '2-digit' });
+const ChatMessage: Component<ChatMessageProps> = (props) => {
+  const local = mergeProps({ type: 'first-last'}, props);
+
+  const time = () => new Date(local.message.timestamp);
+  const timeString = () => time().toLocaleString(undefined, { hour: '2-digit', minute: '2-digit' });
 
   return (
-    <div className={cx(containerStyle, mine && mineStyle)}>
+    <div className={cx(containerStyle, local.mine && mineStyle)}>
       <Show
-        when={!mine && (type === 'first-last' || type === 'last')}
-        fallback={mine ? null : profileDummy}
+        when={!local.mine && (local.type === 'first-last' || local.type === 'last')}
+        fallback={local.mine ? null : profileDummy}
       >
-        <UserProfile className={'profile'} user={sender} />
+        <UserProfile className={'profile'} user={local.message.sender} />
       </Show>
-      <Show when={!mine && (type === 'first-last' || type === 'first')}>
-        <div className={'sender-name'}>{sender.name}</div>
+      <Show when={!local.mine && (local.type === 'first-last' || local.type === 'first')}>
+        <div className={'sender-name'}>{local.message.sender.name}</div>
       </Show>
       <ChatBubble
-        type={mine ? 'mine' : 'other'}
-        isTail={type === 'last' || type === 'first-last'}
+        type={local.mine ? 'mine' : 'other'}
+        isTail={local.type === 'last' || local.type === 'first-last'}
         className={'bubble'}
-        message={message}
+        message={local.message}
       />
-      <div className={'info'}>{timeString}</div>
+      <div className={'info'}>{timeString()}</div>
     </div>
   );
 }
