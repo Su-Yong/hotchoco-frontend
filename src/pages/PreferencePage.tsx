@@ -9,6 +9,8 @@ import { Component, For } from 'solid-js';
 
 const containerStyle = css`
   position: relative;
+  width: 100%;
+  height: 100%;
 
   display: flex;
   flex-flow: column;
@@ -17,10 +19,11 @@ const containerStyle = css`
   gap: ${variable('Size.space.medium')};
 
   padding: 0 ${variable('Size.space.medium')};
+  overflow-y: auto;
 `;
 
 const headerStyle = css`
-  position: absolute;
+  position: fixed;
   left: 0;
   right: 0;
   top: 0;
@@ -44,16 +47,19 @@ const headerStyle = css`
 `;
 
 const PreferencePage: Component = () => {
+  const onClose = () => {
+    history.back();
+  };
 
   return (
     <div className={containerStyle}>
-      <Header
-        className={headerStyle}
-        leftIcon={<IconButton icon={VscArrowLeft} />}
-      >
-        설정
-      </Header>
-      <div style={'height: 56px;'} />
+    <Header
+      className={headerStyle}
+      leftIcon={<IconButton icon={VscArrowLeft} onClick={onClose} />}
+    >
+      설정
+    </Header>
+      <div style={'height: 56px; min-height: 56px; max-height: 56px;'} />
       <For each={preferenceGroupList}>
         {(group) => <PreferenceContainer group={group} />}
       </For>

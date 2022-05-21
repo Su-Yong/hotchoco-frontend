@@ -6,6 +6,8 @@ import { JSX } from 'solid-js/jsx-runtime';
 import TextButton from './TextButton';
 
 const menuContainer = css`
+  height: max-content;
+
   margin: 0;
   padding: 0;
   list-style: none;
@@ -21,7 +23,6 @@ const menuContainer = css`
 
 const itemStyle = css`
   width: 100%;
-  max-width: calc(${variable('Size.icon.medium')} + 120px + ${variable('Size.space.medium')} * 2);
   flex: 1;
 
   display: flex;

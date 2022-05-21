@@ -21,7 +21,8 @@ const NumberPreference: Component<NumberPreferenceProps> = (props) => {
 
   return (
     <TextInput
-      id={props.id}
+      min={props.min}
+      max={props.max}
       type={'number'}
       value={text()}
       onChange={(event) => setText(Number(event.currentTarget.value))}

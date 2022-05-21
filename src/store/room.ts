@@ -9,3 +9,7 @@ export const [roomContainerWidth, setRoomContainerWidth] = createStorageSignal('
     return 320;
   },
 });
+
+export const [roomLayout, setRoomLayout] = createStorageSignal('chatRoomLayout', 'list', {
+  serialize: false,
+});

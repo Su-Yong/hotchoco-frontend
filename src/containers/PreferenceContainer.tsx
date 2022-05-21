@@ -18,6 +18,9 @@ const containerStyle = css`
   padding: ${variable('Size.space.large')};
   border-radius: ${variable('Size.space.large')};
   background: ${variable('Color.Grey.100')};
+
+  transition-duration: ${variable('Animation.duration.short')};
+  transition-timing-function: ${variable('Animation.easing.deceleration')};
 `;
 
 const titleStyle = css`

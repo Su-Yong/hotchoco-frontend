@@ -47,6 +47,8 @@ const components: Record<PreferenceType['type'], (preference: any) => JSX.Elemen
       id={preference.id}
       name={preference.name}
       icon={preference.icon}
+      min={preference.min}
+      max={preference.max}
       signal={preference.signal}
       defaultValue={preference.defaultValue}
     />

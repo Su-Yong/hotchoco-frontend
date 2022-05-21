@@ -1,6 +1,6 @@
 import { css, cx } from '@linaria/core';
 import { nanoid } from 'nanoid';
-import { Accessor, createEffect, createSignal, For, on, onMount, splitProps } from 'solid-js';
+import { Accessor, batch, createEffect, createSignal, For, on, onMount, splitProps, useTransition } from 'solid-js';
 import { JSX } from 'solid-js/jsx-runtime';
 import { calculateVisibleRange } from './calculateVisibleRange';
 
@@ -54,6 +54,8 @@ const VirtualList = <T extends unknown>(props: VirtualListProps<T>): JSX.Element
   const [topPadding, setTopPadding] = createSignal(0);
   const [bottomPadding, setBottomPadding] = createSignal(0);
 
+  const [isRangeChanged, startRangeChange] = useTransition();
+
   let defaultItemHeight = (
     typeof local.itemHeight === 'function'
       ? DEFAULT_HEIGHT
@@ -81,29 +83,41 @@ const VirtualList = <T extends unknown>(props: VirtualListProps<T>): JSX.Element
     );
 
     if (start !== newStart || end !== newEnd) {
-      setRange([newStart, newEnd]);
+      const children = Array.from(parentRef!.children);
+      for (let i = newStart; i < newEnd; i++) {
+        if (!children[i - start + 1]) continue;
+        if (itemHeights.has(i)) continue;
+
+        const rect = children[i - start + 1].getBoundingClientRect();
+        
+        itemHeights.set(i, rect.height ?? defaultItemHeight);
+      }
+
+      let newTop = 0;
+      let newBottom = 0;
+
+      for(let i = 0; i < newStart; i++) {
+        newTop += itemHeights.get(i) ?? defaultItemHeight;
+      }
+      for(let i = newEnd; i < local.items.length; i++) {
+        newBottom += itemHeights.get(i) ?? defaultItemHeight;
+      }
+
+      startRangeChange(() => {
+        setRange([newStart, newEnd]);
+        setTopPadding(newTop);
+        setBottomPadding(newBottom);
+      });
     }
   };
 
-  let throttle = 0;
-  let timeout: number | null = null;
   const onScroll: JSX.EventHandlerUnion<HTMLDivElement, UIEvent> = (event) => {
-    if (event.timeStamp - throttle < THROTTLE) {
-      const scroll = event.target.scrollTop;
-      const height = event.target.clientHeight;
-  
-      timeout = setTimeout(() => {
-        calculateRange(scroll, height);
-      }, THROTTLE);
-      return;
-    }
-    if (typeof timeout === 'number') clearTimeout(timeout);
+    if (isRangeChanged()) return;
 
     const scroll = event.target.scrollTop;
     const height = event.target.clientHeight;
 
     calculateRange(scroll, height);
-    throttle = event.timeStamp;
   };
 
   onMount(() => {
@@ -125,7 +139,7 @@ const VirtualList = <T extends unknown>(props: VirtualListProps<T>): JSX.Element
   });
 
   createEffect(on(() => local.items, () => {
-    if (!parentRef) return;
+    if (!parentRef || !frameRef) return;
 
     const scroll = parentRef.scrollTop;
     const height = parentRef.clientHeight;
@@ -143,25 +157,7 @@ const VirtualList = <T extends unknown>(props: VirtualListProps<T>): JSX.Element
 
       children[i - start + 1].setAttribute('data-index', i.toString());
       resizeObserver.observe(children[i - start + 1]);
-
-      if (itemHeights.has(i)) continue;
-      const rect = children[i - start + 1].getBoundingClientRect();
-      
-      itemHeights.set(i, rect.height ?? defaultItemHeight);
     }
-
-    let top = 0;
-    let bottom = 0;
-
-    for(let i = 0; i < start; i++) {
-      top += itemHeights.get(i) ?? defaultItemHeight;
-    }
-    for(let i = end; i < local.items.length; i++) {
-      bottom += itemHeights.get(i) ?? defaultItemHeight;
-    }
-
-    setTopPadding(top);
-    setBottomPadding(bottom);
   });
 
   return (

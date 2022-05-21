@@ -3,6 +3,7 @@ import { ChatRoom as ChatRoomType, Message } from '@/types';
 import { css } from '@linaria/core';
 import { Component, Show } from 'solid-js';
 import ChatBadge from './ChatBadge';
+import Profile from './Profile';
 
 const containerStyle = css`
   position: relative;
@@ -45,30 +46,29 @@ const containerStyle = css`
   }
 
   & > img {
-    width: 48px;
-    height: 48px;
-    border-radius: 100%;
-    object-fit: cover;
-    aspect-ratio: 1;
     grid-row: 1 / span 2;
-    margin-right: 4px;
+    margin-right: ${variable('Size.space.small')};
 
     justify-center: center;
     align-self: center;
   }
 
   & > .title {
-    font-size: 18px;
+    font-size: ${variable('Size.text.title')};
   }
 
   & > .message {
-    font-size: 16px;
+    font-size: ${variable('Size.text.subtitle')};
     grid-column: 2 / span 1;
     grid-row: 2 / span 1;
 
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+  }
+
+  & > .timestamp {
+    font-size: ${variable('Size.text.caption')};
   }
 
   & > .badge {
@@ -114,7 +114,7 @@ const ChatRoom: Component<ChatRoomProps> = (props) => {
       onClick={() => props.onClick?.(props.room)}
     >
       <Show when={props.room.thumbnail}>
-        <img src={props.room.thumbnail} />
+        <Profile url={props.room.thumbnail} />
       </Show>
       <div className={'title'}>{props.room.title}</div>
       <div className={'message'}>{props.lastMessage?.content}</div>

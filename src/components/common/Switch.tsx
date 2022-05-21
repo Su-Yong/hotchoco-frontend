@@ -131,19 +131,23 @@ const Switch: Component<SwitchProps> = (props) => {
   const mainColor = local.disabled ? variable('Color.Grey.300') : variable('Color.Blue.500');
   const secondaryColor = local.disabled ? variable('Color.Grey.300') : variable('Color.Grey.500');
 
-  let lastX: number = 0;
+  let lastScreenX: number = 0;
   let x: number | null = null;
+  let lastX: number | null = null;
   let moved: boolean = false;
   const onEnter = (event: PointerEvent) => {
-    x = checked() ? local.size : 0;
+    x = checked() ? local.size : 0
+    lastX = x;
     setIsMove(true);
-    lastX = event.screenX;
+    lastScreenX = event.screenX;
   };
   const onMove = (event: PointerEvent) => {
     if (typeof x === 'number') {
-      x += event.movementX ?? event.screenX - lastX;
-      lastX = event.screenX;
-      moved = true;
+      x += event.movementX ?? event.screenX - lastScreenX;
+      lastScreenX = event.screenX;
+
+      if (x !== lastX) moved = true;
+      lastX = x;
 
       const newOffset = Math.min(Math.max(x, 0), local.size) / local.size;
       setOffset(newOffset);
@@ -151,8 +155,8 @@ const Switch: Component<SwitchProps> = (props) => {
   };
   const onEnd = (event: PointerEvent) => {
     if (typeof x === 'number') {
-      x += event.movementX ?? event.screenX - lastX;
-      lastX = event.screenX;
+      x += event.movementX ?? event.screenX - lastScreenX;
+      lastScreenX = event.screenX;
 
       if (moved) {
         const newOffset = Math.min(Math.max(x, 0), local.size) / local.size;
@@ -164,6 +168,7 @@ const Switch: Component<SwitchProps> = (props) => {
         setChecked(newValue);
         setOffset(newValue ? 1 : 0);
       }
+      console.log('end', moved);
     }
 
     x = null;

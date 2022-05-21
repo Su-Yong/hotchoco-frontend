@@ -31,6 +31,11 @@ const createStorageSignal = <T>(
     if (to) data = to(data);
 
     setValue(data as Exclude<T, Function>);
+  } else {
+    let result = initValue as unknown as string;
+    if (serialize) result = JSON.stringify(initValue);
+
+    storage.setItem(key, result);
   }
 
   return [value, setValue];

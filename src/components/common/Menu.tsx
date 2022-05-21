@@ -2,15 +2,16 @@ import { variable } from '@/theme';
 import { sx } from '@/utils';
 import { css, cx } from '@linaria/core';
 import { Component, createEffect, createSignal, createUniqueId, mergeProps, onCleanup, onMount, Show, splitProps } from 'solid-js';
+import { Portal } from 'solid-js/web';
 import { Transition } from 'solid-transition-group';
-import MenuList, { MenuItem, MenuListProps } from './MenuList';
+import MenuList, { MenuListProps } from './MenuList';
 
 const menuStyle = css`
   position: absolute;
   left: var(--menu-x);
   top: var(--menu-y);
 
-  z-index: 100;
+  z-index: 1000000;
 `;
 
 const enterStart = css`
@@ -42,8 +43,7 @@ const exitEnd = css`
 `;
 
 const invisibleStyle = css`
-  visibility: collapse;
-  overflow: hidden;
+  visibility: hidden;
 `;
 
 type Origin = {
@@ -179,30 +179,32 @@ const Menu: Component<MenuProps> = (props) => {
   });
 
   return (
-    <Transition
-      enterClass={enterStart}
-      enterToClass={enterEnd}
-      exitClass={exitStart}
-      exitToClass={exitEnd}
-    >
-      <Show when={local.open || localSize() === null}>
-        <MenuList
-          {...leftProps}
-          ref={onLoad}
-          style={sx({
-            '--menu-x': `${coord()[0]}px`,
-            '--menu-y': `${coord()[1]}px`,
-            '--origin-x': getOriginX(),
-            '--origin-y': getOriginY(),
-          }, leftProps.style)}
-          className={cx(
-            menuStyle,
-            (localSize() === null) && invisibleStyle,
-            leftProps.className,
-          )}
-        />
-      </Show>
-    </Transition>
+    <Portal>
+      <Transition
+        enterClass={enterStart}
+        enterToClass={enterEnd}
+        exitClass={exitStart}
+        exitToClass={exitEnd}
+      >
+        <Show when={local.open || localSize() === null}>
+          <MenuList
+            {...leftProps}
+            ref={onLoad}
+            style={sx({
+              '--menu-x': `${coord()[0]}px`,
+              '--menu-y': `${coord()[1]}px`,
+              '--origin-x': getOriginX(),
+              '--origin-y': getOriginY(),
+            }, leftProps.style)}
+            className={cx(
+              menuStyle,
+              (localSize() === null) && invisibleStyle,
+              leftProps.className,
+            )}
+          />
+        </Show>
+      </Transition>
+    </Portal>
   );
 }
 

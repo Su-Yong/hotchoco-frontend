@@ -3,7 +3,7 @@ import Header from '@/components/Header';
 import VirtualList from '@/components/virtual/VirtualList';
 import { clientUser, messageList } from '@/utils/dummy';
 import { css } from '@linaria/core';
-import { Component, createSignal, onMount } from 'solid-js';
+import { Component, createEffect, createSignal, onMount } from 'solid-js';
 import { VscArrowLeft } from 'solid-icons/vsc';
 import { variable } from '@/theme';
 import ChatMessage, { ChatMessageProps } from '@/components/chat/bubble/ChatMessage';
@@ -25,7 +25,7 @@ const containerStyle = css`
 `;
 
 const messageListStyle = css`
-  padding: 0px 8px;
+  padding: ${variable('Size.space.medium')};
 
   &::-webkit-scrollbar {
     width: 16px;
@@ -102,8 +102,11 @@ const ChatContainer: Component<ChatContainerProps> = (props) => {
     resizeObserver.observe(inputRef);
   });
 
+  const list = () => messageList.slice(0, count());
+
   return (
     <div
+      id={'chat-container'}
       style={{
         '--scrollbar-track-margin-top': '56px',
         '--scrollbar-track-margin-bottom': `${bottomMargin()}px`,
@@ -118,31 +121,33 @@ const ChatContainer: Component<ChatContainerProps> = (props) => {
       </Header>
       <VirtualList
         className={messageListStyle}
-        items={messageList.slice(0, count())}
+        items={list()}
         style={'flex: 1'}
         topMargin={56}
         bottomMargin={bottomMargin()}
         overscan={5}
       >
         {(item, index) => {
-          let type: ChatMessageProps['type'] = 'first-last';
+          const [type, setType] = createSignal<ChatMessageProps['type']>('first-last');
 
-          let prevId = null;
-          const currentId = item.sender.id;
-          let nextId = null;
-          if (index() > 0) prevId = messageList[index() - 1].sender.id;
-          if (index() < messageList.length - 1) nextId = messageList[index() + 1].sender.id;
+          createEffect(() => {
+            let prevId = null;
+            const currentId = item.sender.id;
+            let nextId = null;
+            if (index() > 0) prevId = list()[index() - 1].sender.id;
+            if (index() < list().length - 1) nextId = list()[index() + 1].sender.id;
 
-          if (prevId === currentId && nextId === currentId) type = 'follow';
-          else if (prevId !== currentId && nextId === currentId) type = 'first';
-          else if (prevId === currentId && nextId !== currentId) type = 'last';
-          else if (prevId !== currentId && nextId !== currentId) type = 'first-last';
+            if (prevId === currentId && nextId === currentId) setType( 'follow');
+            else if (prevId !== currentId && nextId === currentId) setType('first');
+            else if (prevId === currentId && nextId !== currentId) setType('last');
+            else if (prevId !== currentId && nextId !== currentId) setType('first-last');
+          });
 
           return (
             <ChatMessage
-              message={/*@once*/ item}
-              mine={/*@once*/ clientUser.id === item.sender.id}
-              type={/*@once*/ type}
+              message={item}
+              mine={clientUser.id === item.sender.id}
+              type={type()}
             />
           );
         }}

@@ -61,7 +61,10 @@ const defaultProps = {
 } as const;
 
 const Hoverable: Component<HoverableProps> = (props) => {
-  const [local, children, leftProps] = splitProps(mergeProps(defaultProps, props), [
+  const [local, children, leftProps] = splitProps(mergeProps({
+    ...defaultProps,
+    overlayScale: props.borderless ? 1 : Math.sqrt(2),
+  }, props), [
     'className',
     'borderless',
     'overlayColor',

@@ -64,6 +64,14 @@ const iconStyle = css`
   }
 `;
 
+const innerStyle = css`
+  display: flex;
+  flex-flow: row;
+  justify-content: flex-start;
+  align-items: center;
+  gap: ${variable('Size.space.small')};
+`;
+
 export interface SelectProps extends Pick<MenuProps, 'items' | 'origin' | 'menuOrigin'>, Omit<JSX.HTMLAttributes<HTMLDivElement>, 'onSelect'> {
   required?: boolean;
   value?: string;
@@ -100,6 +108,12 @@ const Select: Component<SelectProps> = (props) => {
     if (!local.disabled) setOpen((it) => !it);
   }
 
+  const innerIcon = () => {
+    const found = menuProps.items.find((it) => it.id === local.value);
+
+    if (found?.icon) return <found.icon />;
+    return undefined;
+  };
   const innerName = createDeferred(() => {
     const found = menuProps.items.find((it) => it.id === local.value);
 
@@ -151,7 +165,10 @@ const Select: Component<SelectProps> = (props) => {
           '--background-hover-color': backgroundHoverColor(),
         }, leftProps.style)}
       >
-        {innerName()}
+        <span className={innerStyle}>
+          {innerIcon()}
+          {innerName()}
+        </span>
         <VscChevronDown
           className={iconStyle}
         />

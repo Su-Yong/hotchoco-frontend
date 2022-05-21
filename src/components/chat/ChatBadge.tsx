@@ -6,12 +6,13 @@ const containerStyle = css`
   width: fit-content;
   min-width: 24px;
 
-  padding: 0 4px;
+  padding: ${variable('Size.space.small')};
   display: inline-flex;
   flex-flow: row;
   justify-content: center;
   align-items: center;
 
+  font-size: ${variable('Size.text.caption')};
   color: ${variable('Color.Red.100')};
   background: ${variable('Color.Red.500')};
 
@@ -19,7 +20,7 @@ const containerStyle = css`
 `;
 
 const indeterminateStyle = css`
-  width: 36px;
+  height: ${variable('Size.text.caption')};
   fill: ${variable('Color.Red.100')};
 
   & > * {
@@ -67,7 +68,7 @@ const ChatBadge: Component<ChatBadgeProps> = (props) => {
   return (
     <div className={containerStyle}>
       <Show when={local.indeterminent} fallback={children.children}>
-        <svg viewBox={'0 0 48 24'} className={indeterminateStyle}>
+        <svg viewBox={`0 0 48 24`} className={indeterminateStyle}>
           <circle cx="12" cy="12" r="4" />
           <circle cx="24" cy="12" r="4" />
           <circle cx="36" cy="12" r="4" />

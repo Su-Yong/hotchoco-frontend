@@ -1,13 +1,12 @@
-import { setThemeMode, themeMode } from '@/App';
 import Button from '@/components/common/Button';
 import CheckBox from '@/components/common/CheckBox';
 import IconButton from '@/components/common/IconButton';
 import TextButton from '@/components/common/TextButton';
 import TextInput from '@/components/common/TextInput';
-import { setTheme, variable } from '@/theme';
-import { DarkTheme } from '@/theme/defined/DarkTheme';
-import { LightTheme } from '@/theme/defined/LightTheme';
+import { setThemeMode, themeMode } from '@/store/display';
+import { variable } from '@/theme';
 import { css } from '@linaria/core';
+import { useNavigate } from 'solid-app-router';
 import { FaMoon, FaSun } from 'solid-icons/fa';
 import { Component, createEffect, createSignal } from 'solid-js';
 
@@ -83,8 +82,14 @@ export interface LoginPageProps {
 }
 
 const LoginPage: Component<LoginPageProps> = (props) => {
+  const navigate = useNavigate();
+
   const onChangeTheme = () => {
     setThemeMode((it) => it === 'light' ? 'dark' : 'light');
+  };
+
+  const onLogin = () => {
+    navigate('../chat');
   };
 
   return (
@@ -98,7 +103,7 @@ const LoginPage: Component<LoginPageProps> = (props) => {
       <TextInput type={'password'} placeholder={'비밀번호'} />
       <CheckBox>아이디 저장</CheckBox>
       <CheckBox>자동 로그인</CheckBox>
-      <Button className={loginButtonStyle}>로그인</Button>
+      <Button className={loginButtonStyle} onClick={onLogin}>로그인</Button>
       <TextButton className={loginButtonStyle}>회원가입</TextButton>
     </div>
   );

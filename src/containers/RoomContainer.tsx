@@ -1,13 +1,15 @@
 import ChatRoom from '@/components/chat/ChatRoom';
+import Profile from '@/components/chat/Profile';
 import IconButton from '@/components/common/IconButton';
 import Header from '@/components/Header';
 import VirtualList from '@/components/virtual/VirtualList';
+import { roomLayout } from '@/store/room';
 import { variable } from '@/theme';
 import { ChatRoom as ChatRoomType } from '@/types';
 import { messageList } from '@/utils/dummy';
-import { css } from '@linaria/core';
+import { css, cx } from '@linaria/core';
 import { VscSearch, VscSettingsGear } from 'solid-icons/vsc';
-import { Component, createEffect, createSignal } from 'solid-js';
+import { Component, createEffect, createSignal, For } from 'solid-js';
 
 const containerStyle = css`
   position: relative;
@@ -49,6 +51,8 @@ const headerStyle = css`
 `;
 
 const roomListStyle = css`
+  width: 100%;
+
   &::-webkit-scrollbar {
     width: 16px;
   }
@@ -66,10 +70,59 @@ const roomListStyle = css`
   }
 `;
 
+const listLayoutOuter = css`
+  flex-flow: column;
+`;
+
+const gridLayoutOuter = css`
+  width: 100%;
+
+  display: flex;
+  flex-flow: column;
+  gap: ${variable('Size.space.small')};
+`;
+
+const gridLayout = css`
+  display: flex;
+  flex-flow: row;
+  justify-content: space-evenly;
+  align-items: center;
+  gap: ${variable('Size.space.small')};
+`;
+
+const gridItemStyle = css`
+  flex: 1;
+  display: flex;
+  flex-flow: column;
+  justify-content: flex-start;
+  align-items: center;
+  gap: ${variable('Size.space.small')};
+
+  background: ${variable('Color.Grey.100')};
+  padding: ${variable('Size.space.medium')};
+
+  transition-duration: ${variable('Animation.duration.short')};
+  transition-timing-function: ${variable('Animation.easing.deceleration')};
+
+  & > img {
+    flex-shrink: 0;
+  }
+  & > span {
+    font-size: ${variable('Size.text.title')};
+    flex-shrink: 1;
+  }
+
+  &:hover, &:active {
+    background: ${variable('Color.Grey.200')};
+  }
+`;
+
 export interface RoomContainerProps {
   rooms: ChatRoomType[];
   selectedRoom?: ChatRoomType;
   onRoomSelect?: (room?: ChatRoomType) => void;
+
+  onItem?: (id: string) => void;
 }
 
 const RoomContainer: Component<RoomContainerProps> = (props) => {
@@ -83,12 +136,67 @@ const RoomContainer: Component<RoomContainerProps> = (props) => {
       value = it;
     }
 
-    props.onRoomSelect?.(it);
+    props.onRoomSelect?.(value);
   };
 
   createEffect(() => {
     setSelectedRoom(props.selectedRoom);
   });
+
+  const RoomRenderer = (list: ChatRoomType | ChatRoomType[]) => {
+    if (Array.isArray(list)) {
+      return (
+        <div className={gridLayout}>
+          <For each={list}>
+            {(room) => {
+              const onSelect = () => {
+                if (room.id === selectedRoom()?.id) onClick(undefined);
+                onClick(room);
+              };
+
+              return (
+                <div
+                  className={gridItemStyle}
+                  onClick={onSelect}
+                >
+                  <Profile
+                    url={room.thumbnail}
+                    ring={room.id === selectedRoom()?.id ? 'Blue.500' : undefined}
+                  />
+                  <span>{room.title}</span>
+                </div>
+              );
+            }}
+          </For>
+        </div>
+      );
+    }
+
+    return (
+      <ChatRoom
+        selected={list.id === selectedRoom()?.id}
+        room={list}
+        lastMessage={Math.random() > 0.5 ? messageList[~~(Math.random() * messageList.length)] : undefined}
+        unread={~~(Math.random() * 10)}
+        writing={Math.random() > 0.5}
+        onClick={onClick}
+      />
+    );
+  };
+
+  const targetItems = (): ChatRoomType[][] | ChatRoomType[] => {
+    if (roomLayout() === 'grid') {
+      const result: ChatRoomType[][] = [];
+      props.rooms.forEach((room, index) => {
+        if (index % 4 === 0) result.push([room]);
+        else result[result.length - 1].push(room);
+      });
+
+      return result;
+    }
+
+    return props.rooms;
+  }
 
   return (
     <div
@@ -100,29 +208,24 @@ const RoomContainer: Component<RoomContainerProps> = (props) => {
       <Header
         className={headerStyle}
         rightIcon={<>
-          <IconButton size={16} icon={VscSearch} />
-          <IconButton size={16} icon={VscSettingsGear} />
+          <IconButton size={16} icon={VscSearch} onClick={() => props.onItem?.('search')} />
+          <IconButton size={16} icon={VscSettingsGear} onClick={() => props.onItem?.('settings')} />
         </>}
       >
         채팅 ({props.rooms.length})
       </Header>
-      <VirtualList
-        items={props.rooms}
+      <VirtualList<ChatRoomType | ChatRoomType[]>
+        items={targetItems()}
         style={'flex: 1'}
+        innerClassName={cx(
+          roomLayout() === 'list' && listLayoutOuter,
+          roomLayout() === 'grid' && gridLayoutOuter,
+        )}
         itemHeight={56}
         topMargin={56}
         className={roomListStyle}
       >
-        {(room) => (
-          <ChatRoom
-            selected={room.id === selectedRoom()?.id}
-            room={room}
-            lastMessage={Math.random() > 0.5 ? messageList[~~(Math.random() * messageList.length)] : undefined}
-            unread={~~(Math.random() * 10)}
-            writing={Math.random() > 0.5}
-            onClick={onClick}
-          />
-        )}
+        {RoomRenderer}
       </VirtualList>
     </div>
   );

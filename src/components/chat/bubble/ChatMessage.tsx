@@ -2,7 +2,7 @@ import { variable } from '@/theme';
 import { Message, User } from '@/types';
 import { css, cx } from '@linaria/core';
 import { Component, mergeProps, Show } from 'solid-js';
-import UserProfile from '../UserProfile';
+import Profile from '../Profile';
 import ChatBubble from './ChatBubble';
 
 const containerStyle = css`
@@ -23,7 +23,7 @@ const containerStyle = css`
   & > .sender-name {
     grid-row: 1 / 2;
     grid-column: 2 / span 2;
-    font-size: 16px;
+    font-size: ${variable('Size.text.subtitle')};
   }
 
   & > .bubble {
@@ -35,6 +35,7 @@ const containerStyle = css`
     padding-right: ${variable('Size.icon.large')};
 
     white-space: nowrap;
+    font-size: ${variable('Size.text.caption')};
     font-size: 12px;
     color: ${variable('Color.Grey.500')};
 
@@ -100,7 +101,10 @@ const ChatMessage: Component<ChatMessageProps> = (props) => {
         when={!local.mine && (local.type === 'first-last' || local.type === 'last')}
         fallback={local.mine ? null : profileDummy}
       >
-        <UserProfile className={'profile'} user={local.message.sender} />
+        <Profile
+          className={'profile'}
+          url={local.message.sender.profile}
+        />
       </Show>
       <Show when={!local.mine && (local.type === 'first-last' || local.type === 'first')}>
         <div className={'sender-name'}>{local.message.sender.name}</div>

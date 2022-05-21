@@ -1,16 +1,21 @@
-import { createSignal, Show } from 'solid-js';
+import { createEffect, createSignal, on, onCleanup, onMount, Show } from 'solid-js';
 
 import type { Component } from 'solid-js';
 import { css } from '@linaria/core';
 import { JSX } from 'solid-js/jsx-runtime';
 
-import { variable } from '@/theme';
+import { getTheme, variable } from '@/theme';
 import {roomList } from '@/utils/dummy';
 import RoomContainer from '@/containers/RoomContainer';
 import ChatContainer from '@/containers/ChatContainer';
 import { ChatRoom } from '@/types';
 import { roomContainerWidth, setRoomContainerWidth } from '@/store/room';
 import { Transition } from 'solid-transition-group';
+import { useNavigate, useParams, useSearchParams } from 'solid-app-router';
+import createMediaSignal from '@/hooks/createMediaSignal';
+import { cssTimeToMs } from '@/utils/css';
+
+const GESTURE_OFFSET = 30;
 
 const containerStyle = css`
   width: 100%;
@@ -35,6 +40,33 @@ const roomContainerStyle = css`
     max-width: 60vw;
     width: var(--room-container-width, 320px);
   }
+
+  @media (max-width: 640px) {
+    &[data-active="false"] {
+      --page-ratio: 1;
+    }
+    width: 100%;
+
+    transform: translateX(calc((1 - var(--page-ratio)) * -10%));
+
+    transition-duration: ${variable('Animation.duration.short')};
+    transition-timing-function: ${variable('Animation.easing.deceleration')};
+
+    &::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      z-index: 2;
+
+      pointer-events: none;
+
+      background: ${variable('Color.Grey.500')};
+      opacity: calc((1 - var(--page-ratio)) * ${variable('Color.Transparency.translucent')});
+
+      transition-duration: ${variable('Animation.duration.short')};
+      transition-timing-function: ${variable('Animation.easing.deceleration')};
+    }
+  }
 `;
 
 const chatContainerStyle = css`
@@ -47,6 +79,15 @@ const chatContainerStyle = css`
     inset: 0;
 
     pointer-events: none;
+
+    & #chat-container {
+      transform: translateX(calc(var(--page-ratio) * 100%));
+    }
+
+    &[data-animation="true"] #chat-container {
+      transition-duration: ${variable('Animation.duration.short')} !important;
+      transition-timing-function: ${variable('Animation.easing.deceleration')};
+    }
 
     &[data-active="true"] {
       pointer-events: auto;
@@ -68,9 +109,7 @@ const placeholderStyle = css`
   gap: 4px;
   
   @media (max-width: 640px) {
-    color: transparent;
-    opacity: 0;
-    background: ${variable('Color.Grey.300')};
+    display: none;
   }
 `;
 
@@ -82,7 +121,7 @@ const dividerStyle = css`
   position: absolute;
   top: 0;
   bottom: 0;
-  left: calc(var(--room-container-width, 320px) - 4px);
+  left: clamp(320px, calc(var(--room-container-width, 320px) - 4px), 60vw);
 
   z-index: 100;
   user-drag: none;
@@ -117,7 +156,7 @@ const slideInStart = css`
 
   @media (max-width: 640px) {
     opacity: 1;
-    transform: translateX(100%);
+    --page-ratio: 1;
   }
 `;
 
@@ -126,11 +165,11 @@ const slideInEnd = css`
   transform: translateX(0);
 
   transition-duration: ${variable('Animation.duration.short')};
-  transition-timing-function: ${variable('Animation.easing.deceleration')};
+  transition-timing-function: ${variable('Animation.easing.inOut')};
 
   @media (max-width: 640px) {
     opacity: 1;
-    transform: translateX(0);
+    --page-ratio: 0;
   }
 `;
 
@@ -140,7 +179,6 @@ const slideOutStart = css`
 
   @media (max-width: 640px) {
     opacity: 1;
-    transform: translateX(0);
   }
 `;
 
@@ -149,13 +187,12 @@ const slideOutEnd = css`
   transform: translateX(50%);
 
   transition-duration: ${variable('Animation.duration.short')};
-  transition-timing-function: ${variable('Animation.easing.acceleration')};
+  transition-timing-function: ${variable('Animation.easing.inOut')};
 
   @media (max-width: 640px) {
     opacity: 1;
-    transform: translateX(100%);
 
-    transition-timing-function: ${variable('Animation.easing.deceleration')};
+    --page-ratio: 1;
   }
 `;
 
@@ -164,28 +201,28 @@ const fadeIn = css`
 
   transition-duration: ${variable('Animation.duration.short')};
   transition-timing-function: ${variable('Animation.easing.inOut')};
-
-  @media (max-width: 640px) {
-    opacity: 0;
-
-    transition-timing-function: ${variable('Animation.easing.deceleration')};
-  }
 `;
 const fadeOut = css`
   opacity: 0;
 
   transition-duration: ${variable('Animation.duration.short')};
   transition-timing-function: ${variable('Animation.easing.inOut')};
-
-  @media (max-width: 640px) {
-    opacity: 0.5;
-
-    transition-timing-function: ${variable('Animation.easing.deceleration')};
-  }
 `;
 
 const ChatPage: Component = () => {
-  const [selectedRoom, setSelectedRoom] = createSignal<ChatRoom | undefined>();
+  const [searchParams, setSearchParams] = useSearchParams();
+  const navigate = useNavigate();
+
+  const isScreenNarrow = createMediaSignal('(max-width: 640px)');
+  const [pageRatio, setPageRatio] = createSignal(0);
+  const [animation, setAnimation] = createSignal(false);
+
+  const selectedRoomId = () => searchParams.id;
+  const selectedRoom = () => roomList.find((it) => it.id === selectedRoomId());
+  const setSelectedRoom = (room?: ChatRoom) => {
+    if (room) setSearchParams({ id: room.id }, { replace: !!selectedRoomId() });
+    else history.back();
+  };
 
   let startWidth: number | null = null;
   const [startX, setStartX] = createSignal<number | null>(null);
@@ -202,7 +239,7 @@ const ChatPage: Component = () => {
     const { clientX } = event;
     const diff = clientX - x;
 
-    setRoomContainerWidth(Math.max(320, startWidth + diff));
+    setRoomContainerWidth(~~Math.max(320, startWidth + diff));
   };
   const onDividerUp: JSX.EventHandlerUnion<HTMLDivElement, PointerEvent> = (event) => {
     setStartX(null);
@@ -211,18 +248,87 @@ const ChatPage: Component = () => {
     event.target.releasePointerCapture(event.pointerId);
   };
 
+  let moveX = 0;
+  let lastScreenX = 0;
+  let startScreenX: number | null = null;
+  let isMove = false;
+  const onGestureStart = (event: TouchEvent) => {
+    const screenX = event.touches.item(0)?.clientX ?? document.body.clientWidth;
+    
+    if (isScreenNarrow() && screenX < document.body.clientWidth / 2) startScreenX = screenX;
+  };
+  const onGesture = (event: TouchEvent) => {
+    if (typeof startScreenX !== 'number') return;
+
+    const screenX = event.touches.item(0)?.clientX;
+    if (!screenX) return;
+
+    if (!isMove && Math.abs(startScreenX - screenX) > GESTURE_OFFSET) isMove = true;
+
+    if (isMove) {
+      moveX += screenX - lastScreenX;
+      lastScreenX = screenX;
+  
+      const ratio = Math.min(Math.max((moveX - startScreenX) / document.body.clientWidth, 0), 1);
+      setPageRatio(ratio);
+    }
+  };
+  const onGestureEnd = () => {
+    if (typeof startScreenX === 'number') {
+      if (pageRatio() > 0.5) {
+        if (selectedRoom()) setSelectedRoom();
+      } else {
+        setAnimation(true);
+        setPageRatio(0);
+      }
+
+      const duration = cssTimeToMs(getTheme().Animation.duration.short);
+
+      if (typeof duration === 'number') {
+        setTimeout(() => {
+          setAnimation(false);
+          setPageRatio(0);
+        }, duration);
+      }
+
+      isMove = false;
+      startScreenX = null;
+    }
+  };
+
+  const onItemClick = (id: string) => {
+    if (id === 'settings') navigate('../preference');
+  };
+
+  onMount(() => {
+    document.body.addEventListener('touchstart', onGestureStart);
+    document.body.addEventListener('touchmove', onGesture);
+    document.body.addEventListener('touchend', onGestureEnd);
+  });
+
+  onCleanup(() => {
+    document.body.removeEventListener('touchstart', onGestureStart);
+    document.body.removeEventListener('touchmove', onGesture);
+    document.body.removeEventListener('touchend', onGestureEnd);
+  });
+
   return (
     <div
       className={containerStyle}
       style={{
         '--room-container-width': `${roomContainerWidth()}px`,
+        '--page-ratio': pageRatio(),
       }}  
     >
-      <div className={roomContainerStyle}>
+      <div
+        data-active={selectedRoom() !== undefined}
+        className={roomContainerStyle}
+      >
         <RoomContainer
           rooms={roomList}
           selectedRoom={selectedRoom()}
           onRoomSelect={setSelectedRoom}
+          onItem={onItemClick}
         />
       </div>
       <div
@@ -234,6 +340,7 @@ const ChatPage: Component = () => {
       />
       <div
         data-active={selectedRoom() !== undefined}
+        data-animation={animation()}
         className={chatContainerStyle}
       >
         <Transition

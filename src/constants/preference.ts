@@ -1,14 +1,17 @@
 import { MenuItem } from '@/components/common/MenuList';
 import { setThemeMode, themeMode } from '@/store/display';
-import { roomContainerWidth, setRoomContainerWidth } from '@/store/room';
+import { roomContainerWidth, roomLayout, setRoomContainerWidth, setRoomLayout } from '@/store/room';
 import { IconTypes } from 'solid-icons';
 import { FaMoon, FaSun } from 'solid-icons/fa';
 import {
   VscLayout,
+  VscListFlat,
   VscServerEnvironment,
   VscSignOut,
+  VscSplitHorizontal,
   VscSymbolColor,
   VscSync,
+  VscTable,
   VscTextSize,
 } from 'solid-icons/vsc';
 import { Accessor, Setter } from 'solid-js';
@@ -78,27 +81,38 @@ export const appearancePreferenceGroup: PreferenceGroupType = {
         { id: 'dark', name: '다크 모드', icon: FaMoon },
       ],
     },
-    {
-      id: 'fontSize',
-      icon: VscTextSize,
-      name: '폰트 크기',
-      type: 'number',
-      defaultValue: 14,
-      min: 8,
-      max: 24,
-    },
+  ],
+};
+
+export const chatPreferenceGroup: PreferenceGroupType = {
+  id: 'chat',
+  name: '채팅',
+  preferences: [
     {
       id: 'roomContainerWidth',
-      icon: VscLayout,
+      icon: VscSplitHorizontal,
       name: '채팅방 가로 크기',
       type: 'number',
       defaultValue: 320,
       min: 320,
       max: 1280,
       signal: [roomContainerWidth, setRoomContainerWidth],
-    }
+    },
+    {
+      id: 'chatRoomLayout',
+      icon: VscLayout,
+      name: '채팅방 레이아웃',
+      type: 'select',
+      defaultValue: 'list',
+      required: true,
+      signal: [roomLayout, setRoomLayout],
+      values: [
+        { id: 'list', name: '리스트', icon: VscListFlat },
+        { id: 'grid', name: '그리드', icon: VscTable }
+      ]
+    },
   ],
-};
+}
 
 export const serverPreferenceGroup: PreferenceGroupType = {
   id: 'server',
@@ -139,6 +153,7 @@ export const accountPreferenceGroup: PreferenceGroupType = {
 
 export const preferenceGroupList = [
   appearancePreferenceGroup,
+  chatPreferenceGroup,
   serverPreferenceGroup,
   accountPreferenceGroup,
 ];
