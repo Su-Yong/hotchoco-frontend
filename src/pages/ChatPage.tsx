@@ -1,4 +1,4 @@
-import { createEffect, createSignal, on, onCleanup, onMount, Show } from 'solid-js';
+import { createSignal, Show } from 'solid-js';
 
 import type { Component } from 'solid-js';
 import { css } from '@linaria/core';
@@ -14,8 +14,7 @@ import { Transition } from 'solid-transition-group';
 import { useNavigate, useParams, useSearchParams } from 'solid-app-router';
 import createMediaSignal from '@/hooks/createMediaSignal';
 import { cssTimeToMs } from '@/utils/css';
-
-const GESTURE_OFFSET = 30;
+import Hammer from 'hammerjs';
 
 const containerStyle = css`
   width: 100%;
@@ -49,8 +48,10 @@ const roomContainerStyle = css`
 
     transform: translateX(calc((1 - var(--page-ratio)) * -10%));
 
-    transition-duration: ${variable('Animation.duration.short')};
-    transition-timing-function: ${variable('Animation.easing.deceleration')};
+    &[data-animation="true"] {
+      transition-duration: ${variable('Animation.duration.short')};
+      transition-timing-function: ${variable('Animation.easing.deceleration')};
+    }
 
     &::after {
       content: '';
@@ -62,10 +63,13 @@ const roomContainerStyle = css`
 
       background: ${variable('Color.Grey.500')};
       opacity: calc((1 - var(--page-ratio)) * ${variable('Color.Transparency.translucent')});
+    }
 
+    &[data-animation="true"]::after {
       transition-duration: ${variable('Animation.duration.short')};
       transition-timing-function: ${variable('Animation.easing.deceleration')};
     }
+
   }
 `;
 
@@ -73,6 +77,8 @@ const chatContainerStyle = css`
   position: relative;
   z-index: 2;
   flex: 1;
+
+  touch-action: none;
 
   @media (max-width: 640px) {
     position: absolute;
@@ -216,101 +222,73 @@ const ChatPage: Component = () => {
   const isScreenNarrow = createMediaSignal('(max-width: 640px)');
   const [pageRatio, setPageRatio] = createSignal(0);
   const [animation, setAnimation] = createSignal(false);
+  const [dividerActive, setDividerActive] = createSignal(false);
 
   const selectedRoomId = () => searchParams.id;
   const selectedRoom = () => roomList.find((it) => it.id === selectedRoomId());
   const setSelectedRoom = (room?: ChatRoom) => {
+    setAnimation(true);
     if (room) setSearchParams({ id: room.id }, { replace: !!selectedRoomId() });
     else history.back();
-  };
-
-  let startWidth: number | null = null;
-  const [startX, setStartX] = createSignal<number | null>(null);
-  const onDividerDown: JSX.EventHandlerUnion<HTMLDivElement, PointerEvent> = (event) => {
-    setStartX(event.clientX);
-    startWidth = roomContainerWidth();
-
-    event.target.setPointerCapture(event.pointerId);
-  };
-  const onDividerMove: JSX.EventHandlerUnion<HTMLDivElement, PointerEvent> = (event) => {
-    const x = startX();
-    if (x === null || startWidth === null) return;
-
-    const { clientX } = event;
-    const diff = clientX - x;
-
-    setRoomContainerWidth(~~Math.max(320, startWidth + diff));
-  };
-  const onDividerUp: JSX.EventHandlerUnion<HTMLDivElement, PointerEvent> = (event) => {
-    setStartX(null);
-    startWidth = null;
-
-    event.target.releasePointerCapture(event.pointerId);
-  };
-
-  let moveX = 0;
-  let lastScreenX = 0;
-  let startScreenX: number | null = null;
-  let isMove = false;
-  const onGestureStart = (event: TouchEvent) => {
-    const screenX = event.touches.item(0)?.clientX ?? document.body.clientWidth;
-    
-    if (isScreenNarrow() && screenX < document.body.clientWidth / 2) startScreenX = screenX;
-  };
-  const onGesture = (event: TouchEvent) => {
-    if (typeof startScreenX !== 'number') return;
-
-    const screenX = event.touches.item(0)?.clientX;
-    if (!screenX) return;
-
-    if (!isMove && Math.abs(startScreenX - screenX) > GESTURE_OFFSET) isMove = true;
-
-    if (isMove) {
-      moveX += screenX - lastScreenX;
-      lastScreenX = screenX;
-  
-      const ratio = Math.min(Math.max((moveX - startScreenX) / document.body.clientWidth, 0), 1);
-      setPageRatio(ratio);
-    }
-  };
-  const onGestureEnd = () => {
-    if (typeof startScreenX === 'number') {
-      if (pageRatio() > 0.5) {
-        if (selectedRoom()) setSelectedRoom();
-      } else {
-        setAnimation(true);
-        setPageRatio(0);
-      }
-
-      const duration = cssTimeToMs(getTheme().Animation.duration.short);
-
-      if (typeof duration === 'number') {
-        setTimeout(() => {
-          setAnimation(false);
-          setPageRatio(0);
-        }, duration);
-      }
-
-      isMove = false;
-      startScreenX = null;
-    }
   };
 
   const onItemClick = (id: string) => {
     if (id === 'settings') navigate('../preference');
   };
 
-  onMount(() => {
-    document.body.addEventListener('touchstart', onGestureStart);
-    document.body.addEventListener('touchmove', onGesture);
-    document.body.addEventListener('touchend', onGestureEnd);
-  });
+  const registerDividerGesture = (divider: HTMLDivElement) => {
+    const hammer = new Hammer(divider);
 
-  onCleanup(() => {
-    document.body.removeEventListener('touchstart', onGestureStart);
-    document.body.removeEventListener('touchmove', onGesture);
-    document.body.removeEventListener('touchend', onGestureEnd);
-  });
+    hammer.get('pan').set({ direction: Hammer.DIRECTION_HORIZONTAL });
+
+    hammer.on('panstart', () => setDividerActive(true));
+    hammer.on('pan', (event) => {
+      const x = ~~Math.max(event.center.x, 320);
+      setRoomContainerWidth(x);
+    });
+    hammer.on('panend', () => setDividerActive(false));
+  };
+
+  const registerChatRoomGesture = (chatRoom: HTMLDivElement) => {
+    const hammer = new Hammer(chatRoom);
+
+    hammer.get('pan').set({ direction: Hammer.DIRECTION_HORIZONTAL });
+
+    let isStart = false;
+    hammer.on('panstart', (event) => {
+      setAnimation(false);
+      if (isScreenNarrow() && event.center.x < document.body.clientWidth / 2) {
+        isStart = true;
+      }
+    });
+    hammer.on('pan', (event) => {
+      if (isStart) {
+        const ratio = Math.min(Math.max(event.deltaX / document.body.clientWidth, 0), 1);
+        setPageRatio(ratio);
+      }
+    });
+    hammer.on('panend', () => {
+      if (isStart) {
+        if (pageRatio() > 0.5) {
+          if (selectedRoom()) setSelectedRoom();
+        } else {
+          setAnimation(true);
+          setPageRatio(0);
+        }
+
+        const duration = cssTimeToMs(getTheme().Animation.duration.short);
+
+        if (typeof duration === 'number') {
+          setTimeout(() => {
+            setAnimation(false);
+            setPageRatio(0);
+          }, duration);
+        }
+
+        isStart = false;
+      }
+    });
+  };
 
   return (
     <div
@@ -321,6 +299,7 @@ const ChatPage: Component = () => {
       }}  
     >
       <div
+        data-animation={animation()}
         data-active={selectedRoom() !== undefined}
         className={roomContainerStyle}
       >
@@ -332,15 +311,14 @@ const ChatPage: Component = () => {
         />
       </div>
       <div
-        data-visible={startX() !== null}
+        data-visible={dividerActive()}
+        ref={registerDividerGesture}
         className={dividerStyle}
-        onPointerDown={onDividerDown}
-        onPointerMove={onDividerMove}
-        onPointerUp={onDividerUp}
       />
       <div
         data-active={selectedRoom() !== undefined}
         data-animation={animation()}
+        ref={registerChatRoomGesture}
         className={chatContainerStyle}
       >
         <Transition

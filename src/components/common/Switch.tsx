@@ -120,7 +120,6 @@ const Switch: Component<SwitchProps> = (props) => {
     'onChecked',
   ], ['children']);
 
-  let switchThumbRef: HTMLDivElement | undefined;
   let inputRef: HTMLInputElement | undefined;
 
   const [checked, setChecked] = createSignal(local.checked);
@@ -131,73 +130,39 @@ const Switch: Component<SwitchProps> = (props) => {
   const mainColor = local.disabled ? variable('Color.Grey.300') : variable('Color.Blue.500');
   const secondaryColor = local.disabled ? variable('Color.Grey.300') : variable('Color.Grey.500');
 
-  let lastScreenX: number = 0;
-  let x: number | null = null;
-  let lastX: number | null = null;
-  let moved: boolean = false;
-  const onEnter = (event: PointerEvent) => {
-    x = checked() ? local.size : 0
-    lastX = x;
-    setIsMove(true);
-    lastScreenX = event.screenX;
-  };
-  const onMove = (event: PointerEvent) => {
-    if (typeof x === 'number') {
-      x += event.movementX ?? event.screenX - lastScreenX;
-      lastScreenX = event.screenX;
-
-      if (x !== lastX) moved = true;
-      lastX = x;
-
-      const newOffset = Math.min(Math.max(x, 0), local.size) / local.size;
-      setOffset(newOffset);
-    }
-  };
-  const onEnd = (event: PointerEvent) => {
-    if (typeof x === 'number') {
-      x += event.movementX ?? event.screenX - lastScreenX;
-      lastScreenX = event.screenX;
-
-      if (moved) {
-        const newOffset = Math.min(Math.max(x, 0), local.size) / local.size;
-  
-        setChecked(newOffset > 0.5);
-        setOffset(newOffset > 0.5 ? 1 : 0);
-      } else {
-        const newValue = !checked();
-        setChecked(newValue);
-        setOffset(newValue ? 1 : 0);
-      }
-      console.log('end', moved);
-    }
-
-    x = null;
-    moved = false;
-    setIsMove(false);
-  };
-
   const onInput: JSX.EventHandlerUnion<HTMLInputElement, Event> = (event) => {
     setChecked(event.currentTarget.checked);
     setOffset(event.currentTarget.checked ? 1 : 0);
   };
 
-  createEffect((remover: () => void) => {
-    if (remover) remover();
+  const registerSwitchGesture = (thumb: HTMLDivElement) => {
+    const hammer = new Hammer(thumb);
 
-    if (!local.disabled) {
-      switchThumbRef?.addEventListener('pointerdown', onEnter);
-      document?.addEventListener('pointermove', onMove);
-      document?.addEventListener('pointerup', onEnd);
-      document?.addEventListener('pointercancel', onEnd);
-    }
+    hammer.get('pan').set({ direction: Hammer.DIRECTION_HORIZONTAL });
 
-    return () => {
-      switchThumbRef?.removeEventListener('pointerdown', onEnter);
-      document?.removeEventListener('pointermove', onMove);
-      document?.removeEventListener('pointerup', onEnd);
-      document?.removeEventListener('pointercancel', onEnd);
-    };
-  }, () => {});
+    let x = 0;
+    hammer.on('panstart', () => {
+      x = checked() ? local.size : 0;
+      setIsMove(true);
+    });
+    hammer.on('pan', (event) => {
+      const newOffset = Math.min(Math.max(x + event.deltaX, 0), local.size) / local.size;
+      setOffset(newOffset);
+    });
+    hammer.on('panend', (event) => {
+      const newOffset = Math.min(Math.max(x + event.deltaX, 0), local.size) / local.size;
+
+      setChecked(newOffset > 0.5);
+      setOffset(newOffset > 0.5 ? 1 : 0);
+      setIsMove(false);
+    });
+    hammer.on('tap', () => {
+      const newChecked = !checked();
+
+      setChecked(newChecked);
+      setOffset(newChecked ? 1 : 0);
+    });
+  };
 
   createEffect(on(checked, (checkedValue) => {
     if (typeof checkedValue === 'boolean') local.onChecked?.(checkedValue);
@@ -222,11 +187,14 @@ const Switch: Component<SwitchProps> = (props) => {
           className={inputStyle}
           disabled={local.disabled}
           checked={checked()}
-          onChange={isMove() ? undefined : onInput}
+          onChange={onInput}
         />
         {children.children}
       </label>
-      <div ref={switchThumbRef} className={switchStyle}>
+      <div
+        ref={registerSwitchGesture}
+        className={switchStyle}
+      >
         <div className={switchRailStyle} />
         <div className={switchThumbStyle} data-move={isMove()} />
       </div>

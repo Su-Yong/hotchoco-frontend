@@ -77,8 +77,8 @@ const mineStyle = css`
 `;
 
 const profileDummyStyle = css`
-  width: ${variable('Size.icon.large')};
-  height: ${variable('Size.icon.large')};
+  width: ${variable('Size.icon.medium')};
+  height: ${variable('Size.icon.medium')};
 `;
 
 const profileDummy = () => <div className={cx(profileDummyStyle, 'profile')} />
@@ -104,6 +104,7 @@ const ChatMessage: Component<ChatMessageProps> = (props) => {
         <Profile
           className={'profile'}
           url={local.message.sender.profile}
+          size={'medium'}
         />
       </Show>
       <Show when={!local.mine && (local.type === 'first-last' || local.type === 'first')}>
