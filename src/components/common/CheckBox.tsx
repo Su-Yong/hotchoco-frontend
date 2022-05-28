@@ -115,7 +115,7 @@ const CheckBox: Component<CheckBoxProps> = (props) => {
   ], ['children']);
 
   const sizePixel = `${local.size}px`;
-  const mainColor = local.disabled ? variable('Color.Grey.300') : variable('Color.Blue.500');
+  const mainColor = local.disabled ? variable('Color.Grey.300') : variable('Primary.Main');
   const secondaryColor = local.disabled ? variable('Color.Grey.300') : variable('Color.Grey.500');
 
   return (

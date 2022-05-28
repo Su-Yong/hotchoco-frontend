@@ -1,12 +1,13 @@
 import { variable } from '@/theme';
 import { css, cx } from '@linaria/core';
-import { IconTypes } from 'solid-icons';
 import { Component, For, Show, splitProps } from 'solid-js';
 import { JSX } from 'solid-js/jsx-runtime';
 import TextButton from './TextButton';
 
 const menuContainer = css`
   height: max-content;
+  max-height: 360px;
+  overflow: auto;
 
   margin: 0;
   padding: 0;
@@ -31,14 +32,14 @@ const itemStyle = css`
   align-items: center;
   gap: ${variable('Size.space.medium')};
 
-  padding: ${variable('Size.space.medium')} ${variable('Size.space.large')};
+  padding: ${variable('Size.space.medium')};
   font-size: ${variable('Size.text.body')};
 `;
 
 export interface MenuItem {
   id: string;
   name: string;
-  icon?: IconTypes;
+  icon?: () => JSX.Element;
 }
 
 export interface MenuListProps extends JSX.HTMLAttributes<HTMLUListElement> {

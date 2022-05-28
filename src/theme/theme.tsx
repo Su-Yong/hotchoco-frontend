@@ -22,4 +22,4 @@ const createTheme = () => {
 export const { theme: getTheme, setTheme } = createRoot(createTheme);
 
 export type ThemeStyle = Record<CSSVariableName, unknown>;
-export const createThemeStyle = (): Accessor<ThemeStyle> => () =>  getCSSVariables(getTheme());
+export const createThemeStyle = (): Accessor<ThemeStyle> => () => getCSSVariables(getTheme());

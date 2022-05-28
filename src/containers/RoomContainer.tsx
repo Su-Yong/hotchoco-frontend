@@ -8,7 +8,6 @@ import { variable } from '@/theme';
 import { ChatRoom as ChatRoomType } from '@/types';
 import { messageList } from '@/utils/dummy';
 import { css, cx } from '@linaria/core';
-import { VscSearch, VscSettingsGear } from 'solid-icons/vsc';
 import { Component, createEffect, createSignal, For } from 'solid-js';
 
 const containerStyle = css`
@@ -208,8 +207,8 @@ const RoomContainer: Component<RoomContainerProps> = (props) => {
       <Header
         className={headerStyle}
         rightIcon={<>
-          <IconButton size={16} icon={VscSearch} onClick={() => props.onItem?.('search')} />
-          <IconButton size={16} icon={VscSettingsGear} onClick={() => props.onItem?.('settings')} />
+          <IconButton size={variable('Size.icon.small')} icon={'search'} onClick={() => props.onItem?.('search')} />
+          <IconButton size={variable('Size.icon.small')} icon={'settings'} onClick={() => props.onItem?.('settings')} />
         </>}
       >
         채팅 ({props.rooms.length})

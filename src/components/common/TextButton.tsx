@@ -30,13 +30,13 @@ const buttonStyle = css`
     box-sizing: border-box;
     z-index: -1;
 
-    background: ${variable('Color.BLACK')};
+    background: ${variable('Secondary.Main')};
     transition-duration: ${variable('Animation.duration.short')};
     transition-timing-function: ${variable('Animation.easing.deceleration')};
   }
 
   &:hover {
-    color: ${variable('Color.WHITE')};
+    color: ${variable('Secondary.Text')};
 
     &::before {
       width: calc(100% - 4px);
@@ -44,13 +44,13 @@ const buttonStyle = css`
   }
 
   &:active {
-    color: ${variable('Color.WHITE')};
+    color: ${variable('Primary.Text')};
 
     &::before {
       width: 100%;
       inset: 0;
 
-      background: ${variable('Color.Blue.500')};
+      background: ${variable('Primary.Main')};
     }
   }
 `;

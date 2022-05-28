@@ -28,6 +28,7 @@ export interface ColorSheet {
   Grey: ColorPalette;
 
   Red: ColorPalette;
+  Yellow: ColorPalette;
   Green: ColorPalette;
   Blue: ColorPalette;
 

@@ -3,10 +3,7 @@ import { css } from '@linaria/core';
 import { Component, createSignal, onMount } from 'solid-js';
 import IconButton from '../common/IconButton';
 import TextInput from '../common/TextInput';
-import { AiOutlineSend } from 'solid-icons/ai';
 import { JSX } from 'solid-js/jsx-runtime';
-import { VscChevronUp } from 'solid-icons/vsc';
-import { AiOutlinePaperClip } from 'solid-icons/ai';
 
 const inputContainerStyle = css`
   position: absolute;
@@ -93,7 +90,7 @@ const ChatInput: Component<ChatInputProps> = (props) => {
     <div {...props} className={inputContainerStyle}>
       <IconButton
         size={getTheme().Size.icon.small}
-        icon={VscChevronUp}
+        icon={'expand_less'}
       />
       <div className={inputWrapperStyle}>
         <textarea
@@ -105,11 +102,11 @@ const ChatInput: Component<ChatInputProps> = (props) => {
       </div>
       <IconButton
         size={getTheme().Size.icon.small}
-        icon={AiOutlinePaperClip}
+        icon={'attachment'}
       />
       <IconButton
         size={getTheme().Size.icon.small}
-        icon={AiOutlineSend}
+        icon={'send'}
       />
     </div>
   );

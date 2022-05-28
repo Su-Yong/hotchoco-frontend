@@ -29,11 +29,13 @@ const buttonStyle = css`
   }
 
   &:hover::before {
-    background-color: ${variable('Color.Blue.500')};
+    color: ${variable('Primary.Text')};
+    background-color: ${variable('Primary.Main')};
   }
   &:active::before {
     inset: 0;
-    background-color: ${variable('Color.Blue.500')};
+    color: ${variable('Primary.Text')};
+    background-color: ${variable('Primary.Main')};
   }
 `;
 

@@ -1,12 +1,10 @@
 import { getTheme, variable } from '@/theme';
 import { Color, ColorSheet } from '@/theme/ColorSheet';
-import { User } from '@/types';
 import { Leaves, sx } from '@/utils';
 import { css, cx } from '@linaria/core';
-import { IconTypes } from 'solid-icons';
-import { FaUser } from 'solid-icons/fa';
 import { Component, createMemo, mergeProps, splitProps } from 'solid-js';
 import { JSX } from 'solid-js/jsx-runtime';
+import Icon from '../common/Icon';
 
 const profileStyle = css`
   width: var(--profile-size);
@@ -27,14 +25,14 @@ const ringgedProfileStyle = css`
 export interface ProfileProps extends JSX.HTMLAttributes<HTMLImageElement> {
   size?: 'small' | 'medium' | 'large';
   url?: string;
-  fallback?: IconTypes;
+  fallback?: string;
   ring?: Leaves<ColorSheet>;
 }
 
 const Profile: Component<ProfileProps> = (props) => {
   const [local, leftProps] = splitProps(
     mergeProps(
-      { size: 'large', fallback: FaUser },
+      { size: 'large', fallback: 'person' },
       props,
     ),
     ['size', 'url', 'fallback', 'ring'],
@@ -73,7 +71,7 @@ const Profile: Component<ProfileProps> = (props) => {
         [ringgedProfileStyle]: !!local.ring,
       }}
     >
-      <local.fallback size={profileSize()} />
+      <Icon icon={local.fallback} size={profileSize()} />
     </div>
   )
 }

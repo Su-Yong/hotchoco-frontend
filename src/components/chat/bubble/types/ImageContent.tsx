@@ -1,8 +1,8 @@
 import { css } from '@linaria/core';
 import { Component, createSignal, For, Show } from 'solid-js';
-import { VscAdd, VscChevronLeft } from 'solid-icons/vsc';
 import { variable } from '@/theme';
 import Hoverable from '@/components/common/Hoverable';
+import Icon from '@/components/common/Icon';
 
 const containerStyle = css`
   margin: -8px;
@@ -122,12 +122,12 @@ const ImageContent: Component<ImageContentProps> = (props) => {
             fallback={(
               <>
                 <img src={leftSources()[0]} />
-                <VscAdd />
+                <Icon icon={'add'} />
                 <span>{leftSources().length + 1}</span>
               </>
             )}
           >
-            <VscChevronLeft />
+          <Icon icon={'chevron_left'} />
           </Show>
         </Hoverable>
       </Show>

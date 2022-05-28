@@ -1,10 +1,11 @@
 import { Component, splitProps } from 'solid-js';
 import { JSX } from 'solid-js/jsx-runtime';
 
-import { IconProps, IconTypes } from 'solid-icons';
 import { css, cx } from '@linaria/core';
 
-import { variable } from '../../theme';
+import { Theme, variable } from '../../theme';
+import Icon, { IconProps } from './Icon';
+import { Leaves } from '@/utils';
 
 const iconButtonWrapperStyle = css`
   position: relative;
@@ -56,7 +57,7 @@ export interface IconButtonProps extends IconProps {
   outerClassName?: string;
   outerStyle?: JSX.HTMLAttributes<HTMLDivElement>['style'];
   children?: never;
-  icon: IconTypes;
+  icon: string;
 }
 
 const IconButton: Component<IconButtonProps> = (props) => {
@@ -66,7 +67,6 @@ const IconButton: Component<IconButtonProps> = (props) => {
     'color',
     'title',
     'style',
-    'viewBox',
     'className',
     'outerClassName',
     'outerStyle',
@@ -96,13 +96,13 @@ const IconButton: Component<IconButtonProps> = (props) => {
       {...(listeners as JSX.HTMLAttributes<HTMLDivElement>)}
     >
       <div className={overlayStyle} />
-      <local.icon
+      <Icon
         size={local.size}
         color={local.color}
         title={local.title}
         style={local.style}
-        viewBox={local.viewBox}
         className={cx(iconStyle, local.className)}
+        icon={local.icon}
         {...leftProps}
       />
     </div>

@@ -4,7 +4,6 @@ import { preferenceGroupList } from '@/constants/preference';
 import PreferenceContainer from '@/containers/PreferenceContainer';
 import { variable } from '@/theme';
 import { css } from '@linaria/core';
-import { VscArrowLeft } from 'solid-icons/vsc';
 import { Component, For } from 'solid-js';
 
 const containerStyle = css`
@@ -55,7 +54,7 @@ const PreferencePage: Component = () => {
     <div className={containerStyle}>
     <Header
       className={headerStyle}
-      leftIcon={<IconButton icon={VscArrowLeft} onClick={onClose} />}
+      leftIcon={<IconButton icon={'arrow_back'} onClick={onClose} />}
     >
       설정
     </Header>

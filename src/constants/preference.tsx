@@ -1,27 +1,18 @@
+import Icon from '@/components/common/Icon';
 import { MenuItem } from '@/components/common/MenuList';
-import { setThemeMode, themeMode } from '@/store/display';
+import { mainColor, setMainColor, setThemeMode, themeMode } from '@/store/display';
 import { roomContainerWidth, roomLayout, setRoomContainerWidth, setRoomLayout } from '@/store/room';
-import { IconTypes } from 'solid-icons';
-import { FaMoon, FaSun } from 'solid-icons/fa';
-import {
-  VscLayout,
-  VscListFlat,
-  VscServerEnvironment,
-  VscSignOut,
-  VscSplitHorizontal,
-  VscSymbolColor,
-  VscSync,
-  VscTable,
-  VscTextSize,
-} from 'solid-icons/vsc';
+import { getCSSVariables, getTheme, getVariableName, Theme, variable } from '@/theme';
+import { LightTheme } from '@/theme/defined/LightTheme';
 import { Accessor, Setter } from 'solid-js';
+import { JSX } from 'solid-js/jsx-runtime';
 
 export interface PreferenceBaseType<Type extends string, Value extends unknown> {
   id: string;
   name: string;
   description?: string;
   type: Type;
-  icon: IconTypes;
+  icon: () => JSX.Element;
   defaultValue: Value;
   signal?: [Accessor<Value>, Setter<Value>];
 }
@@ -70,17 +61,44 @@ export const appearancePreferenceGroup: PreferenceGroupType = {
   preferences: [
     {
       id: 'theme',
-      icon: VscSymbolColor,
+      icon: () => <Icon icon={'palette'} />,
       name: '테마',
       type: 'select',
       defaultValue: 'light',
       required: true,
       signal: [themeMode, setThemeMode],
       values: [
-        { id: 'light', name: '라이트 모드', icon: FaSun },
-        { id: 'dark', name: '다크 모드', icon: FaMoon },
+        { id: 'light', name: '라이트 모드', icon: () => <Icon icon={'light_mode'} /> },
+        { id: 'dark', name: '다크 모드', icon: () => <Icon icon={'dark_mode'} /> },
       ],
     },
+    {
+      id: 'mainColor',
+      icon: () => <Icon icon={'format_color_fill'} />,
+      name: '메인 색상',
+      type: 'select',
+      defaultValue: getVariableName('Color.Blue.500'),
+      required: true,
+      signal: [mainColor, setMainColor],
+      // 테마 키값을 추출하기 위한 더미 LightTheme, 타입도 중요하지 않음
+      values: Object
+        .entries(getCSSVariables(LightTheme))
+        .filter(([key]) => key.startsWith('--th-color'))
+        .map(([key, value]) => ({
+          id: key,
+          name: (value as string).toString(),
+          icon: () => (
+            <div
+              style={{
+                width: variable('Size.icon.small'),
+                height: variable('Size.icon.small'),
+                'border-radius': variable('Size.icon.small'),
+                background: `var(${key})`,
+              }}
+            />
+          )
+        })),
+    }
   ],
 };
 
@@ -90,7 +108,7 @@ export const chatPreferenceGroup: PreferenceGroupType = {
   preferences: [
     {
       id: 'roomContainerWidth',
-      icon: VscSplitHorizontal,
+      icon: () => <Icon icon={'width_full'} />,
       name: '채팅방 가로 크기',
       type: 'number',
       defaultValue: 320,
@@ -100,15 +118,15 @@ export const chatPreferenceGroup: PreferenceGroupType = {
     },
     {
       id: 'chatRoomLayout',
-      icon: VscLayout,
+      icon: () => <Icon icon={'view_list'} />,
       name: '채팅방 레이아웃',
       type: 'select',
       defaultValue: 'list',
       required: true,
       signal: [roomLayout, setRoomLayout],
       values: [
-        { id: 'list', name: '리스트', icon: VscListFlat },
-        { id: 'grid', name: '그리드', icon: VscTable }
+        { id: 'list', name: '리스트', icon: () => <Icon icon={'view_list'} /> },
+        { id: 'grid', name: '그리드', icon: () => <Icon icon={'grid_view'} /> },
       ]
     },
   ],
@@ -120,7 +138,7 @@ export const serverPreferenceGroup: PreferenceGroupType = {
   preferences: [
     {
       id: 'serverUrl',
-      icon: VscServerEnvironment,
+      icon: () => <Icon icon={'dns'} />,
       name: '서버 주소',
       type: 'text',
       defaultValue: 'http://localhost:3000',
@@ -134,14 +152,14 @@ export const accountPreferenceGroup: PreferenceGroupType = {
   preferences: [
     {
       id: 'autoLogin',
-      icon: VscSync,
+      icon: () => <Icon icon={'autorenew'} />,
       name: '자동 로그인',
       type: 'switch',
       defaultValue: false,
     },
     {
       id: 'logoutTimeout',
-      icon: VscSignOut,
+      icon: () => <Icon icon={'logout'} />,
       name: '자동 로그아웃 시간 (단위: 분)',
       type: 'number',
       defaultValue: 5,

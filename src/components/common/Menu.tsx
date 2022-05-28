@@ -159,6 +159,8 @@ const Menu: Component<MenuProps> = (props) => {
       onLoad(menuRef);
       menuMutationObserver.observe(menuRef, mutationObserverConfig);
     }
+    
+    document.addEventListener('scroll', calculateCoordinate, true);
   });
 
   createEffect(calculateCoordinate);
@@ -168,14 +170,16 @@ const Menu: Component<MenuProps> = (props) => {
       if (prevAnchor) anchorMutationObserver.disconnect();
 
       anchorMutationObserver.observe(local.anchor, mutationObserverConfig);
-    }
 
-    return local.anchor;
+      return local.anchor;
+    }
   }, undefined);
 
   onCleanup(() => {
     anchorMutationObserver.disconnect();
     menuMutationObserver.disconnect();
+
+    document.removeEventListener('scroll', calculateCoordinate, true);
   });
 
   return (

@@ -1,9 +1,9 @@
 import { variable } from '@/theme';
 import { sx } from '@/utils';
 import { css, cx } from '@linaria/core';
-import { VscChevronDown } from 'solid-icons/vsc';
 import { Component, createDeferred, createEffect, createSignal, createUniqueId, mergeProps, splitProps } from 'solid-js';
 import { JSX } from 'solid-js/jsx-runtime';
+import Icon from './Icon';
 import Menu, { MenuProps } from './Menu';
 import { MenuItem } from './MenuList';
 
@@ -43,7 +43,7 @@ const selectStyle = css`
   }
 
   &[data-required="true"][data-value="false"] {
-    --box-shadow-color: ${variable('Color.Red.500')};
+    --box-shadow-color: ${variable('Danger.Main')};
   }
 
   &[data-value="true"] {
@@ -93,6 +93,7 @@ const Select: Component<SelectProps> = (props) => {
   const noneId = createUniqueId();
   const [anchor, setAnchor] = createSignal<HTMLDivElement>();
   const [open, setOpen] = createSignal(false);
+  const [menuWidth, setMenuWidth] = createSignal(0);
 
   const onMenuItem = (item: MenuItem) => {
     if (item.id === noneId) {
@@ -135,7 +136,7 @@ const Select: Component<SelectProps> = (props) => {
 
   const textColor = () => (local.disabled || local.value === undefined) ? variable('Color.Grey.500') : variable('Color.BLACK');
   const iconColor = () => local.disabled ? variable('Color.Grey.500') : variable('Color.BLACK');
-  const mainColor = () => local.disabled ? variable('Color.Grey.200') : variable('Color.Blue.500');
+  const mainColor = () => local.disabled ? variable('Color.Grey.200') : variable('Primary.Main');
   const secondaryColor = () => local.disabled ? variable('Color.Grey.300') : variable('Color.Grey.500');
   const backgroundColor = () => local.disabled ? variable('Color.Grey.100') : variable('Color.Grey.200');
   const backgroundHoverColor = () => local.disabled ? variable('Color.Grey.100') : variable('Color.Grey.300');
@@ -143,6 +144,15 @@ const Select: Component<SelectProps> = (props) => {
   createEffect(() => {
     if (local.disabled) {
       setOpen(false);
+    }
+  });
+
+  createEffect(() => {
+    const element = anchor();
+    if (element) {
+      const width = element.getBoundingClientRect().width;
+      
+      setMenuWidth(width);
     }
   });
 
@@ -169,12 +179,13 @@ const Select: Component<SelectProps> = (props) => {
           {innerIcon()}
           {innerName()}
         </span>
-        <VscChevronDown
-          className={iconStyle}
-        />
+        <Icon icon={'expand_more'} className={iconStyle} />
       </div>
       <Menu
         {...menuProps}
+        style={{
+          width: typeof menuWidth() === 'number' ? `${menuWidth()}px` : undefined,
+        }}
         items={items()}
         open={open()}
         onMenuItem={onMenuItem}

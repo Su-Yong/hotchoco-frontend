@@ -6,7 +6,7 @@ import { createThemeStyle, setTheme, variable } from './theme';
 import { css } from '@linaria/core';
 import { LightTheme } from './theme/defined/LightTheme';
 import { DarkTheme } from './theme/defined/DarkTheme';
-import { themeMode } from './store/display';
+import { mainColor, themeMode } from './store/display';
 import { Transition } from 'solid-transition-group';
 import ChatContainer from './containers/ChatContainer';
 import ChatPage from './pages/ChatPage';
@@ -14,6 +14,8 @@ import ComponentPage from './pages/ComponentPage';
 import LoginPage from './pages/LoginPage';
 import PreferencePage from './pages/PreferencePage';
 import { ROOT_ID } from './constants/common';
+import { createUserColorStyle, setUserColor } from './theme/UserColor';
+import { DefaultUserColor } from './theme/defined/DefaultUserColor';
 
 const bodyStyle = css`
   position: relative;
@@ -61,6 +63,7 @@ const exitEnd = css`
 
 const App: Component = () => {
   const themeStyle = createThemeStyle();
+  const userColorStyle = createUserColorStyle();
 
   createEffect(() => {
     if (themeMode() === 'light') setTheme(LightTheme);
@@ -68,8 +71,24 @@ const App: Component = () => {
   });
 
   createEffect(() => {
+    setUserColor({
+      ...DefaultUserColor,
+      Primary: {
+        ...DefaultUserColor.Primary,
+        Main: `var(${mainColor()})`,
+      },
+    });
+  });
+
+  createEffect(() => {
     let bodyStyle = '';
-    Object.entries(themeStyle()).forEach(([key, value]) => {
+
+    const variableList = [
+      ...Object.entries(themeStyle()),
+      ...Object.entries(userColorStyle()),
+    ];
+    
+    variableList.forEach(([key, value]) => {
       bodyStyle += `${key}: ${value};\n`;
     });
 

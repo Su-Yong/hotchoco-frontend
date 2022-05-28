@@ -16,6 +16,10 @@ const CheckPreference: Component<CheckPreferenceProps> = (props) => {
     },
   );
 
+  if (props.required && props.values.every((it) => it.id !== select())) {
+    setSelect(props.defaultValue);
+  }
+
   return (
     <Select
       required={props.required}

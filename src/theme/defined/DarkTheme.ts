@@ -31,6 +31,19 @@ export const DarkColorSheet: ColorSheet = {
     100: '#7f1d1d',
   },
 
+  Yellow: {
+    50: '#fefce8',
+    100: '#fef9c3',
+    200: '#fef08a',
+    300: '#fde047',
+    400: '#facc15',
+    500: '#eab308',
+    600: '#ca8a04',
+    700: '#a16207',
+    800: '#854d0e',
+    900: '#713f12',
+  },
+
   Green: {
     900: '#dcfce7',
     800: '#bbf7d0',
@@ -97,7 +110,7 @@ const SizeSheet: Size = {
   },
   icon: {
     small: '24px',
-    medium: '32px',
+    medium: '36px',
     large: '48px',
   },
   space: {

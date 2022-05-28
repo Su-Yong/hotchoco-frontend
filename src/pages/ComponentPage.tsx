@@ -5,7 +5,6 @@ import Select from '@/components/common/Select';
 import Switch from '@/components/common/Switch';
 import TextInput from '@/components/common/TextInput';
 import { css } from '@linaria/core';
-import { FaMoon, FaSun } from 'solid-icons/fa';
 import { Component, createSignal } from 'solid-js';
 import { JSX } from 'solid-js/jsx-runtime';
 
@@ -38,8 +37,8 @@ const ComponentPage: Component = () => {
       <TextInput disabled={disabled()} />
       <MenuList
         items={[
-          { id: 'light', name: '라이트 테마', icon: FaSun },
-          { id: 'dark', name: '다크 테마', icon: FaMoon },
+          { id: 'light', name: '라이트 테마' },
+          { id: 'dark', name: '다크 테마' },
         ]}
       />
       <Button onClick={onClick}>메뉴</Button>
@@ -47,8 +46,8 @@ const ComponentPage: Component = () => {
         open={open()}
         onMenuItem={() => setOpen(false)}
         items={[
-          { id: 'light', name: '라이트 테마', icon: FaSun },
-          { id: 'dark', name: '다크 테마', icon: FaMoon },
+          { id: 'light', name: '라이트 테마' },
+          { id: 'dark', name: '다크 테마' },
         ]}
         anchor={anchor()}
       />
@@ -60,8 +59,8 @@ const ComponentPage: Component = () => {
           setItem(value);
         }}
         items={[
-          { id: 'light', name: '라이트 테마', icon: FaSun },
-          { id: 'dark', name: '다크 테마', icon: FaMoon },
+          { id: 'light', name: '라이트 테마' },
+          { id: 'dark', name: '다크 테마' },
         ]}
       />
     </div>

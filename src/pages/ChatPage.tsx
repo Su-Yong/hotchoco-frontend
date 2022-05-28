@@ -78,8 +78,6 @@ const chatContainerStyle = css`
   z-index: 2;
   flex: 1;
 
-  touch-action: none;
-
   @media (max-width: 640px) {
     position: absolute;
     inset: 0;
@@ -252,7 +250,7 @@ const ChatPage: Component = () => {
   const registerChatRoomGesture = (chatRoom: HTMLDivElement) => {
     const hammer = new Hammer(chatRoom);
 
-    hammer.get('pan').set({ direction: Hammer.DIRECTION_HORIZONTAL });
+    hammer.get('pan').set({ direction: Hammer.DIRECTION_RIGHT });
 
     let isStart = false;
     hammer.on('panstart', (event) => {
@@ -328,7 +326,10 @@ const ChatPage: Component = () => {
           exitToClass={slideOutEnd}
         >
           <Show when={selectedRoom() !== undefined}>
-            <ChatContainer onClose={() => setSelectedRoom()} />
+            <ChatContainer
+              room={selectedRoom()}
+              onClose={() => setSelectedRoom()}
+            />
           </Show>
         </Transition>
         <Transition

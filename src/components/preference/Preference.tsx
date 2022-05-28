@@ -93,9 +93,7 @@ const Preference: Component<PreferenceProps> = (props) => {
   return (
     <div className={containerStyle}>
       <div className={iconWrapperStyle}>
-        <props.preference.icon
-          size={getTheme().Size.icon.medium}
-        />
+        {props.preference.icon()}
       </div>
       {props.preference.name}
       <div style={'flex: 1;'} />

@@ -14,7 +14,6 @@ const containerStyle = css`
   align-items: stretch;
   gap: ${variable('Size.space.small')};
 
-  z-index: 0;
   padding: ${variable('Size.space.large')};
   border-radius: ${variable('Size.space.large')};
   background: ${variable('Color.Grey.100')};

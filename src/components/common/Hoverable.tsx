@@ -1,4 +1,5 @@
 import { Theme, variable } from '@/theme';
+import { UserColor } from '@/theme/UserColor';
 import { Leaves } from '@/utils';
 import { css, cx } from '@linaria/core';
 import { Component, mergeProps, splitProps } from 'solid-js';
@@ -49,7 +50,7 @@ const overlayStyle = css`
 export interface HoverableProps extends JSX.HTMLAttributes<HTMLDivElement> {
   borderless?: boolean;
 
-  overlayColor?: Leaves<Theme>;
+  overlayColor?: Leaves<Theme | UserColor>;
   overlayScale?: number;
   overlayOpacity?: number;
 }

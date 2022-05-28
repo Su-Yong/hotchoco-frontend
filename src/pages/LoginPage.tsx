@@ -7,7 +7,6 @@ import { setThemeMode, themeMode } from '@/store/display';
 import { variable } from '@/theme';
 import { css } from '@linaria/core';
 import { useNavigate } from 'solid-app-router';
-import { FaMoon, FaSun } from 'solid-icons/fa';
 import { Component, createEffect, createSignal } from 'solid-js';
 
 const containterStyle = css`
@@ -96,8 +95,8 @@ const LoginPage: Component<LoginPageProps> = (props) => {
     <div className={containterStyle}>
       <h1 className={titleStyle}>
         Hotchoco
-        {themeMode() === 'light' && <IconButton size={24} icon={FaMoon} onClick={onChangeTheme} />}
-        {themeMode() === 'dark' && <IconButton size={24} icon={FaSun} onClick={onChangeTheme} />}
+        {themeMode() === 'light' && <IconButton icon={'dark_mode'} onClick={onChangeTheme} />}
+        {themeMode() === 'dark' && <IconButton icon={'light_mode'} onClick={onChangeTheme} />}
       </h1>
       <TextInput placeholder={'아이디'} />
       <TextInput type={'password'} placeholder={'비밀번호'} />

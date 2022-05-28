@@ -3,14 +3,16 @@ import Header from '@/components/Header';
 import VirtualList from '@/components/virtual/VirtualList';
 import { clientUser, messageList } from '@/utils/dummy';
 import { css } from '@linaria/core';
-import { Component, createEffect, createSignal, onMount } from 'solid-js';
-import { VscArrowLeft } from 'solid-icons/vsc';
+import { Component, createEffect, createSignal, onMount, Show } from 'solid-js';
 import { variable } from '@/theme';
 import ChatMessage, { ChatMessageProps } from '@/components/chat/bubble/ChatMessage';
 import ChatInput from '@/components/chat/ChatInput';
+import { ChatRoom, Message } from '@/types';
+import Profile from '@/components/chat/Profile';
 
 const containerStyle = css`
   position: relative;
+  touch-action: none;
 
   width: 100%;
   height: 100%;
@@ -25,6 +27,7 @@ const containerStyle = css`
 `;
 
 const messageListStyle = css`
+  touch-action: pan-y;
   padding: ${variable('Size.space.medium')};
 
   &::-webkit-scrollbar {
@@ -69,17 +72,21 @@ const headerStyle = css`
 `;
 
 export interface ChatContainerProps {
+  room?: ChatRoom;
   onClose?: () => void;
 }
 
 const ChatContainer: Component<ChatContainerProps> = (props) => {
   let inputRef: HTMLInputElement | undefined;
 
-  const [count, setCount] = createSignal(0);
+  const [chatList, setChatList] = createSignal<Message[]>([]);
   const [bottomMargin, setBottomMargin] = createSignal(56);
 
   const addChat = (time = 1000) => {
-    setCount((it) => it + 1);
+    setChatList([
+      ...chatList(),
+      messageList[chatList().length],
+    ]);
 
     setTimeout(() => {
       addChat(Math.random() * 3000 + 1000);
@@ -102,8 +109,6 @@ const ChatContainer: Component<ChatContainerProps> = (props) => {
     resizeObserver.observe(inputRef);
   });
 
-  const list = () => messageList.slice(0, count());
-
   return (
     <div
       id={'chat-container'}
@@ -115,13 +120,22 @@ const ChatContainer: Component<ChatContainerProps> = (props) => {
     >
       <Header
         className={headerStyle}
-        leftIcon={<IconButton icon={VscArrowLeft} onClick={props.onClose} />}
+        leftIcon={<IconButton icon={'arrow_back'} onClick={props.onClose} />}
       >
-        챗방
+        <Show when={!!props.room?.thumbnail}>
+          <Profile
+            url={props.room?.thumbnail}
+            size={'medium'}
+            style={{
+              'margin-right': variable('Size.space.medium'),
+            }}
+          />
+        </Show>
+        {props.room?.title ?? '채팅방'}
       </Header>
       <VirtualList
         className={messageListStyle}
-        items={list()}
+        items={chatList()}
         style={'flex: 1'}
         topMargin={56}
         bottomMargin={bottomMargin()}
@@ -134,10 +148,10 @@ const ChatContainer: Component<ChatContainerProps> = (props) => {
             let prevId = null;
             const currentId = item.sender.id;
             let nextId = null;
-            if (index() > 0) prevId = list()[index() - 1].sender.id;
-            if (index() < list().length - 1) nextId = list()[index() + 1].sender.id;
+            if (index() > 0) prevId = chatList()[index() - 1].sender.id;
+            if (index() < chatList().length - 1) nextId = chatList()[index() + 1].sender.id;
 
-            if (prevId === currentId && nextId === currentId) setType( 'follow');
+            if (prevId === currentId && nextId === currentId) setType('follow');
             else if (prevId !== currentId && nextId === currentId) setType('first');
             else if (prevId === currentId && nextId !== currentId) setType('last');
             else if (prevId !== currentId && nextId !== currentId) setType('first-last');

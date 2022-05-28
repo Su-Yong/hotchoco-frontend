@@ -14,9 +14,9 @@ const inputStyle = css`
   -webkit-appearance: none;
   box-shadow: 0 -4px 0 -2px var(--box-shadow-color) inset;
 
-  padding: 8px;
-  padding-top: 12px;
-  padding-bottom: 12px;
+  padding: ${variable('Size.space.medium')};
+  padding-top: ${variable('Size.space.large')};
+  padding-bottom: ${variable('Size.space.large')};
   color: var(--text-color);
   background: var(--background-color);
 
@@ -32,7 +32,7 @@ const inputStyle = css`
   }
 
   &:invalid {
-    --box-shadow-color: ${variable('Color.Red.500')};
+    --box-shadow-color: ${variable('Danger.Main')};
   }
   &:focus:valid {
     --box-shadow-color: var(--main-color);
@@ -47,7 +47,7 @@ const TextInput: Component<TextInputProps> = (props) => {
   const [local, leftProps] = splitProps(props, ['disabled', 'children']);
 
   const textColor = () => local.disabled ? variable('Color.Grey.500') : variable('Color.BLACK');
-  const mainColor = () => local.disabled ? variable('Color.Grey.200') : variable('Color.Blue.500');
+  const mainColor = () => local.disabled ? variable('Color.Grey.200') : variable('Primary.Main');
   const secondaryColor = () => local.disabled ? variable('Color.Grey.300') : variable('Color.Grey.500');
   const backgroundColor = () => local.disabled ? variable('Color.Grey.100') : variable('Color.Grey.200');
   const backgroundHoverColor = () => local.disabled ? variable('Color.Grey.100') : variable('Color.Grey.300');

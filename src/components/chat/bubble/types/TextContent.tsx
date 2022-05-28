@@ -1,8 +1,8 @@
 import { css, cx } from '@linaria/core';
 import { Component, createEffect, createSignal, Show } from 'solid-js';
-import { VscChevronDown } from 'solid-icons/vsc';
 import TextButton from '@/components/common/TextButton';
 import { variable } from '@/theme';
+import Icon from '@/components/common/Icon';
 
 const LENGTH_LIMIT = 500;
 
@@ -29,7 +29,7 @@ const toggleStyle = css`
   flex-flow: row;
   justify-content: center;
   align-items: center;
-  gap: ${variable('Size.space.medium')};
+  gap: ${variable('Size.space.small')};
 
   & > .icon {
     transform: rotate(180deg);
@@ -81,7 +81,7 @@ const TextContent: Component<TextContentProps> = (props) => {
             onClick={onToggleCollapse}
             className={toggleStyle}
           >
-            <VscChevronDown className={'icon'} />
+            <Icon icon={'expand_more'} className={'icon'} />
             <Show
               when={collapse()}
               fallback={'접기'}

@@ -127,7 +127,7 @@ const Switch: Component<SwitchProps> = (props) => {
   const [isMove, setIsMove] = createSignal(false);
 
   const sizePixel = `${local.size}px`;
-  const mainColor = local.disabled ? variable('Color.Grey.300') : variable('Color.Blue.500');
+  const mainColor = local.disabled ? variable('Color.Grey.300') : variable('Primary.Main');
   const secondaryColor = local.disabled ? variable('Color.Grey.300') : variable('Color.Grey.500');
 
   const onInput: JSX.EventHandlerUnion<HTMLInputElement, Event> = (event) => {
