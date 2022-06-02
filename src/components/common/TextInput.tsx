@@ -12,6 +12,7 @@ const inputStyle = css`
   border: 0 solid transparent;
 
   -webkit-appearance: none;
+  -webkit-tap-highlight-color: transparent;
   box-shadow: 0 -4px 0 -2px var(--box-shadow-color) inset;
 
   padding: ${variable('Size.space.medium')};

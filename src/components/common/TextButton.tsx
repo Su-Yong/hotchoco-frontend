@@ -9,7 +9,9 @@ const buttonStyle = css`
   border: none;
   cursor: pointer;
   z-index: 1;
+
   user-select: none;
+  -webkit-tap-highlight-color: transparent;
 
   margin: 0;
   padding: 8px 12px;

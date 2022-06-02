@@ -20,6 +20,7 @@ const wrapperStyle = css`
   z-index: 0;
   cursor: pointer;
   user-select: none;
+  -webkit-tap-highlight-color: transparent;
 `;
 
 const inputStyle = css`

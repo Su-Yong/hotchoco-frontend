@@ -9,6 +9,9 @@ import ChatMessage, { ChatMessageProps } from '@/components/chat/bubble/ChatMess
 import ChatInput from '@/components/chat/ChatInput';
 import { ChatRoom, Message } from '@/types';
 import Profile from '@/components/chat/Profile';
+import useRoomMessage from '@/hooks/useRoomMessage';
+import { nanoid } from 'nanoid';
+import { Transition } from 'solid-transition-group';
 
 const containerStyle = css`
   position: relative;
@@ -71,31 +74,66 @@ const headerStyle = css`
   }
 `;
 
+const inputWrapperStyle = css`
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+`;
+
+const messageAnimationStyle = css`
+  animation: message-other-animation ${variable('Animation.duration.short')} ${variable('Animation.easing.deceleration')};  
+
+  &[data-mine="true"] {
+    animation: message-mine-animation ${variable('Animation.duration.short')} ${variable('Animation.easing.deceleration')};  
+  }
+
+  @keyframes message-other-animation {
+    0% {
+      opacity: 0;
+      transform: translateX(-100%);
+    }
+    100% {
+      opacity: 1;
+      transform: translateX(0);
+    }
+  }
+  @keyframes message-mine-animation {
+    0% {
+      opacity: 0;
+      transform: translateX(100%);
+    }
+    100% {
+      opacity: 1;
+      transform: translateX(0);
+    }
+  }
+`;
+
 export interface ChatContainerProps {
-  room?: ChatRoom;
+  room: ChatRoom;
   onClose?: () => void;
 }
 
 const ChatContainer: Component<ChatContainerProps> = (props) => {
   let inputRef: HTMLInputElement | undefined;
 
-  const [chatList, setChatList] = createSignal<Message[]>([]);
+  const [chatList, setChatList] = useRoomMessage(() => props.room);
   const [bottomMargin, setBottomMargin] = createSignal(56);
+  const [readIndex, setReadIndex] = createSignal(0);
 
-  const addChat = (time = 1000) => {
+  const onSend = (text: string) => {
     setChatList([
       ...chatList(),
-      messageList[chatList().length],
+      {
+        id: nanoid(),
+        type: 'text',
+        sender: clientUser,
+        content: text,
+        timestamp: Date.now(),
+      }
     ]);
-
-    setTimeout(() => {
-      addChat(Math.random() * 3000 + 1000);
-    }, time);
   };
-
-  setTimeout(() => {
-    addChat();
-  }, Math.random() * 3000 + 1000);
 
   onMount(() => {
     if (!inputRef) return;
@@ -157,16 +195,24 @@ const ChatContainer: Component<ChatContainerProps> = (props) => {
             else if (prevId !== currentId && nextId !== currentId) setType('first-last');
           });
 
+          setReadIndex((it) => it < index() - 1 ? index() - 1 : it);
+
           return (
             <ChatMessage
               message={item}
               mine={clientUser.id === item.sender.id}
               type={type()}
+              className={readIndex() < index() ? messageAnimationStyle : undefined}
             />
           );
         }}
       </VirtualList>
-      <ChatInput ref={inputRef} />
+      <div className={inputWrapperStyle}>
+        <ChatInput
+          ref={inputRef}
+          onSend={onSend}
+        />
+      </div>
     </div>
   );
 }

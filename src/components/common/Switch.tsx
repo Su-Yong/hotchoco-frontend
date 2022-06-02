@@ -13,6 +13,7 @@ const wrapperStyle = css`
   cursor: pointer;
   touch-action: none;
   user-select: none;
+  -webkit-tap-highlight-color: transparent;
 `;
 const inputStyle = css`
   display: none;

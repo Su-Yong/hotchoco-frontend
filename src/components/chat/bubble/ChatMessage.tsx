@@ -87,6 +87,8 @@ export interface ChatMessageProps {
   message: Message;
   mine?: boolean;
   type?: 'follow' | 'first' | 'last' | 'first-last';
+
+  className?: string;
 }
 
 const ChatMessage: Component<ChatMessageProps> = (props) => {
@@ -96,7 +98,10 @@ const ChatMessage: Component<ChatMessageProps> = (props) => {
   const timeString = () => time().toLocaleString(undefined, { hour: '2-digit', minute: '2-digit' });
 
   return (
-    <div className={cx(containerStyle, local.mine && mineStyle)}>
+    <div
+      data-mine={local.mine}
+      className={cx(containerStyle, local.mine && mineStyle, props.className)}
+    >
       <Show
         when={!local.mine && (local.type === 'first-last' || local.type === 'last')}
         fallback={local.mine ? null : profileDummy}

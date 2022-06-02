@@ -3,6 +3,7 @@ import Profile from '@/components/chat/Profile';
 import IconButton from '@/components/common/IconButton';
 import Header from '@/components/Header';
 import VirtualList from '@/components/virtual/VirtualList';
+import useRoomMessage from '@/hooks/useRoomMessage';
 import { roomLayout } from '@/store/room';
 import { variable } from '@/theme';
 import { ChatRoom as ChatRoomType } from '@/types';
@@ -171,13 +172,19 @@ const RoomContainer: Component<RoomContainerProps> = (props) => {
       );
     }
 
+    const [roomMessage] = useRoomMessage(() => list);
+
+    createEffect(() => {
+      console.log('newMessage ' + roomMessage()?.slice(-1)?.[0]?.content);
+    });
+
     return (
       <ChatRoom
         selected={list.id === selectedRoom()?.id}
         room={list}
-        lastMessage={Math.random() > 0.5 ? messageList[~~(Math.random() * messageList.length)] : undefined}
-        unread={~~(Math.random() * 10)}
-        writing={Math.random() > 0.5}
+        lastMessage={roomMessage()?.slice(-1)?.[0]}
+        unread={0}
+        writing={false}
         onClick={onClick}
       />
     );

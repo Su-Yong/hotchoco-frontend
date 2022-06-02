@@ -11,6 +11,9 @@ const buttonStyle = css`
 
   padding: 8px 12px;
 
+  -webkit-tap-highlight-color: transparent;
+  user-select: none;
+
   color: ${variable('Color.WHITE')};
   background: transparent;
   transition-duration: ${variable('Animation.duration.short')};

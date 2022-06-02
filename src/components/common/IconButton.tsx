@@ -21,6 +21,9 @@ const iconButtonWrapperStyle = css`
 
   -webkit-tap-highlight-color: transparent;
   user-select: none;
+
+  transition-duration: ${variable('Animation.duration.short')};
+  transition-timing-function: ${variable('Animation.easing.deceleration')};
 `;
 
 const overlayStyle = css`
@@ -70,6 +73,7 @@ const IconButton: Component<IconButtonProps> = (props) => {
     'className',
     'outerClassName',
     'outerStyle',
+    'ref',
   ], [
     'onclick',
     'onClick',
@@ -91,6 +95,7 @@ const IconButton: Component<IconButtonProps> = (props) => {
 
   return (
     <div
+      ref={local.ref}
       style={local.outerStyle}
       className={cx(iconButtonWrapperStyle, local.outerClassName)}
       {...(listeners as JSX.HTMLAttributes<HTMLDivElement>)}
@@ -98,7 +103,6 @@ const IconButton: Component<IconButtonProps> = (props) => {
       <div className={overlayStyle} />
       <Icon
         size={local.size}
-        color={local.color}
         title={local.title}
         style={local.style}
         className={cx(iconStyle, local.className)}
