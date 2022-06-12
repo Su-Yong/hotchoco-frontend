@@ -6,6 +6,7 @@ import { JSX } from 'solid-js/jsx-runtime';
 import { Transition } from 'solid-transition-group';
 import { Portal } from 'solid-js/web';
 import Popup from '../common/Popup';
+import { flip, offset, shift } from '@floating-ui/dom';
 
 const inputContainerStyle = css`
   position: relative;
@@ -72,6 +73,11 @@ const inputStyle = css`
   font-size: ${variable('Size.text.body')};
 `;
 
+const popupStyle = css`
+  width: max-content;
+  backdrop-filter: blur(16px);
+  border-radius: ${variable('Size.space.medium')};
+`;
 const panelStyle = css`
   position: relative;
 
@@ -88,6 +94,7 @@ const panelStyle = css`
   flex-wrap: wrap;
   gap: ${variable('Size.space.medium')};
 
+  z-index: 0;
   overflow: hidden;
   background: transparent;
   backdrop-filter: blur(16px);
@@ -197,18 +204,15 @@ const ChatInput: Component<ChatInputProps> = (props) => {
       <Popup
         open={panelOpen()}
         anchor={moreButton()}
-        origin={{
-          vertical: 'top',
-          horizontal: 'left',
-        }}
-        targetOrigin={{
-          vertical: 'bottom',
-          horizontal: 'left',
-        }}
-        gapX={variable('Size.space.medium')}
-        gapY={`calc(-2 * ${variable('Size.space.medium')})`}
+        placement={'top-start'}
+        class={popupStyle}
+        middleware={[
+          offset({
+            mainAxis: 16
+          }),
+        ]}
       >
-        <div className={panelStyle}>
+        <div class={panelStyle}>
           <IconButton icon={'camera'} />
           <IconButton icon={'photo'} />
           <IconButton icon={'movie'} />
