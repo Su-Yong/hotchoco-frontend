@@ -33,6 +33,8 @@ const buttonStyle = css`
     z-index: -1;
 
     background: ${variable('Secondary.Main')};
+    box-shadow: 0 0 0 0 ${variable('Secondary.Main')};
+
     transition-duration: ${variable('Animation.duration.short')};
     transition-timing-function: ${variable('Animation.easing.deceleration')};
   }
@@ -42,6 +44,7 @@ const buttonStyle = css`
 
     &::before {
       width: calc(100% - 4px);
+      box-shadow: 0 0 0 0 ${variable('Secondary.Main')};
     }
   }
 
@@ -49,10 +52,9 @@ const buttonStyle = css`
     color: ${variable('Primary.Text')};
 
     &::before {
-      width: 100%;
-      inset: 0;
-
+      width: calc(100% - 4px);
       background: ${variable('Primary.Main')};
+      box-shadow: 0 0 0 2px ${variable('Primary.Main')};
     }
   }
 `;

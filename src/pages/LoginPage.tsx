@@ -4,14 +4,13 @@ import IconButton from '@/components/common/IconButton';
 import TextButton from '@/components/common/TextButton';
 import TextInput from '@/components/common/TextInput';
 import Preference from '@/components/preference/Preference';
-import { appearancePreferenceGroup, preferenceGroupList } from '@/constants/preference';
+import Stackable from '@/components/Stackable';
+import { appearancePreferenceGroup } from '@/constants/preference';
 import createMediaSignal from '@/hooks/createMediaSignal';
-import { setThemeMode, themeMode } from '@/store/display';
 import { variable } from '@/theme';
 import { css } from '@linaria/core';
-import { useNavigate } from 'solid-app-router';
-import { Component, createEffect, createSignal, For, Show } from 'solid-js';
-import { Transition } from 'solid-transition-group';
+import { useNavigate, useSearchParams } from 'solid-app-router';
+import { Component, createSignal, For, Show } from 'solid-js';
 
 const containerStyle = css`
   width: 100%;
@@ -35,6 +34,7 @@ const formStyle = css`
   align-items: stretch;
   gap: 8px;
 
+  transform: translateX(calc(-1 * (10% - var(--offset, 10%))));
   background: transparent;
 
   transition-duration: ${variable('Animation.duration.short')};
@@ -46,10 +46,6 @@ const formStyle = css`
 
     justify-content: center;
     align-items: stretch;
-  }
-
-  &[data-settings="true"] {
-    transform: translateX(-10%);
   }
 
   & > * {
@@ -126,69 +122,18 @@ const infoContainerStyle = css`
     background: transparent;
 
     z-index: 10;
-    backdrop-filter: blur(8px);
-
-    &::before {
-      content: '';
-      position: absolute;
-      inset: 0;
-      z-index: -1;
-
-      background: ${variable('Color.Grey.100')};
-      opacity: ${variable('Color.Transparency.vague')};
-
-      transition-duration: ${variable('Animation.duration.short')};
-      transition-timing-function: ${variable('Animation.easing.deceleration')};
-    }
   }
-`;
 
-const showStart = css`
-  transform: translateX(100%);
-`;
+  &::before {
+    content: '';
+    position: absolute;
+    inset: 0;
 
-const showEnd = css`
-  transform: translateX(0);
+    z-index: -1;
 
-  transition-duration: ${variable('Animation.duration.short')};
-  transition-timing-function: ${variable('Animation.easing.deceleration')};
-`;
-
-const dismissStart = css`
-  transform: translateX(0);
-`;
-
-const dismissEnd = css`
-  transform: translateX(100%);
-
-  transition-duration: ${variable('Animation.duration.short')};
-  transition-timing-function: ${variable('Animation.easing.deceleration')};
-`;
-
-const overlayStyle = css`
-  position: fixed;
-  inset: 0;
-  background: ${variable('Color.Grey.500')};
-  opacity: ${variable('Color.Transparency.translucent')};
-  z-index: 5;
-
-  pointer-events: none;
-
-  transition-duration: ${variable('Animation.duration.short')};
-  transition-timing-function: ${variable('Animation.easing.linear')};
-`;
-
-const fadeInStart = css`
-  opacity: 0;
-`;
-const fadeInEnd = css`
-  opacity: ${variable('Color.Transparency.translucent')};
-`;
-const fadeOutStart = css`
-  opacity: ${variable('Color.Transparency.translucent')};
-`;
-const fadeOutEnd = css`
-  opacity: 0;
+    background: ${variable('Color.Grey.300')};
+    opacity: ${variable('Color.Transparency.vague')};
+  }
 `;
 
 export interface LoginPageProps {
@@ -196,25 +141,42 @@ export interface LoginPageProps {
 }
 
 const LoginPage: Component<LoginPageProps> = (props) => {
+  const [searchParams] = useSearchParams();
   const navigate = useNavigate();
   const isWideScreen = createMediaSignal('(min-width: 640px)');
-  const [open, setOpen] = createSignal(false);
+  
+  const [offset, setOffset] = createSignal(0);
 
-  const onSettingToggle = () => {
-    setOpen((it) => !it);
+  const isPreferenceOpen = () => searchParams.mode === 'preference';
+  const onTogglePreference = () => {
+    if (!isPreferenceOpen()) navigate('?mode=preference');
+    else history.back();
   };
 
   const onLogin = () => {
     navigate('../chat');
   };
 
+  const LoginSettings = () => (
+    <>
+      <Show when={!isWideScreen()}>
+        <IconButton icon={'close'} onClick={onTogglePreference} />
+      </Show>
+      <For each={appearancePreferenceGroup.preferences}>
+        {(preference) => (
+          <Preference preference={preference} />
+        )}
+      </For>
+    </>
+  );
+
   return (
     <div className={containerStyle}>
-      <div className={formStyle} data-settings={open()}>
+      <div className={formStyle} style={{ '--offset': `${~~(offset() * 10)}%` }}>
         <h1 className={titleStyle}>
           Hotchoco
           <Show when={!isWideScreen()}>
-            <IconButton icon={'settings'} onClick={onSettingToggle} />
+            <IconButton icon={'settings'} onClick={onTogglePreference} />
           </Show>
         </h1>
         <TextInput placeholder={'아이디'} />
@@ -224,37 +186,22 @@ const LoginPage: Component<LoginPageProps> = (props) => {
         <Button className={loginButtonStyle} onClick={onLogin}>로그인</Button>
         <TextButton className={loginButtonStyle}>회원가입</TextButton>
       </div>
-      <Transition
-        enterClass={fadeInStart}
-        enterToClass={fadeInEnd}
-        exitClass={fadeOutStart}
-        exitToClass={fadeOutEnd}
+      <Stackable
+        open={!!isPreferenceOpen()}
+        direction={'right'}
+        onBack={onTogglePreference}
+        onGesture={setOffset}
+        className={infoContainerStyle}
       >
-        <Show when={open()}>
-          <div className={overlayStyle} />
-        </Show>
-      </Transition>
-      <Transition
-        enterClass={showStart}
-        enterToClass={showEnd}
-        exitClass={dismissStart}
-        exitToClass={dismissEnd}
+        <LoginSettings />
+      </Stackable>
+      <Show
+        when={isWideScreen()}
       >
-        <Show
-          when={isWideScreen() || open()}
-        >
-          <div className={infoContainerStyle}>
-            <Show when={!isWideScreen()}>
-              <IconButton icon={'close'} onClick={() => setOpen(false)} />
-            </Show>
-            <For each={appearancePreferenceGroup.preferences}>
-              {(preference) => (
-                <Preference preference={preference} />
-              )}
-            </For>
-          </div>
-        </Show>
-      </Transition>
+        <div className={infoContainerStyle}>
+          <LoginSettings />
+        </div>
+      </Show>
     </div>
   );
 }

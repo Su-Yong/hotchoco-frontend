@@ -1,71 +1,85 @@
 import { variable } from '@/theme';
 import { sx } from '@/utils';
-import { css, cx } from '@linaria/core';
-import { Component, createEffect, createSignal, createUniqueId, mergeProps, onCleanup, onMount, Show, splitProps } from 'solid-js';
+import { autoUpdate, computePosition, flip, offset, Placement, shift, size } from '@floating-ui/dom';
+import { css } from '@linaria/core';
+import { Component, createEffect, createSignal, createUniqueId, mergeProps, on, splitProps } from 'solid-js';
 import { Portal } from 'solid-js/web';
-import { Transition } from 'solid-transition-group';
 import MenuList, { MenuListProps } from './MenuList';
 
 const menuStyle = css`
-  position: absolute;
-  left: var(--menu-x);
-  top: var(--menu-y);
-
   z-index: 1000000;
-`;
+  
+  position: absolute;
+  left: var(--x);
+  top: var(--y);
 
-const enterStart = css`
-  opacity: 0;
-  transform: scale(0);
-  transform-origin: var(--origin-x) var(--origin-y);
-`;
-const enterEnd = css`
+  max-width: calc(var(--max-width, 100%) - ${variable('Size.space.medium')} * 2);
+  max-height: calc(var(--max-height, 100%) - ${variable('Size.space.medium')} * 2);
+
+  margin: 0;
+
   opacity: 1;
   transform: scale(1);
-  transform-origin: var(--origin-x) var(--origin-y);
 
+  transition-property: opacity, transform;
   transition-duration: ${variable('Animation.duration.shortest')};
   transition-timing-function: ${variable('Animation.easing.deceleration')};
 `;
 
-const exitStart = css`
-  opacity: 1;
-  transform: scale(1);
-  transform-origin: var(--origin-x) var(--origin-y);
+const enterAnimation = css`
+  transform-origin: var(--origin-x, 50%) var(--origin-y, 50%);
+
+  animation: enter;
+  animation-duration: ${variable('Animation.duration.shortest')};
+  animation-timing-funciton: ${variable('Animation.easing.deceleration')};
+  animation-fill-mode: both;
+
+  @keyframes enter {
+    0% {
+      opacity: 0;
+      transform: scale(0);
+    }
+
+    100% {
+      opacity: 1;
+      transform: scale(1);
+    }
+  }
 `;
-const exitEnd = css`
+const exitAnimation = css`
+  transform-origin: var(--origin-x, 50%) var(--origin-y, 50%);
+
+  animation: exit;
+  animation-duration: ${variable('Animation.duration.shortest')};
+  animation-timing-funciton: ${variable('Animation.easing.deceleration')};
+  animation-fill-mode: both;
+
+  @keyframes exit {
+    0% {
+      opacity: 1;
+      transform: scale(1);
+    }
+
+    100% {
+      opacity: 0;
+      transform: scale(0);
+    }
+  }
+`;
+
+const ignoreStyle = css`
   opacity: 0;
   transform: scale(0);
-  transform-origin: var(--origin-x) var(--origin-y);
-
-  transition-duration: ${variable('Animation.duration.shortest')};
-  transition-timing-function: ${variable('Animation.easing.deceleration')};
 `;
 
-const invisibleStyle = css`
-  visibility: hidden;
-`;
-
-type Origin = {
-  vertical?: 'top' | 'center' | 'bottom';
-  horizontal?: 'left' | 'center' | 'right';
-}
 export interface MenuProps extends MenuListProps {
   open?: boolean;
-  origin?: Origin;
-  menuOrigin?: Origin;
+  placement?: Placement;
   anchor?: Element;
 }
 
 const defaultProps: Omit<MenuProps, 'items'> = {
-  origin: {
-    horizontal: 'left',
-    vertical: 'bottom',
-  },
-  menuOrigin: {
-    horizontal: 'left',
-    vertical: 'top',
-  },
+  placement: 'bottom-start',
 };
 
 const Menu: Component<MenuProps> = (props) => {
@@ -74,140 +88,96 @@ const Menu: Component<MenuProps> = (props) => {
       ...defaultProps,
       id: createUniqueId(),
     }, props),
-    ['open', 'origin', 'menuOrigin', 'anchor'],
+    ['open', 'placement', 'anchor'],
   );
 
-  const [coord, setCoord] = createSignal<[number, number]>([0, 0]);
-  const [localSize, setLocalSize] = createSignal<[number, number] | null>(null);
+  let target: HTMLUListElement | undefined;
 
-  const calculateCoordinate = () => {
-    const anchorRect = local.anchor?.getBoundingClientRect();
-    const localRect = localSize();
+  const [playExitAnimation, setPlayExitAnimation] = createSignal(false);
+  const [coord, setCoordinate] = createSignal<[number, number] | null>(null);
+  const [avaiableSize, setAvailableSize] = createSignal<[number, number] | null>(null);
 
-    if (anchorRect && localRect) {
-      let horizontalOffset = 0;
-      let verticalOffset = 0;
-      let localHorizontalOffset = 0;
-      let localVerticalOffset = 0;
+  let cleanUpdater: (() => void) | null = null;
 
-      if (local.menuOrigin?.horizontal === 'left') localHorizontalOffset += 0;
-      if (local.menuOrigin?.horizontal === 'center') localHorizontalOffset -= localRect[0] / 2;
-      if (local.menuOrigin?.horizontal === 'right') localHorizontalOffset -= localRect[0];
-      if (local.menuOrigin?.vertical === 'top') localVerticalOffset -= 0;
-      if (local.menuOrigin?.vertical === 'center') localVerticalOffset -= localRect[1] / 2;
-      if (local.menuOrigin?.vertical === 'bottom') localVerticalOffset -= localRect[1];
+  const getOrigin = (): [string, string] => {
+    if (!local.placement) return ['0%', '0%'];
 
-      if (local.origin?.horizontal === 'left') horizontalOffset += 0;
-      if (local.origin?.horizontal === 'center') horizontalOffset += anchorRect.width / 2;
-      if (local.origin?.horizontal === 'right') horizontalOffset += anchorRect.width;
-      if (local.origin?.vertical === 'top') verticalOffset += 0;
-      if (local.origin?.vertical === 'center') verticalOffset += anchorRect.height / 2;
-      if (local.origin?.vertical === 'bottom') verticalOffset += anchorRect.height;
+    let x = '0%';
+    let y = '0%';
+    const [side, align] = local.placement.split('-');
 
-      setCoord([
-        anchorRect.left + horizontalOffset + localHorizontalOffset,
-        anchorRect.top + verticalOffset + localVerticalOffset,
-      ]);
+    if (side === 'left') x = '0%';
+    if (side === 'right') x = '100%';
+    if (side === 'top') y = '100%';
+    if (side === 'bottom') y = '0%';
+
+    if (align === 'start') {
+      if (side === 'left' || side === 'right') y = '100%';
+      if (side === 'top' || side === 'bottom') x = '0%';
     }
-  };
-
-  const getOriginX = () => {
-    if (local.menuOrigin?.horizontal === 'left') return '0%';
-    if (local.menuOrigin?.horizontal === 'center') return '50%';
-    if (local.menuOrigin?.horizontal === 'right') return '100%';
-  };
-  
-  const getOriginY = () => {
-    if (local.menuOrigin?.vertical === 'top') return '0%';
-    if (local.menuOrigin?.vertical === 'center') return '50%';
-    if (local.menuOrigin?.vertical === 'bottom') return '100%';
-  };
-
-  let menuRef: Element | undefined;
-  const onLoad = (ref: Element) => {
-    menuRef = ref;
-    
-    const { width, height } = ref.getBoundingClientRect();
-
-    if (width && height) setLocalSize([width, height]);
-  };
-
-  const mutationObserverConfig = {
-    attributes: true,
-    childList: false,
-    characterData: true,
-  };
-  const menuMutationObserver = new MutationObserver((mutations) => {
-    for (const mutation of mutations) {
-      if (mutation.target.isSameNode(menuRef ?? null)) {
-        onLoad(menuRef!);
-
-        calculateCoordinate();
-      }
+    if (align === 'end') {
+      if (side === 'left' || side === 'right') y = '0%';
+      if (side === 'top' || side === 'bottom') x = '100%';
     }
-  });
-  const anchorMutationObserver = new MutationObserver((mutations) => {
-    for (const mutation of mutations) {
-      if (mutation.target.isSameNode(local.anchor ?? null)) {
-        calculateCoordinate();
-      }
+
+    return [x, y];
+  };
+
+  createEffect(() => {
+    if (local.anchor && target) {
+      if (cleanUpdater) cleanUpdater();
+
+      cleanUpdater = autoUpdate(local.anchor, target, () => {
+        if (!local.anchor || !target) return;
+        
+        computePosition(local.anchor, target, {
+          placement: local.placement,
+          middleware: [
+            offset(0),
+            shift(),
+            flip(),
+            size({
+              apply({ availableWidth, availableHeight }) {
+                setAvailableSize([availableWidth, availableHeight]);
+              },
+            }),
+          ],
+        }).then(({ x: coordX, y: coordY }) => {
+          setCoordinate([~~coordX, ~~coordY]);
+        });
+      }, {
+        animationFrame: true,
+      });
     }
   });
 
-  onMount(() => {
-    if (menuRef) {
-      onLoad(menuRef);
-      menuMutationObserver.observe(menuRef, mutationObserverConfig);
-    }
-    
-    document.addEventListener('scroll', calculateCoordinate, true);
-  });
-
-  createEffect(calculateCoordinate);
-
-  createEffect<Element | undefined>((prevAnchor) => {
-    if (local.anchor) {
-      if (prevAnchor) anchorMutationObserver.disconnect();
-
-      anchorMutationObserver.observe(local.anchor, mutationObserverConfig);
-
-      return local.anchor;
-    }
-  }, undefined);
-
-  onCleanup(() => {
-    anchorMutationObserver.disconnect();
-    menuMutationObserver.disconnect();
-
-    document.removeEventListener('scroll', calculateCoordinate, true);
-  });
+  let isRegistered = false;
+  createEffect(on(() => local.open, (isOpen) => {
+    if (isRegistered) setPlayExitAnimation(!isOpen);
+    else isRegistered = true;
+  }));
 
   return (
     <Portal>
-      <Transition
-        enterClass={enterStart}
-        enterToClass={enterEnd}
-        exitClass={exitStart}
-        exitToClass={exitEnd}
-      >
-        <Show when={local.open || localSize() === null}>
-          <MenuList
-            {...leftProps}
-            ref={onLoad}
-            style={sx({
-              '--menu-x': `${coord()[0]}px`,
-              '--menu-y': `${coord()[1]}px`,
-              '--origin-x': getOriginX(),
-              '--origin-y': getOriginY(),
-            }, leftProps.style)}
-            className={cx(
-              menuStyle,
-              (localSize() === null) && invisibleStyle,
-              leftProps.className,
-            )}
-          />
-        </Show>
-      </Transition>
+      <MenuList
+        {...leftProps}
+        ref={target}
+        style={sx({
+          '--x': `${coord()?.[0] ?? 0}px`,
+          '--y': `${coord()?.[1] ?? 0}px`,
+          '--max-width': avaiableSize() ? `${avaiableSize()![0]}px` : undefined,
+          '--max-height': avaiableSize() ? `${avaiableSize()![1]}px` : undefined,
+          '--origin-x': getOrigin()[0],
+          '--origin-y': getOrigin()[1],
+        }, leftProps.style)}
+        classList={{
+          ...leftProps.classList,
+          [menuStyle]: true,
+          [enterAnimation]: local.open,
+          [exitAnimation]: playExitAnimation(),
+          [ignoreStyle]: !local.open && !playExitAnimation(),
+        }}
+      />
     </Portal>
   );
 }

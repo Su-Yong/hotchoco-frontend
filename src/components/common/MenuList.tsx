@@ -5,8 +5,7 @@ import { JSX } from 'solid-js/jsx-runtime';
 import TextButton from './TextButton';
 
 const menuContainer = css`
-  height: max-content;
-  max-height: 360px;
+  height: fit-content;
   overflow: auto;
 
   margin: 0;
@@ -53,11 +52,14 @@ const MenuList: Component<MenuListProps> = (props) => {
   const onClick = (item: MenuItem) => {
     if (local.onMenuItem) local.onMenuItem(item);
   };
-  
+
   return (
     <ul
       {...leftProps}
-      className={cx(menuContainer, leftProps.className)}
+      classList={{
+        ...leftProps.classList,
+        [menuContainer]: true,
+      }}
     >
       <For each={local.items}>
         {(item) => (

@@ -60,6 +60,8 @@ const iconStyle = css`
   transition-duration: ${variable('Animation.duration.short')};
   transition-timing-function: ${variable('Animation.easing.deceleration')};
 
+  user-select: none;
+
   [data-open="true"] > & {
     transform: rotate(180deg);
   }
@@ -73,7 +75,7 @@ const innerStyle = css`
   gap: ${variable('Size.space.small')};
 `;
 
-export interface SelectProps extends Pick<MenuProps, 'items' | 'origin' | 'menuOrigin'>, Omit<JSX.HTMLAttributes<HTMLDivElement>, 'onSelect'> {
+export interface SelectProps extends Pick<MenuProps, 'items' | 'placement'>, Omit<JSX.HTMLAttributes<HTMLDivElement>, 'onSelect'> {
   required?: boolean;
   value?: string;
   placeholder?: string;
@@ -88,7 +90,7 @@ const Select: Component<SelectProps> = (props) => {
   const [local, menuProps, leftProps] = splitProps(
     mergeProps(defaultProps, props),
     ['value', 'onSelect', 'placeholder', 'disabled', 'required'],
-    ['items', 'origin', 'menuOrigin'],
+    ['items', 'placement'],
   );
 
   const noneId = createUniqueId();

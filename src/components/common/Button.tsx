@@ -26,6 +26,7 @@ const buttonStyle = css`
     z-index: -1;
 
     background-color: ${variable('Color.BLACK')};
+    box-shadow: 0 0 0 0 ${variable('Color.BLACK')};
 
     transition-duration: ${variable('Animation.duration.short')};
     transition-timing-function: ${variable('Animation.easing.deceleration')};
@@ -34,11 +35,12 @@ const buttonStyle = css`
   &:hover::before {
     color: ${variable('Primary.Text')};
     background-color: ${variable('Primary.Main')};
+    box-shadow: 0 0 0 0 ${variable('Primary.Main')};
   }
   &:active::before {
-    inset: 0;
     color: ${variable('Primary.Text')};
     background-color: ${variable('Primary.Main')};
+    box-shadow: 0 0 0 2px ${variable('Primary.Main')};
   }
 `;
 
