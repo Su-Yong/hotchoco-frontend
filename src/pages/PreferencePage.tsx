@@ -4,7 +4,8 @@ import { preferenceGroupList } from '@/constants/preference';
 import PreferenceContainer from '@/containers/PreferenceContainer';
 import { variable } from '@/theme';
 import { css } from '@linaria/core';
-import { Component, For } from 'solid-js';
+import { Component, createSignal, For } from 'solid-js';
+import { JSX } from 'solid-js/jsx-runtime';
 
 const containerStyle = css`
   position: relative;
@@ -19,6 +20,22 @@ const containerStyle = css`
 
   padding: 0 ${variable('Size.space.medium')};
   overflow-y: auto;
+  
+  &::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+
+    opacity: ${variable('Color.Transparency.vague')};
+    background: ${variable('Color.Grey.200')};
+  }
+`;
+const allowGestureStyle = css`
+  touch-action: pan-down;
+`;
+const disallowGestureStyle = css`
+  touch-action: pan-y;
 `;
 
 const headerStyle = css`
@@ -50,14 +67,33 @@ const PreferencePage: Component = () => {
     history.back();
   };
 
+  const [isGestureAllow, setIsGestureAllow] = createSignal(true);
+
+  const onScroll: JSX.EventHandlerUnion<HTMLDivElement, UIEvent> = (event) => {
+    const top = event.target.scrollTop;
+
+    if (top <= 0) {
+      if (!isGestureAllow()) setIsGestureAllow(true);
+    } else {
+      if (isGestureAllow()) setIsGestureAllow(false);
+    }
+  };
+
   return (
-    <div className={containerStyle}>
-    <Header
-      className={headerStyle}
-      leftIcon={<IconButton icon={'arrow_back'} onClick={onClose} />}
+    <div
+      classList={{
+        [containerStyle]: true,
+        [allowGestureStyle]: isGestureAllow(),
+        [disallowGestureStyle]: !isGestureAllow(),
+      }}
+      onScroll={onScroll}
     >
-      설정
-    </Header>
+      <Header
+        className={headerStyle}
+        leftIcon={<IconButton icon={'arrow_back'} onClick={onClose} />}
+      >
+        설정
+      </Header>
       <div style={'height: 56px; min-height: 56px; max-height: 56px;'} />
       <For each={preferenceGroupList}>
         {(group) => <PreferenceContainer group={group} />}

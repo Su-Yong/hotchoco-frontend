@@ -105,9 +105,8 @@ const App: Component = () => {
       >
         <Routes>
           <Route path={'/login/*'} element={<LoginPage />} />
-          <Route path={'/chat'} element={<ChatPage />} />
+          <Route path={'/chat/*'} element={<ChatPage />} />
           <Route path={'/component'} element={<ComponentPage />} />
-          <Route path={'/preference'} element={<PreferencePage />} />
         </Routes>  
       </Transition>
     </div>

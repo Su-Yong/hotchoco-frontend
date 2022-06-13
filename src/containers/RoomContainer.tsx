@@ -175,7 +175,7 @@ const RoomContainer: Component<RoomContainerProps> = (props) => {
     const [roomMessage] = useRoomMessage(() => list);
 
     createEffect(() => {
-      console.log('newMessage ' + roomMessage()?.slice(-1)?.[0]?.content);
+      // console.log('newMessage ' + roomMessage()?.slice(-1)?.[0]?.content);
     });
 
     return (

@@ -11,7 +11,9 @@ import { ChatRoom, Message } from '@/types';
 import Profile from '@/components/chat/Profile';
 import useRoomMessage from '@/hooks/useRoomMessage';
 import { nanoid } from 'nanoid';
-import { Transition } from 'solid-transition-group';
+import Stackable from '@/components/Stackable';
+import InfoContainer from './InfoContainer';
+import { useSearchParams } from 'solid-app-router';
 
 const containerStyle = css`
   position: relative;
@@ -91,22 +93,40 @@ const messageAnimationStyle = css`
   @keyframes message-other-animation {
     0% {
       opacity: 0;
-      transform: translateX(-100%);
+      transform: translate(-50%, 50%) scale(0);
     }
     100% {
       opacity: 1;
-      transform: translateX(0);
+      transform: translate(0, 0) scale(1);
     }
   }
   @keyframes message-mine-animation {
     0% {
       opacity: 0;
-      transform: translateX(100%);
+      transform: translate(50%, 50%) scale(0);
     }
     100% {
       opacity: 1;
-      transform: translateX(0);
+      transform: translateX(0, 0) scale(1);
     }
+  }
+`;
+
+const infoWrapperStyle = css`
+  z-index: 1000000000;
+
+  display: flex;
+  flex-flow: column;
+  justify-content: flex-end;
+  align-items: center;
+`;
+
+const infoContainerStyle = css`
+  width: 100%;
+  height: fit-content;
+
+  @media (min-width: 640px) {
+    max-width: 60vw;
   }
 `;
 
@@ -116,6 +136,9 @@ export interface ChatContainerProps {
 }
 
 const ChatContainer: Component<ChatContainerProps> = (props) => {
+  const [searchParams, setSearchParams] = useSearchParams();
+  const isInfo = () => searchParams.mode === 'info';
+  
   let inputRef: HTMLInputElement | undefined;
 
   const [chatList, setChatList] = useRoomMessage(() => props.room);
@@ -133,6 +156,16 @@ const ChatContainer: Component<ChatContainerProps> = (props) => {
         timestamp: Date.now(),
       }
     ]);
+  };
+
+  const onToggleInfo = () => {
+    if (isInfo()) {
+      history.back();
+    } else {
+      setSearchParams({
+        mode: 'info',
+      });
+    }
   };
 
   onMount(() => {
@@ -159,6 +192,7 @@ const ChatContainer: Component<ChatContainerProps> = (props) => {
       <Header
         className={headerStyle}
         leftIcon={<IconButton icon={'arrow_back'} onClick={props.onClose} />}
+        rightIcon={<IconButton icon={'menu'} onClick={onToggleInfo} />}
       >
         <Show when={!!props.room?.thumbnail}>
           <Profile
@@ -213,6 +247,19 @@ const ChatContainer: Component<ChatContainerProps> = (props) => {
           onSend={onSend}
         />
       </div>
+      <Stackable
+        open={isInfo()}
+        direction={'down'}
+        onBack={onToggleInfo}
+        class={infoContainerStyle}
+        outerClass={infoWrapperStyle}
+        gestureRatio={1}
+        positionStrategy={'fixed'}
+      >
+        <InfoContainer
+          room={props.room}
+        />
+      </Stackable>
     </div>
   );
 }

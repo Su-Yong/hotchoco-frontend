@@ -14,6 +14,7 @@ import { useNavigate, useSearchParams } from 'solid-app-router';
 import createMediaSignal from '@/hooks/createMediaSignal';
 import Hammer from 'hammerjs';
 import Stackable from '@/components/Stackable';
+import PreferencePage from './PreferencePage';
 
 const containerStyle = css`
   width: 100%;
@@ -37,6 +38,14 @@ const roomContainerStyle = css`
     min-width: 320px;
     max-width: 60vw;
     width: var(--room-container-width, 320px);
+  }
+
+  @media (max-width: 640px) {
+    transform: translateX(calc(-10% * (1 - var(--page-ratio))));
+
+    transition-property: transform;
+    transition-duration: ${variable('Animation.duration.shortest')};
+    transition-timing-function: ${variable('Animation.easing.inOut')};
   }
 `;
 
@@ -147,9 +156,32 @@ const slideOutEnd = css`
   }
 `;
 
+const preferenceWrapperStyle = css`
+  z-index: 10;
+
+  display: flex;
+  flex-flow: column;
+  justify-content: center;
+  align-items: center;
+`;
+
+const preferenceContainerStyle = css`
+  width: 100%;
+  height: fit-content;
+  max-height: 100%;
+
+  @media (min-width: 640px) {
+    max-width: 60vw;
+  }
+
+  @media (max-width: 640px) {
+    width: 100%;
+    height: 100%;
+  }
+`;
+
 const ChatPage: Component = () => {
   const [searchParams, setSearchParams] = useSearchParams();
-  const navigate = useNavigate();
 
   const isScreenNarrow = createMediaSignal('(max-width: 640px)');
   const [pageRatio, setPageRatio] = createSignal(0);
@@ -162,8 +194,10 @@ const ChatPage: Component = () => {
     else history.back();
   };
 
+  const isPreference = () => searchParams.mode === 'preference';
+
   const onItemClick = (id: string) => {
-    if (id === 'settings') navigate('../preference');
+    if (id === 'settings') setSearchParams({ mode: 'preference' });
   };
 
   const registerDividerGesture = (divider: HTMLDivElement) => {
@@ -245,6 +279,18 @@ const ChatPage: Component = () => {
           {roomContainer}
         </Stackable>
       </Show>
+
+      <Stackable
+        open={isPreference()}
+        direction={isScreenNarrow() ? 'right' : 'down'}
+        outerClass={preferenceWrapperStyle}
+        class={preferenceContainerStyle}
+        onBack={() => history.back()}
+        onGesture={(offset) => setPageRatio(offset)}
+        positionStrategy={'fixed'}
+      >
+        <PreferencePage />
+      </Stackable>
     </div>
   );
 };

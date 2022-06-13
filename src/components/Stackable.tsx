@@ -1,14 +1,20 @@
 import { css, cx } from '@linaria/core';
 import { JSX } from 'solid-js/jsx-runtime';
 import Hammer from 'hammerjs';
-import { createEffect, createSignal, createUniqueId, Show, splitProps } from 'solid-js';
+import { createEffect, createSignal, createUniqueId, mergeProps, Show, splitProps } from 'solid-js';
 import { getTheme, variable } from '@/theme';
 import { Transition } from 'solid-transition-group';
 import { cssTimeToMs } from '@/utils/css';
+import { sx } from '@/utils';
 
 const containerStyle = css`
-  position: absolute;
   inset: 0;
+`;
+const fixedContainerStyle = css`
+  position: fixed;
+`;
+const absoluteContainerStyle = css`
+  position: absolute;
 `;
 
 const wrapperStyle = css`
@@ -31,7 +37,7 @@ const wrapperStyle = css`
     position: absolute;
     inset: 0;
     box-shadow: 0 0 0 max(100vw, 100vh) ${variable('Color.Grey.900')};
-    opacity: calc((100% - var(--offset)) * ${variable('Color.Transparency.translucent')});
+    opacity: calc((100% - var(--opacity-offset)) * ${variable('Color.Transparency.translucent')});
 
     pointer-events: none;
     z-index: -1;
@@ -49,7 +55,7 @@ const toLeftStyle = css`
 `;
 
 const toRightStyle = css`
-  transform: translateX(var(--offset));
+  transform: translateX(calc(1 * var(--offset)));
 `;
 
 const toUpStyle = css`
@@ -57,7 +63,7 @@ const toUpStyle = css`
 `;
 
 const toDownStyle = css`
-  transform: translateY(var(--offset));
+  transform: translateY(calc(1 * var(--offset)));
 `;
 
 export interface StackableProps extends JSX.HTMLAttributes<HTMLDivElement> {
@@ -67,14 +73,28 @@ export interface StackableProps extends JSX.HTMLAttributes<HTMLDivElement> {
 
   onBack?: () => void;
   onGesture?: (offset: number) => void;
+
+  gestureRatio?: number;
+  positionStrategy?: 'absolute' | 'fixed';
+
+  outerClass?: JSX.HTMLAttributes<HTMLDivElement>['class'];
+  outerClassList?: JSX.HTMLAttributes<HTMLDivElement>['classList'];
+  outerStyle?: JSX.HTMLAttributes<HTMLDivElement>['style'];
 }
 
+const defaultProps = {
+  gestureRatio: 0.5,
+  positionStrategy: 'absolute',
+};
+
 const Stackable = (props: StackableProps) => {
-  const [local, leftProps] = splitProps(
-    props,
-    ['open', 'direction', 'children', 'onBack', 'onGesture'],
+  const [local, outerProps, leftProps] = splitProps(
+    mergeProps(defaultProps, props),
+    ['open', 'direction', 'children', 'onBack', 'onGesture', 'gestureRatio', 'positionStrategy'],
+    ['outerClass', 'outerClassList', 'outerStyle'],
   );
 
+  let childWrapperRef: HTMLDivElement | undefined;
   const containerId = createUniqueId();
 
   const [offset, setOffset] = createSignal(0);
@@ -140,18 +160,19 @@ const Stackable = (props: StackableProps) => {
       const { direction, dimension, sign } = value;
       setAnimation(false);
 
-      if ((event.center[direction] - document.body[dimension] / 2) * sign < 0) {
+      if ((event.center[direction] - document.body[dimension] * local.gestureRatio) * sign < 0) {
         isStart = true;
       }
     });
     hammer.on('pan', (event) => {
       if (isStart) {
-        const value = directionValue()!;
+        const value = directionValue();
         if (!value) return;
 
         const { delta, dimension, sign } = value;
 
-        const ratio = Math.min(Math.max(event[delta] * sign / document.body[dimension], 0), 1);
+        const moveTarget = childWrapperRef ?? document.body;
+        const ratio = Math.min(Math.max(event[delta] * sign / moveTarget[dimension], 0), 1);
         setOffset(ratio);
       }
     });
@@ -160,16 +181,13 @@ const Stackable = (props: StackableProps) => {
         const value = directionValue()!;
         if (!value) return;
 
-        const { sign } = value;
-
         setAnimation(true);
-
-          if (offset() > 0.5) {
-            setOffset(1);
-            local.onBack?.();
-          } else {
-            setOffset(0);
-          }
+        if (offset() > 0.5) {
+          setOffset(1);
+          local.onBack?.();
+        } else {
+          setOffset(0);
+        }
 
         isStart = false;
       }
@@ -191,7 +209,11 @@ const Stackable = (props: StackableProps) => {
     <Transition
       onExit={(element, done) => {
         if (!local.open && element instanceof HTMLDivElement) {
-          element.style.setProperty('--offset', '100%');
+          let offset = '100vw';
+          if (local.direction === 'up' || local.direction === 'down') offset = '100vh';
+
+          element.style.setProperty('--offset', offset);
+          element.style.setProperty('--opacity-offset', '100%');
         }
 
         const time = cssTimeToMs(getTheme().Animation.duration.short);
@@ -202,17 +224,23 @@ const Stackable = (props: StackableProps) => {
       <Show when={local.open}>
         <div
           id={containerId}
-          style={{
+          style={sx(outerProps.outerStyle, {
             '--offset': `${~~(offset() * 100)}%`,
-          }}
+            '--opacity-offset': `${~~(offset() * 100)}%`,
+          })}
+          class={outerProps.outerClass}
           classList={{
+            ...outerProps.outerClassList,
             [containerStyle]: true,
+            [fixedContainerStyle]: local.positionStrategy === 'fixed',
+            [absoluteContainerStyle]: local.positionStrategy === 'absolute',
           }}
+          ref={registerGesture}
         >
           <div
             {...leftProps}
+            ref={childWrapperRef}
             data-animation={animation()}
-            ref={registerGesture}
             classList={{
               ...leftProps.classList,
               [wrapperStyle]: true,
