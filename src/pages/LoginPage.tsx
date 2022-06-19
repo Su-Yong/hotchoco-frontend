@@ -154,7 +154,7 @@ const LoginPage: Component<LoginPageProps> = (props) => {
   };
 
   const onLogin = () => {
-    navigate('../chat');
+    navigate('/chat');
   };
 
   const LoginSettings = () => (

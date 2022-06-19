@@ -16,6 +16,7 @@ import PreferencePage from './pages/PreferencePage';
 import { ROOT_ID } from './constants/common';
 import { createUserColorStyle, setUserColor } from './theme/UserColor';
 import { DefaultUserColor } from './theme/defined/DefaultUserColor';
+import MainPage from './pages/MainPage';
 
 const bodyStyle = css`
   position: relative;
@@ -105,8 +106,7 @@ const App: Component = () => {
       >
         <Routes>
           <Route path={'/login/*'} element={<LoginPage />} />
-          <Route path={'/chat/*'} element={<ChatPage />} />
-          <Route path={'/component'} element={<ComponentPage />} />
+          <Route path={'/*'} element={<MainPage />} />
         </Routes>  
       </Transition>
     </div>

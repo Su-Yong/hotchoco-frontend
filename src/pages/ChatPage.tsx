@@ -41,7 +41,8 @@ const roomContainerStyle = css`
   }
 
   @media (max-width: 640px) {
-    transform: translateX(calc(-10% * (1 - var(--page-ratio))));
+    transform-origin: 0% 0%;
+    transform: translateX(calc(-10% * (1 - var(--page-ratio)))) scale(calc(95% + 5% * var(--page-ratio)));
 
     transition-property: transform;
     transition-duration: ${variable('Animation.duration.shortest')};
@@ -157,7 +158,7 @@ const slideOutEnd = css`
 `;
 
 const preferenceWrapperStyle = css`
-  z-index: 10;
+  z-index: 50;
 
   display: flex;
   flex-flow: column;
