@@ -83,7 +83,7 @@ const dividerStyle = css`
   bottom: 0;
   left: clamp(320px, calc(var(--room-container-width, 320px) - 4px), 60vw);
 
-  z-index: 100;
+  z-index: 5;
   user-drag: none;
   user-select: none;
   touch-action: none;
@@ -207,8 +207,10 @@ const ChatPage: Component = () => {
 
     hammer.on('panstart', () => setDividerActive(true));
     hammer.on('pan', (event) => {
-      const x = ~~Math.max(event.center.x, 320);
-      setRoomContainerWidth(x);
+      requestAnimationFrame(() => {
+        const x = ~~Math.max(event.center.x, 320);
+        setRoomContainerWidth(x);
+      });
     });
     hammer.on('panend', () => setDividerActive(false));
   };

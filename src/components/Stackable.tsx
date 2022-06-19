@@ -21,15 +21,19 @@ const wrapperStyle = css`
   position: relative;
   width: 100%;
   height: 100%;
-  backdrop-filter: blur(8px);
+  backdrop-filter: blur(16px);
 
   z-index: 100;
   touch-action: none;
 
+  transition-property: transform;
+  transition-timing-function: ${variable('Animation.easing.inOut')};
+  
+  &[data-animation="false"] {
+    transition-duration: 64ms;
+  }
   &[data-animation="true"] {
-    transition-property: transform;
     transition-duration: ${variable('Animation.duration.short')};
-    transition-timing-function: ${variable('Animation.easing.inOut')};
   }
 
   &::after {
@@ -165,16 +169,20 @@ const Stackable = (props: StackableProps) => {
       }
     });
     hammer.on('pan', (event) => {
-      if (isStart) {
-        const value = directionValue();
-        if (!value) return;
+      requestAnimationFrame(() => {
+        if (isStart) {
+          const value = directionValue();
+          if (!value) return;
+  
+          const { delta, dimension, sign } = value;
+  
+          const moveTarget = childWrapperRef ?? document.body;
+          const ratio = Math.min(Math.max(event[delta] * sign / moveTarget[dimension], 0), 1);
+          setOffset(ratio);
 
-        const { delta, dimension, sign } = value;
-
-        const moveTarget = childWrapperRef ?? document.body;
-        const ratio = Math.min(Math.max(event[delta] * sign / moveTarget[dimension], 0), 1);
-        setOffset(ratio);
-      }
+          if (local.onGesture) local.onGesture(ratio);
+        }
+      });
     });
     hammer.on('panend', () => {
       if (isStart) {
@@ -184,9 +192,11 @@ const Stackable = (props: StackableProps) => {
         setAnimation(true);
         if (offset() > 0.5) {
           setOffset(1);
+          if (local.onGesture) local.onGesture(1);
           local.onBack?.();
         } else {
           setOffset(0);
+          if (local.onGesture) local.onGesture(0);
         }
 
         isStart = false;
@@ -197,12 +207,10 @@ const Stackable = (props: StackableProps) => {
   createEffect(() => {
     setAnimation(true);
 
-    if (local.open) setOffset(0);
-    else setOffset(1);
-  });
-
-  createEffect(() => {
-    if (local.onGesture) local.onGesture(offset());
+    let newOffset = local.open ? 0 : 1;
+    
+    setOffset(newOffset);
+    if (local.onGesture) local.onGesture(newOffset);
   });
 
   return (

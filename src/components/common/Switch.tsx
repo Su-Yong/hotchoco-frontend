@@ -147,8 +147,10 @@ const Switch: Component<SwitchProps> = (props) => {
       setIsMove(true);
     });
     hammer.on('pan', (event) => {
-      const newOffset = Math.min(Math.max(x + event.deltaX, 0), local.size) / local.size;
-      setOffset(newOffset);
+      requestAnimationFrame(() => {
+        const newOffset = Math.min(Math.max(x + event.deltaX, 0), local.size) / local.size;
+        setOffset(newOffset);
+      });
     });
     hammer.on('panend', (event) => {
       const newOffset = Math.min(Math.max(x + event.deltaX, 0), local.size) / local.size;

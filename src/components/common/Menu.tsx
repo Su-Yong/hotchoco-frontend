@@ -1,6 +1,6 @@
 import { variable } from '@/theme';
 import { sx } from '@/utils';
-import { autoUpdate, computePosition, flip, offset, Placement, shift, size } from '@floating-ui/dom';
+import { autoUpdate, computePosition, flip, offset, Placement, shift, size, AutoUpdateOptions } from '@floating-ui/dom';
 import { css } from '@linaria/core';
 import { Component, createEffect, createSignal, createUniqueId, mergeProps, on, splitProps } from 'solid-js';
 import { Portal } from 'solid-js/web';
@@ -76,6 +76,7 @@ export interface MenuProps extends MenuListProps {
   open?: boolean;
   placement?: Placement;
   anchor?: Element;
+  floatingOptions?: Partial<AutoUpdateOptions>;
 }
 
 const defaultProps: Omit<MenuProps, 'items'> = {
@@ -88,7 +89,7 @@ const Menu: Component<MenuProps> = (props) => {
       ...defaultProps,
       id: createUniqueId(),
     }, props),
-    ['open', 'placement', 'anchor'],
+    ['open', 'placement', 'anchor', 'floatingOptions'],
   );
 
   let target: HTMLUListElement | undefined;
@@ -145,9 +146,7 @@ const Menu: Component<MenuProps> = (props) => {
         }).then(({ x: coordX, y: coordY }) => {
           setCoordinate([~~coordX, ~~coordY]);
         });
-      }, {
-        animationFrame: true,
-      });
+      }, local.floatingOptions);
     }
   });
 
