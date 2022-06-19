@@ -76,7 +76,7 @@ export interface MenuProps extends MenuListProps {
   open?: boolean;
   placement?: Placement;
   anchor?: Element;
-  floatingOptions?: Partial<AutoUpdateOptions>;
+  updateOptions?: Partial<AutoUpdateOptions>;
 }
 
 const defaultProps: Omit<MenuProps, 'items'> = {
@@ -89,7 +89,7 @@ const Menu: Component<MenuProps> = (props) => {
       ...defaultProps,
       id: createUniqueId(),
     }, props),
-    ['open', 'placement', 'anchor', 'floatingOptions'],
+    ['open', 'placement', 'anchor', 'updateOptions'],
   );
 
   let target: HTMLUListElement | undefined;
@@ -146,7 +146,7 @@ const Menu: Component<MenuProps> = (props) => {
         }).then(({ x: coordX, y: coordY }) => {
           setCoordinate([~~coordX, ~~coordY]);
         });
-      }, local.floatingOptions);
+      }, local.updateOptions);
     }
   });
 

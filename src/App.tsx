@@ -60,7 +60,7 @@ const exitEnd = css`
 
   transition-duration: ${variable('Animation.duration.shorter')};
   transition-timing-function: ${variable('Animation.easing.out')};
-  `;
+`;
 
 const App: Component = () => {
   const themeStyle = createThemeStyle();

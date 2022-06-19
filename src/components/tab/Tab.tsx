@@ -1,25 +1,32 @@
 import { variable } from '@/theme';
 import { css } from '@linaria/core';
-import { Show } from 'solid-js';
+import { mergeProps, Show } from 'solid-js';
 import { JSX } from 'solid-js/jsx-runtime';
 import { Transition } from 'solid-transition-group';
 
 const containerStyle = css`
   width: 100%;
+  height: 100%;
 
   position: relative;
   z-index: 0;
 
   display: flex;
-  flex-flow: row;
   justify-content: center;
   align-items: center;
 
+  cursor: pointer;
   user-select: none;
   padding: ${variable('Size.space.medium')};
 
   transition-duration: ${variable('Animation.duration.shorter')};
   transition-timing-function: ${variable('Animation.easing.deceleration')};
+`;
+const horizontalStyle = css`
+  flex-direction: row;
+`;
+const verticalStyle = css`
+  flex-direction: column;
 `;
 
 const iconOverlayStyle = css`
@@ -37,9 +44,14 @@ const iconOverlayStyle = css`
   transition-duration: ${variable('Animation.duration.shorter')};
   transition-timing-function: ${variable('Animation.easing.deceleration')};
 
-  *:active > & {
+  *:hover > & {
     transform: scale(1);
     opacity: ${variable('Color.Transparency.clear')};
+  }
+
+  *:active > & {
+    transform: scale(1);
+    opacity: ${variable('Color.Transparency.translucent')};
   }
 
   [data-select="true"] > & {
@@ -64,30 +76,41 @@ const titleWrapperStyle = css`
   align-items: center;
 `;
 
+const verticalAnimationStyle = css`
+  --translate: translateY(-50%);
+`;
+const horizontalAnimationStyle = css`
+  --translate: translateX(-50%);
+`;
+
 const enterStart = css`
   max-width: 0%;
-  transform: translateX(-50%) scale(0);
+  max-height: 0%;
+  transform: var(--translate) scale(0);
   opacity: 0;
 `;
 const enterEnd = css`
   max-width: 100%;
-  transform: translateX(0%) scale(1);
+  max-height: 100%;
+  transform: translate(0%) scale(1);
   opacity: 1;
 
-  transition-duration: ${variable('Animation.duration.short')};
+  transition-duration: ${variable('Animation.duration.shorter')};
   transition-timing-function: ${variable('Animation.easing.deceleration')};
 `;
 const exitStart = css`
   max-width: 100%;
-  transform: translateX(0%) scale(1);
+  max-height: 100%;
+  transform: translate(0%) scale(1);
   opacity: 1;
 `;
 const exitEnd = css`
   max-width: 0%;
-  transform: translateX(-50%) scale(0);
+  max-height: 0%;
+  transform: var(--translate) scale(0);
   opacity: 0;
 
-  transition-duration: ${variable('Animation.duration.short')};
+  transition-duration: ${variable('Animation.duration.shorter')};
   transition-timing-function: ${variable('Animation.easing.deceleration')};
 `;
 
@@ -98,41 +121,56 @@ export interface TabProps {
 
   color?: string;
   selected?: boolean;
+  direction?: 'vertical' | 'horizontal';
 
   onClick?: (id: string) => void;
 }
 
+const defaultTabProps = {
+  direction: 'horizontal',
+  color: variable('Primary.Main'),
+};
+
 const Tab = (props: TabProps) => {
+  const local = mergeProps(defaultTabProps, props);
+
   const onClick = () => {
-    props.onClick?.(props.id);
+    local.onClick?.(local.id);
   };
 
   return (
     <div
-      data-select={props.selected}
-      class={containerStyle}
+      data-select={local.selected}
+      classList={{
+        [containerStyle]: true,
+        [horizontalStyle]: local.direction === 'horizontal',
+        [horizontalAnimationStyle]: local.direction === 'horizontal',
+        [verticalStyle]: local.direction === 'vertical',
+        [verticalAnimationStyle]: local.direction === 'vertical',
+      }}
       onClick={onClick}
       style={{
-        '--color': props.color,
+        '--color': local.color,
       }}
     >
       <div class={iconOverlayStyle} />
-      {props.icon}
+      {local.icon}
       <Transition
         enterClass={enterStart}
         enterToClass={enterEnd}
         exitClass={exitStart}
         exitToClass={exitEnd}
       >
-        <Show when={props.selected}>
+        <Show when={local.direction === 'horizontal' && local.selected}>
           <div class={titleWrapperStyle}>
             <div
               style={{
                 width: variable('Size.space.small'),
+                height: variable('Size.space.small'),
               }}
             />
             <h1 class={titleStyle}>
-              {props.title}
+              {local.title}
             </h1>
           </div>
         </Show>

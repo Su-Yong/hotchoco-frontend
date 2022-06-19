@@ -1,7 +1,8 @@
-import { variable } from '@/theme';
+import { getTheme, variable } from '@/theme';
 import { sx } from '@/utils';
+import { cssTimeToMs } from '@/utils/css';
 import { css, cx } from '@linaria/core';
-import { Component, createDeferred, createEffect, createSignal, createUniqueId, mergeProps, splitProps } from 'solid-js';
+import { Component, createDeferred, createEffect, createSignal, createUniqueId, mergeProps, on, splitProps } from 'solid-js';
 import { JSX } from 'solid-js/jsx-runtime';
 import Icon from './Icon';
 import Menu, { MenuProps } from './Menu';
@@ -97,6 +98,7 @@ const Select: Component<SelectProps> = (props) => {
   const [anchor, setAnchor] = createSignal<HTMLDivElement>();
   const [open, setOpen] = createSignal(false);
   const [menuWidth, setMenuWidth] = createSignal(0);
+  const [fastUpdateOptions, setFastUpdateOptions] = createSignal(false);
 
   const onMenuItem = (item: MenuItem) => {
     if (item.id === noneId) {
@@ -159,6 +161,14 @@ const Select: Component<SelectProps> = (props) => {
     }
   });
 
+  createEffect(on(open, () => {
+    setFastUpdateOptions(false);
+
+    setTimeout(() => {
+      setFastUpdateOptions(true);
+    }, cssTimeToMs(getTheme().Animation.duration.short) ?? 500);
+  }));
+
   return (
     <>
       <div
@@ -193,6 +203,17 @@ const Select: Component<SelectProps> = (props) => {
         open={open()}
         onMenuItem={onMenuItem}
         anchor={anchor()}
+        updateOptions={fastUpdateOptions() ? {
+          ancestorResize: true,
+          ancestorScroll: true,
+          elementResize: false,
+          animationFrame: false,
+        } : {
+          ancestorResize: true,
+          ancestorScroll: true,
+          elementResize: true,
+          animationFrame: true,
+        }}
       />
     </>
   );

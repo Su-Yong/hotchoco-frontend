@@ -4,7 +4,7 @@ import { css, cx } from '@linaria/core';
 import { Component, createEffect, createSignal, mergeProps, on, splitProps } from 'solid-js';
 import { Portal } from 'solid-js/web';
 import { JSX } from 'solid-js/jsx-runtime';
-import { autoUpdate, computePosition, flip, Middleware, offset, Placement, shift, size } from '@floating-ui/dom';
+import { autoUpdate, AutoUpdateOptions, computePosition, flip, Middleware, offset, Placement, shift, size } from '@floating-ui/dom';
 
 const popupStyle = css`
   z-index: 1000000;
@@ -73,6 +73,7 @@ export interface PopupProps extends JSX.HTMLAttributes<HTMLDivElement> {
   placement?: Placement;
   anchor?: Element;
   middleware?: Middleware[];
+  updateOptions?: Partial<AutoUpdateOptions>;
 
   outerStyle?: JSX.HTMLAttributes<HTMLDivElement>['style'];
   outerClassName?: JSX.HTMLAttributes<HTMLDivElement>['className'];
@@ -85,12 +86,15 @@ const defaultProps: PopupProps = {
     shift(),
     flip(),
   ],
+  updateOptions: {
+    animationFrame: true,
+  },
 };
 
 const Popup: Component<PopupProps> = (props) => {
   const [local, leftProps] = splitProps(
     mergeProps(defaultProps, props),
-    ['open', 'placement', 'middleware', 'anchor', 'children'],
+    ['open', 'placement', 'middleware', 'updateOptions', 'anchor', 'children'],
   );
 
   let target: HTMLDivElement | undefined;
@@ -103,12 +107,12 @@ const Popup: Component<PopupProps> = (props) => {
   const getOrigin = (): [string, string] => {
     if (!local.placement) return ['0%', '0%'];
 
-    let x = '0%';
-    let y = '0%';
+    let x = '50%';
+    let y = '50%';
     const [side, align] = local.placement.split('-');
 
-    if (side === 'left') x = '0%';
-    if (side === 'right') x = '100%';
+    if (side === 'left') x = '100%';
+    if (side === 'right') x = '0%';
     if (side === 'top') y = '100%';
     if (side === 'bottom') y = '0%';
 
@@ -137,9 +141,7 @@ const Popup: Component<PopupProps> = (props) => {
         }).then(({ x: coordX, y: coordY }) => {
           setCoordinate([~~coordX, ~~coordY]);
         });
-      }, {
-        animationFrame: true,
-      });
+      }, local.updateOptions);
     }
   });
 

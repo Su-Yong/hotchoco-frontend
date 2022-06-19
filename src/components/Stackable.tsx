@@ -40,7 +40,7 @@ const wrapperStyle = css`
     content: '';
     position: absolute;
     inset: 0;
-    box-shadow: 0 0 0 max(100vw, 100vh) ${variable('Color.Grey.900')};
+    box-shadow: 0 0 0 max(100vw, 100vh) ${variable('Dark')};
     opacity: calc((100% - var(--opacity-offset)) * ${variable('Color.Transparency.translucent')});
 
     pointer-events: none;
@@ -185,22 +185,24 @@ const Stackable = (props: StackableProps) => {
       });
     });
     hammer.on('panend', () => {
-      if (isStart) {
-        const value = directionValue()!;
-        if (!value) return;
+      requestAnimationFrame(() => {
+        if (isStart) {
+          const value = directionValue()!;
+          if (!value) return;
 
-        setAnimation(true);
-        if (offset() > 0.5) {
-          setOffset(1);
-          if (local.onGesture) local.onGesture(1);
-          local.onBack?.();
-        } else {
-          setOffset(0);
-          if (local.onGesture) local.onGesture(0);
+          setAnimation(true);
+          if (offset() > 0.5) {
+            setOffset(1);
+            if (local.onGesture) local.onGesture(1);
+            local.onBack?.();
+          } else {
+            setOffset(0);
+            if (local.onGesture) local.onGesture(0);
+          }
+
+          isStart = false;
         }
-
-        isStart = false;
-      }
+      });
     });
   };
 

@@ -1,4 +1,3 @@
-import BottomTabs from '@/components/BottomTabs';
 import Button from '@/components/common/Button';
 import Icon from '@/components/common/Icon';
 import Menu from '@/components/common/Menu';
@@ -10,6 +9,7 @@ import { variable } from '@/theme';
 import { css } from '@linaria/core';
 import { Component, createSignal } from 'solid-js';
 import { JSX } from 'solid-js/jsx-runtime';
+import Tabs from '@/components/tab/Tabs';
 
 const containerStyle = css`
   display: flex;
@@ -67,7 +67,31 @@ const ComponentPage: Component = () => {
         ]}
       />
 
-      <BottomTabs
+      <Tabs
+        direction={'horizontal'}
+        tabs={[
+          {
+            id: 'test1',
+            icon: <Icon icon={'home'} />,
+            title: '테스트1',
+            color: variable('Color.Red.500')
+          },
+          {
+            id: 'test2',
+            icon: <Icon icon={'settings'} />,
+            title: '테스트2',
+            color: variable('Color.Green.500')
+          },
+          {
+            id: 'test3',
+            icon: <Icon icon={'more'} />,
+            title: '테스트3',
+            color: variable('Color.Blue.500')
+          },
+        ]}
+      />
+      <Tabs
+        direction={'vertical'}
         tabs={[
           {
             id: 'test1',
