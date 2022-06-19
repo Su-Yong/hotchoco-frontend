@@ -87,7 +87,7 @@ export interface StackableProps extends JSX.HTMLAttributes<HTMLDivElement> {
 }
 
 const defaultProps = {
-  gestureRatio: 0.5,
+  gestureRatio: 1,
   positionStrategy: 'absolute',
 };
 

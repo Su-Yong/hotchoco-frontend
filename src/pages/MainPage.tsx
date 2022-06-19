@@ -127,7 +127,7 @@ const tabs = [
     id: 'component',
     icon: <Icon icon={'more_horiz'} />,
     title: '테스트',
-    color: variable('Color.Blue.500')
+    color: variable('Primary.Main'),
   },
 ];
 

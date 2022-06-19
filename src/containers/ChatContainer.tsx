@@ -253,7 +253,6 @@ const ChatContainer: Component<ChatContainerProps> = (props) => {
         onBack={onToggleInfo}
         class={infoContainerStyle}
         outerClass={infoWrapperStyle}
-        gestureRatio={1}
         positionStrategy={'fixed'}
       >
         <InfoContainer
