@@ -278,7 +278,9 @@ const ChatPage: Component = () => {
           direction={'right'}
           onBack={() => setSelectedRoom()}
           onGesture={(offset) => setPageRatio(offset)}
+          outerStyle={{ 'z-index': 50 }}
           gestureRatio={0.5}
+          positionStrategy={'fixed'}
         >
           {roomContainer}
         </Stackable>

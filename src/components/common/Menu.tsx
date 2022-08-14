@@ -130,7 +130,7 @@ const Menu: Component<MenuProps> = (props) => {
 
       cleanUpdater = autoUpdate(local.anchor, target, () => {
         if (!local.anchor || !target) return;
-        
+
         computePosition(local.anchor, target, {
           placement: local.placement,
           middleware: [

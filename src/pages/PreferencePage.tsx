@@ -18,17 +18,21 @@ const containerStyle = css`
   align-items: stretch;
   gap: ${variable('Size.space.medium')};
 
-  padding: 0 ${variable('Size.space.medium')};
+  padding: ${variable('Size.space.medium')};
   overflow-y: auto;
-  
+
   &::before {
     content: '';
-    position: absolute;
+    position: fixed;
     inset: 0;
     z-index: -1;
 
     opacity: ${variable('Color.Transparency.vague')};
     background: ${variable('Color.Grey.200')};
+  }
+
+  @media (max-width: 640px) {
+    height: fit-content;
   }
 `;
 const allowGestureStyle = css`
@@ -60,6 +64,12 @@ const headerStyle = css`
     opacity: ${variable('Color.Transparency.vague')};
     background: ${variable('Color.Grey.200')};
   }
+`;
+const headerDummyStyle = css`
+  height: 56px;
+  min-height: 56px;
+  max-height: 56px;
+  margin-bottom: calc(-1 * ${variable('Size.space.medium')});
 `;
 
 const PreferencePage: Component = () => {
@@ -94,7 +104,7 @@ const PreferencePage: Component = () => {
       >
         설정
       </Header>
-      <div style={'height: 56px; min-height: 56px; max-height: 56px;'} />
+      <div class={headerDummyStyle} />
       <For each={preferenceGroupList}>
         {(group) => <PreferenceContainer group={group} />}
       </For>

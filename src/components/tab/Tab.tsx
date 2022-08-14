@@ -21,6 +21,10 @@ const containerStyle = css`
 
   transition-duration: ${variable('Animation.duration.shorter')};
   transition-timing-function: ${variable('Animation.easing.deceleration')};
+
+  -webkit-tap-highlight-color: transparent;
+  user-select: none;
+
 `;
 const horizontalStyle = css`
   flex-direction: row;

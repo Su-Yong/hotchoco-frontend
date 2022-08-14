@@ -1,7 +1,7 @@
 import { css, cx } from '@linaria/core';
 import { JSX } from 'solid-js/jsx-runtime';
 import Hammer from 'hammerjs';
-import { createEffect, createSignal, createUniqueId, mergeProps, Show, splitProps } from 'solid-js';
+import { createEffect, createMemo, createSignal, createUniqueId, mergeProps, Show, splitProps, on } from 'solid-js';
 import { getTheme, variable } from '@/theme';
 import { Transition } from 'solid-transition-group';
 import { cssTimeToMs } from '@/utils/css';
@@ -9,6 +9,7 @@ import { sx } from '@/utils';
 
 const containerStyle = css`
   inset: 0;
+  overflow: hidden;
 `;
 const fixedContainerStyle = css`
   position: fixed;
@@ -25,10 +26,11 @@ const wrapperStyle = css`
 
   z-index: 100;
   touch-action: none;
+  user-select: none;
 
   transition-property: transform;
   transition-timing-function: ${variable('Animation.easing.inOut')};
-  
+
   &[data-animation="false"] {
     transition-duration: 64ms;
   }
@@ -55,19 +57,19 @@ const wrapperStyle = css`
 `;
 
 const toLeftStyle = css`
-  transform: translateX(calc(-1 * var(--offset)));
+  transform: translateX(calc(-1 * var(--offset, 100%)));
 `;
 
 const toRightStyle = css`
-  transform: translateX(calc(1 * var(--offset)));
+  transform: translateX(calc(1 * var(--offset, 100%)));
 `;
 
 const toUpStyle = css`
-  transform: translateY(calc(-1 * var(--offset)));
+  transform: translateY(calc(-1 * var(--offset, 100%)));
 `;
 
 const toDownStyle = css`
-  transform: translateY(calc(1 * var(--offset)));
+  transform: translateY(calc(1 * var(--offset, 100%)));
 `;
 
 export interface StackableProps extends JSX.HTMLAttributes<HTMLDivElement> {
@@ -101,19 +103,19 @@ const Stackable = (props: StackableProps) => {
   let childWrapperRef: HTMLDivElement | undefined;
   const containerId = createUniqueId();
 
-  const [offset, setOffset] = createSignal(0);
+  const [offset, setOffset] = createSignal(1);
   const [animation, setAnimation] = createSignal(false);
 
-  const direction = () => {
+  const direction = createMemo(() => {
     if (local.direction === 'left') return Hammer.DIRECTION_LEFT;
     if (local.direction === 'right') return Hammer.DIRECTION_RIGHT;
     if (local.direction === 'up') return Hammer.DIRECTION_UP;
     if (local.direction === 'down') return Hammer.DIRECTION_DOWN;
 
     return Hammer.DIRECTION_ALL;
-  };
+  });
 
-  const directionValue = () => {
+  const directionValue = createMemo(() => {
     if (local.direction === 'left') {
       return {
         direction: 'x',
@@ -149,6 +151,12 @@ const Stackable = (props: StackableProps) => {
         sign: 1,
       } as const;
     }
+  });
+
+  const onClose: JSX.EventHandlerUnion<HTMLDivElement, MouseEvent> = (event) => {
+    if (event.target.id !== containerId) return;
+
+    local.onBack?.();
   };
 
   const registerGesture = (target: HTMLDivElement) => {
@@ -170,50 +178,47 @@ const Stackable = (props: StackableProps) => {
     });
     hammer.on('pan', (event) => {
       requestAnimationFrame(() => {
-        if (isStart) {
-          const value = directionValue();
-          if (!value) return;
-  
-          const { delta, dimension, sign } = value;
-  
-          const moveTarget = childWrapperRef ?? document.body;
-          const ratio = Math.min(Math.max(event[delta] * sign / moveTarget[dimension], 0), 1);
-          setOffset(ratio);
+        if (!isStart) return;
 
-          if (local.onGesture) local.onGesture(ratio);
-        }
+        const value = directionValue();
+        if (!value) return;
+
+        const { delta, dimension, sign } = value;
+
+        const moveTarget = childWrapperRef ?? document.body;
+        const ratio = Math.min(Math.max(event[delta] * sign / moveTarget[dimension], 0), 1);
+        setOffset(ratio);
+
+        if (local.onGesture) local.onGesture(ratio);
       });
     });
     hammer.on('panend', () => {
       requestAnimationFrame(() => {
-        if (isStart) {
-          const value = directionValue()!;
-          if (!value) return;
+        if (!isStart) return;
 
-          setAnimation(true);
-          if (offset() > 0.5) {
-            setOffset(1);
-            if (local.onGesture) local.onGesture(1);
-            local.onBack?.();
-          } else {
-            setOffset(0);
-            if (local.onGesture) local.onGesture(0);
-          }
-
-          isStart = false;
+        setAnimation(true);
+        if (offset() > 0.5) {
+          setOffset(1);
+          if (local.onGesture) local.onGesture(1);
+          local.onBack?.();
+        } else {
+          setOffset(0);
+          if (local.onGesture) local.onGesture(0);
         }
+
+        isStart = false;
       });
     });
   };
 
-  createEffect(() => {
+  createEffect(on(() => local.open, () => {
     setAnimation(true);
 
     let newOffset = local.open ? 0 : 1;
-    
+
     setOffset(newOffset);
     if (local.onGesture) local.onGesture(newOffset);
-  });
+  }));
 
   return (
     <Transition
@@ -224,15 +229,16 @@ const Stackable = (props: StackableProps) => {
 
           element.style.setProperty('--offset', offset);
           element.style.setProperty('--opacity-offset', '100%');
+
+          const time = cssTimeToMs(getTheme().Animation.duration.short);
+
+          setTimeout(done, time ?? 0);
         }
-
-        const time = cssTimeToMs(getTheme().Animation.duration.short);
-
-        setTimeout(done, time ?? 0);
       }}
     >
       <Show when={local.open}>
         <div
+          ref={registerGesture}
           id={containerId}
           style={sx(outerProps.outerStyle, {
             '--offset': `${~~(offset() * 100)}%`,
@@ -245,7 +251,7 @@ const Stackable = (props: StackableProps) => {
             [fixedContainerStyle]: local.positionStrategy === 'fixed',
             [absoluteContainerStyle]: local.positionStrategy === 'absolute',
           }}
-          ref={registerGesture}
+          onClick={onClose}
         >
           <div
             {...leftProps}

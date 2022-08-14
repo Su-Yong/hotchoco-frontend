@@ -23,7 +23,7 @@ const bodyStyle = css`
     justify-content: flex-start;
     align-items: stretch;
   }
-  
+
   @media (min-width: 640px) {
     flex-flow: row-reverse;
     justify-content: flex-start;
@@ -169,7 +169,7 @@ const MainPage = () => {
           tabs={tabs}
           onTabChange={onTabChange}
           selected={tabs[nowIndex()].id}
-        />  
+        />
       </div>
     </div>
   )

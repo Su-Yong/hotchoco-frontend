@@ -26,7 +26,7 @@ const titleStyle = css`
   font-size: ${variable('Size.text.title')};
   font-weight: bold;
   font-family: 'SUIT Variable';
-  
+
   margin-bottom: ${variable('Size.space.medium')};
 `;
 
@@ -35,7 +35,7 @@ export interface PreferenceContainerProps {
 }
 
 const PreferenceContainer: Component<PreferenceContainerProps> = (props) => {
-  
+
 
   return (
     <div className={containerStyle}>

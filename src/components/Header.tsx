@@ -4,7 +4,7 @@ import { Component, splitProps } from 'solid-js';
 import { JSX } from 'solid-js/jsx-runtime';
 
 const headerStyle = css`
-  width: 100%;  
+  width: 100%;
   height: 56px;
 
   display: flex;
@@ -37,12 +37,12 @@ const Header: Component<HeaderProps> = (props) => {
   return (
     <h1
       {...leftProps}
-      className={cx(
-        headerStyle,
-        icons.leftIcon && leftIconHeaderStyle,  
-        icons.rightIcon && rightIconHeaderStyle,  
-        props.className,
-      )}
+      classList={{
+        [headerStyle]: true,
+        [leftIconHeaderStyle]: !!icons.leftIcon,
+        [rightIconHeaderStyle]: !!icons.rightIcon,
+        ...props.classList,
+      }}
     >
       {icons.leftIcon}
       {children.children}

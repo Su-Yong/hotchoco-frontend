@@ -1,14 +1,19 @@
 import { css, cx } from '@linaria/core';
-import { Component, createEffect, createSignal, Show } from 'solid-js';
+import { Component, createEffect, createSignal, onMount, Show } from 'solid-js';
 import TextButton from '@/components/common/TextButton';
-import { variable } from '@/theme';
+import { getTheme, variable } from '@/theme';
 import Icon from '@/components/common/Icon';
-
-const LENGTH_LIMIT = 500;
+import { cssTimeToMs } from '@/utils/css';
 
 const containerStyle = css`
   height: fit-content;
   overflow: hidden;
+
+  display: flex;
+  flex-flow: column;
+  justify-content: flex-start;
+  align-items: stretch;
+  gap: ${variable('Size.space.small')};
 
   transition-property: height;
   transition-duration: ${variable('Animation.duration.short')};
@@ -16,12 +21,15 @@ const containerStyle = css`
 `;
 
 const textStyle = css`
-  display: inline-flex;
-  flex-flow: column;
-  gap: ${variable('Size.space.small')};
-
   font-size: ${variable('Size.text.body')};
   white-space: pre-line;
+
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: var(--line-clamp, 3);
+  -webkit-box-orient: vertical;
+
 `;
 
 const toggleStyle = css`
@@ -50,53 +58,46 @@ export interface TextContentProps {
 const TextContent: Component<TextContentProps> = (props) => {
   let textDiv: HTMLDivElement | undefined;
   let containerDiv: HTMLDivElement | undefined;
- 
-  if (props.content.length > LENGTH_LIMIT) {
-    const smallContent = () => props.content.substring(0, LENGTH_LIMIT) + '...';
 
-    const [collapse, setCollapse] = createSignal(true);
-    const [visibleContent, setVisibleContent] = createSignal(smallContent());
+  const [collapse, setCollapse] = createSignal(true);
+  const [isOverflow, setOverflow] = createSignal(false);
 
-    const onToggleCollapse = () => {
-      setCollapse((it) => !it);
-    };
+  onMount(() => {
+    setTimeout(() => {
+      const textNode = textDiv?.childNodes[0];
+      if (!textDiv || !textNode) return;
 
-    createEffect(() => {
-      if (collapse()) setVisibleContent(smallContent());
-      else setVisibleContent(props.content);
-
-      setTimeout(() => {
-        if (textDiv && containerDiv) {
-          containerDiv.style.height = `${textDiv.clientHeight}px`;
-        }
-      }, 0);
-    });
-
-    return (
-      <div ref={containerDiv} className={containerStyle}>
-        <div ref={textDiv} className={textStyle}>
-          {visibleContent()}
-          <TextButton
-            data-collapse={collapse()}
-            onClick={onToggleCollapse}
-            className={toggleStyle}
-          >
-            <Icon icon={'expand_more'} className={'icon'} />
-            <Show
-              when={collapse()}
-              fallback={'접기'}
-            >
-              더보기
-            </Show>
-          </TextButton>
-        </div>
-      </div>
-    );
-  }
+      const range = document.createRange();
+      range.selectNodeContents(textNode);
+      const rect = range.getBoundingClientRect?.();
+      if (rect) setOverflow(textDiv.clientHeight < (rect.bottom - rect.top));
+    }, cssTimeToMs(getTheme().Animation.duration.short) ?? 350);
+  });
 
   return (
-    <div className={cx(containerStyle, textStyle)}>
-      {props.content}
+    <div ref={containerDiv} class={containerStyle}>
+      <div
+        ref={textDiv}
+        class={textStyle}
+        style={collapse() ? '--line-clamp: 10;' : '--line-clamp: 100000;'}
+      >
+        {props.content}
+      </div>
+      <Show when={isOverflow()}>
+        <TextButton
+          data-collapse={collapse()}
+          onClick={() => setCollapse(!collapse())}
+          className={toggleStyle}
+        >
+          <Icon icon={'expand_more'} className={'icon'} />
+          <Show
+            when={collapse()}
+            fallback={'접기'}
+          >
+            더보기
+          </Show>
+        </TextButton>
+      </Show>
     </div>
   );
 }
